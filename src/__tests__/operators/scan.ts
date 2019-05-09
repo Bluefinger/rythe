@@ -1,0 +1,68 @@
+import { createCell } from "../../cell";
+import { combine, scan } from "../../operators/index";
+import { SKIP } from "../../signal";
+
+describe("scan", () => {
+  it("should default to an initial value", () => {
+    const a = createCell<number>();
+    const s = scan((acc, value) => acc + value, 0)(a);
+    expect(s()).toBe(0);
+  });
+  it("should accumulate values", () => {
+    const a = createCell<number>();
+    const s = scan<number, string>((acc, value) => acc + value, "")(a);
+    a(1)(2)(3);
+    expect(s()).toBe("123");
+  });
+  it("can be mapped", () => {
+    const a = createCell<number>();
+    const s = scan((acc, value) => acc + value, 0)(a);
+    const m = s.map(value => value + 1);
+    a(1)(2)(3);
+    expect(m()).toBe(7);
+  });
+  it("pushes initial value down first", () => {
+    const atomic: number[] = [];
+    const scanFn = jest.fn((acc: number, value: number) => acc + value);
+    const a = createCell<number>();
+    const s = scan(scanFn, 0)(a);
+    const m = s.map(value => atomic.push(value));
+    expect(m()).toBe(1);
+    expect(atomic).toEqual([0]);
+    expect(scanFn).toBeCalledTimes(0);
+  });
+  it("should accumulate atomically", () => {
+    const atomic: number[] = [];
+    const scanFn = jest.fn((acc: number, value: number) => acc + value);
+    const a = createCell<number>();
+    const b = createCell<number>();
+    const aM = a.map(n => n);
+    const c = combine((sA, sB) => sA() + sB(), [aM, b]);
+    const s = scan(scanFn, 0)(c);
+    const m = s.map(value => atomic.push(value), SKIP);
+    a(2);
+    b(2)(5);
+    a(3);
+    expect(m()).toBe(3);
+    expect(atomic).toEqual([4, 11, 19]);
+    expect(scanFn).toBeCalledTimes(3);
+  });
+  it("stops accumulating after .end is invoked", () => {
+    const a = createCell<number>();
+    const scanFn = jest.fn((acc: number, value: number) => acc + value);
+    const s = scan(scanFn, 0)(a);
+
+    a(1)(2)(3);
+    expect(s()).toBe(6);
+    expect(s.parents).toBe(a);
+    expect(scanFn).toBeCalledTimes(3);
+
+    scanFn.mockClear();
+    s.end(true);
+    a(5)(6);
+
+    expect(s()).toBe(6);
+    expect(s.parents).toBe(null);
+    expect(scanFn).toBeCalledTimes(0);
+  });
+});

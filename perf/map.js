@@ -5,7 +5,7 @@ const rxOps = require("rxjs/operators");
 const flyd = require("flyd");
 const utils = require("./utils");
 
-CellStream.setDispatcher(CellStream.flatDispatcher);
+// CellStream.setDispatcher(CellStream.flatDispatcher);
 
 const suite1 = new Benchmark.Suite();
 

@@ -3,3 +3,4 @@ dist/
 .rpt2_cache/
 .vscode/
 coverage/
+package-lock.json

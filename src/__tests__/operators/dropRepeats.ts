@@ -1,38 +1,46 @@
 import { createCell } from "../../cell";
-import { dropRepeats } from "../../operators/index";
+import { dropRepeats, map } from "../../operators/index";
 
 describe("dropRepeats", () => {
   it("will not pass down repeat values", () => {
     const a = createCell<number>();
-    const dr = dropRepeats(a);
     const mapFn = jest.fn((n: number) => n);
-    const m = dr.map(mapFn);
+    const m = a.pipe(
+      dropRepeats,
+      map(mapFn)
+    );
     a(1)(1)(2)(2)(2)(3);
     expect(m()).toBe(3);
     expect(mapFn).toBeCalledTimes(3);
   });
   it("passes down initial value immediately", () => {
     const a = createCell<number>(1);
-    const dr = dropRepeats(a);
     const mapFn = jest.fn((n: number) => n);
-    const m = dr.map(mapFn);
+    const m = a.pipe(
+      dropRepeats,
+      map(mapFn)
+    );
     expect(m()).toBe(1);
     expect(mapFn).toBeCalledTimes(1);
   });
   it("handles explicit undefined values", () => {
     const a = createCell<number | undefined>();
-    const dr = dropRepeats(a);
     const mapFn = jest.fn((n: number | undefined) => n);
-    const m = dr.map(mapFn);
+    const m = a.pipe(
+      dropRepeats,
+      map(mapFn)
+    );
     a(1)(1)(undefined)(undefined)(2)(3);
     expect(m()).toBe(3);
     expect(mapFn).toBeCalledTimes(4);
   });
   it("handles explicit null values", () => {
     const a = createCell<number | null>();
-    const dr = dropRepeats(a);
     const mapFn = jest.fn((n: number | null) => n);
-    const m = dr.map(mapFn);
+    const m = a.pipe(
+      dropRepeats,
+      map(mapFn)
+    );
     a(1)(1)(null)(null)(2)(3);
     expect(m()).toBe(3);
     expect(mapFn).toBeCalledTimes(4);
@@ -41,9 +49,11 @@ describe("dropRepeats", () => {
     const objA = { a: 1 };
     const objB = { a: 1 };
     const a = createCell<any>();
-    const dr = dropRepeats(a);
     const mapFn = jest.fn((n: any) => n);
-    const m = dr.map(mapFn);
+    const m = a.pipe(
+      dropRepeats,
+      map(mapFn)
+    );
 
     // Assert objects are similar in shape, but not the same instance
     expect(objA).toEqual(objB);
@@ -69,7 +79,7 @@ describe("dropRepeats", () => {
     const a = createCell<number>();
     const dr = dropRepeats(a);
     const mapFn = jest.fn((n: number) => n);
-    const m = dr.map(mapFn);
+    const m = map(mapFn)(dr);
 
     a(1)(3);
     expect(m()).toBe(3);

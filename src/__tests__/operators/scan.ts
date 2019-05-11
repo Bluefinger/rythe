@@ -1,5 +1,5 @@
 import { createCell } from "../../cell";
-import { combine, scan } from "../../operators/index";
+import { combine, map, scan } from "../../operators/index";
 import { SKIP } from "../../signal";
 
 describe("scan", () => {
@@ -9,15 +9,17 @@ describe("scan", () => {
     expect(s()).toBe(0);
   });
   it("should accumulate values", () => {
-    const a = createCell<number>();
+    const a = createCell<number>(0);
     const s = scan<number, string>((acc, value) => acc + value, "")(a);
     a(1)(2)(3);
-    expect(s()).toBe("123");
+    expect(s()).toBe("0123");
   });
   it("can be mapped", () => {
     const a = createCell<number>();
-    const s = scan((acc, value) => acc + value, 0)(a);
-    const m = s.map(value => value + 1);
+    const m = a.pipe(
+      scan((acc, value) => acc + value, 0),
+      map(value => value + 1)
+    );
     a(1)(2)(3);
     expect(m()).toBe(7);
   });
@@ -25,8 +27,11 @@ describe("scan", () => {
     const atomic: number[] = [];
     const scanFn = jest.fn((acc: number, value: number) => acc + value);
     const a = createCell<number>();
-    const s = scan(scanFn, 0)(a);
-    const m = s.map(value => atomic.push(value));
+    const m = a.pipe(
+      scan(scanFn, 0),
+      map(value => atomic.push(value))
+    );
+
     expect(m()).toBe(1);
     expect(atomic).toEqual([0]);
     expect(scanFn).toBeCalledTimes(0);
@@ -36,10 +41,10 @@ describe("scan", () => {
     const scanFn = jest.fn((acc: number, value: number) => acc + value);
     const a = createCell<number>();
     const b = createCell<number>();
-    const aM = a.map(n => n);
+    const aM = map<number>(n => n)(a);
     const c = combine((sA, sB) => sA() + sB(), [aM, b]);
     const s = scan(scanFn, 0)(c);
-    const m = s.map(value => atomic.push(value), SKIP);
+    const m = map<number>(value => atomic.push(value), SKIP)(s);
     a(2);
     b(2)(5);
     a(3);

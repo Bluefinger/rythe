@@ -1,5 +1,4 @@
 import { CellState } from "./constants";
-import { SKIP } from "./signal";
 
 export type OperatorFn<T, U> = (source: Cell<T>) => Cell<U>;
 
@@ -58,16 +57,10 @@ export interface Cell<T> {
    * to any other cells, it is null.
    */
   parents: Array<Cell<any>> | Cell<any> | null;
-  /**
-   * Map operator. Takes the current Cell and applies a function to yield a
-   * new Cell of the map function's output type. Can ignore the initial value
-   * from the source Cell.
-   */
-  map<U>(fn: (current: T) => U, ignoreInitial?: SKIP): Cell<U>;
 
   pipe(): Cell<T>;
   pipe<A>(fn1: OperatorFn<T, A>): Cell<A>;
-  pipe<A, B>(fn1: OperatorFn<T, A>, fn2: OperatorFn<A, B>): OperatorFn<T, B>;
+  pipe<A, B>(fn1: OperatorFn<T, A>, fn2: OperatorFn<A, B>): Cell<B>;
   pipe<A, B, C>(
     fn1: OperatorFn<T, A>,
     fn2: OperatorFn<A, B>,

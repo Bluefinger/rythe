@@ -3,7 +3,7 @@ import { createCell, setDispatcher } from "../../cell";
 import { CellState } from "../../constants";
 import { flatDispatcher } from "../../dispatchers/flatDispatcher";
 import { recursiveDispatcher } from "../../dispatchers/recursiveDispatcher";
-import { combine } from "../../operators/index";
+import { combine, map } from "../../operators/index";
 
 describe("combine()", () => {
   it("transforms value", () => {
@@ -42,8 +42,8 @@ describe("combine()", () => {
   it("combines value atomically", () => {
     const atomic: number[] = [];
     const a = createCell<number>();
-    const b = a.map<number>(num => num + 2);
-    const c = a.map<number>(num => num * 10);
+    const b = a.pipe(map<number>(num => num + 2));
+    const c = a.pipe(map<number>(num => num * 10));
     const d = combine((sA, sB) => atomic.push(sA() + sB()), [b, c]);
     a(3)(4);
     expect(d()).toBe(2);
@@ -52,8 +52,8 @@ describe("combine()", () => {
   it("combines default value atomically", () => {
     const atomic: number[] = [];
     const a = createCell<number>(4);
-    const b = a.map<number>(num => num + 2);
-    const c = a.map<number>(num => num * 10);
+    const b = a.pipe(map<number>(num => num + 2));
+    const c = a.pipe(map<number>(num => num * 10));
     const d = combine((sA, sB) => atomic.push(sA() + sB()), [b, c]);
     expect(d()).toBe(1);
     expect(atomic).toEqual([46]);
@@ -63,7 +63,7 @@ describe("combine()", () => {
     const a = createCell<string>();
     const b = combine(sA => sA() + 2, [a]);
     const c = combine(sA => sA() + sA(), [a]);
-    const d = c.map(x => x + 1);
+    const d = c.pipe(map(x => x + 1));
     const e = combine(x => x() + 0, [d]);
     const f = combine((sB, sE) => atomic.push(sB() + sE()), [b, e]);
 
@@ -77,7 +77,7 @@ describe("combine()", () => {
     const a = createCell<string>();
     const b = createCell<string>();
     const c = combine((sA, sB) => sA() + sB() + "c", [a, b]);
-    const d = c.map(val => val + "d");
+    const d = map<string>(val => val + "d")(c);
     const e = combine((sB, sC) => sB() + sC() + "e", [b, c]);
     const f = combine(
       (sD, sE) => {
@@ -107,7 +107,7 @@ describe("combine()", () => {
     const a = createCell<string>();
     const b = createCell<string>();
     const c = combine((sA, sB) => sA() + sB() + "c", [a, b]);
-    const d = c.map(val => val + "d");
+    const d = map<string>(val => val + "d")(c);
     const e = combine((sB, sC) => sB() + sC() + "e", [b, c]);
     const f = combine(
       (sD, sE) => {
@@ -147,7 +147,7 @@ describe("combine()", () => {
   it("combine removes all listeners with .end", () => {
     const a = createCell<number>();
     const b = createCell<number>();
-    const c = combine((sA, sB) => sA() + sB(), [a, b]);
+    const c = combine((sA, sB) => sA() + sB(), [b, a]);
 
     expect(c.parents!.length).toBe(2);
     a(3);
@@ -158,6 +158,8 @@ describe("combine()", () => {
 
     expect(c()).toBe(7);
     expect(c.parents).toBe(null);
+    expect(b.dependents.length).toBe(0);
+    expect(a.dependents.length).toBe(0);
   });
   it("creates a pending cell with an empty array as sources", () => {
     const c = combine(() => true, []);

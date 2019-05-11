@@ -1,25 +1,10 @@
 import { CellState } from "./constants";
 import { recursiveDispatcher } from "./dispatchers/recursiveDispatcher";
-import { SKIP } from "./signal";
 import { Cell, Dispatcher, OperatorFn } from "./types";
 import { pipeFromArray } from "./utils/pipe";
 
 function toJSON(this: Cell<any>): any {
   return this.val != null && this.val.toJSON ? this.val.toJSON() : this.val;
-}
-
-function map<T, U>(
-  this: Cell<T>,
-  mapFn: (current: T) => U,
-  ignoreInitial?: SKIP
-) {
-  const mapCell = createCell<U>();
-  if (this.state >= CellState.ACTIVE && ignoreInitial !== SKIP) {
-    mapCell(mapFn(this.val));
-  }
-  this.dependents.push([mapCell, mapFn]);
-  mapCell.parents = this;
-  return mapCell;
 }
 
 function removeDep(this: Cell<any>, parent: Cell<any>) {
@@ -30,9 +15,7 @@ function removeDep(this: Cell<any>, parent: Cell<any>) {
       break;
     }
   }
-  if (index >= 0) {
-    deps.splice(index, 1);
-  }
+  deps.splice(index, 1);
 }
 
 function boundPipe<T>(
@@ -66,7 +49,6 @@ const initCell = <T>(cell: Partial<Cell<T>>): Cell<T> => {
   cell.parents = null;
   cell.state = CellState.PENDING;
 
-  cell.map = map;
   cell.pipe = boundPipe;
   cell.toJSON = toJSON;
   cell.constructor = initCell;

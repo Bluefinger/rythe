@@ -1,10 +1,19 @@
-import { CellState } from "../constants";
-import { END, SKIP } from "../signal";
-import { Cell, DependentTuple } from "../types";
+import { Cell } from "../types";
+import { markActive } from "./helpers/markActive";
 import { markDependencies } from "./helpers/markDependencies";
+import { shouldApplyValue } from "./helpers/shouldApplyValue";
 
-const applyValue = <T, U>(cell: Cell<T>, [dep, fn]: DependentTuple<T, U>) =>
-  recursiveDispatcher(dep, fn(cell.val));
+const updateDependencies = <T>(cell: Cell<T>) => {
+  markActive(cell);
+  const deps = cell.dependents;
+  let len = deps.length;
+  while (len--) {
+    const [dep, fn] = deps[len];
+    if (shouldApplyValue(dep, fn(cell.val))) {
+      updateDependencies(dep);
+    }
+  }
+};
 
 /**
  * Dispatch Function for propagating Cell values across all dependencies.
@@ -12,25 +21,12 @@ const applyValue = <T, U>(cell: Cell<T>, [dep, fn]: DependentTuple<T, U>) =>
  * dependency traversal).
  */
 export const recursiveDispatcher = <T>(cell: Cell<T>, value: T) => {
-  if (value === END) {
-    cell.end(true);
-  } else if (value !== SKIP) {
-    cell.val = value;
-    if (cell.state) {
-      cell.state = CellState.ACTIVE;
-      const deps = cell.dependents;
-      let len = deps.length;
-      if (len) {
-        if (!recursiveDispatcher.depth++) {
-          markDependencies(cell);
-        }
-        while (len--) {
-          applyValue(cell, deps[len]);
-        }
-        --recursiveDispatcher.depth;
-      }
+  if (shouldApplyValue(cell, value) && cell.state) {
+    if (cell.dependents.length) {
+      markDependencies(cell);
+      updateDependencies(cell);
+    } else {
+      markActive(cell);
     }
   }
 };
-
-recursiveDispatcher.depth = 0;

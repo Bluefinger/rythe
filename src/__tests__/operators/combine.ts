@@ -42,8 +42,8 @@ describe("combine()", () => {
   it("combines value atomically", () => {
     const atomic: number[] = [];
     const a = createCell<number>();
-    const b = a.pipe(map<number>(num => num + 2));
-    const c = a.pipe(map<number>(num => num * 10));
+    const b = a.pipe(map(num => num + 2));
+    const c = a.pipe(map(num => num * 10));
     const d = combine((sA, sB) => atomic.push(sA() + sB()), [b, c]);
     a(3)(4);
     expect(d()).toBe(2);
@@ -52,8 +52,8 @@ describe("combine()", () => {
   it("combines default value atomically", () => {
     const atomic: number[] = [];
     const a = createCell<number>(4);
-    const b = a.pipe(map<number>(num => num + 2));
-    const c = a.pipe(map<number>(num => num * 10));
+    const b = a.pipe(map(num => num + 2));
+    const c = a.pipe(map(num => num * 10));
     const d = combine((sA, sB) => atomic.push(sA() + sB()), [b, c]);
     expect(d()).toBe(1);
     expect(atomic).toEqual([46]);

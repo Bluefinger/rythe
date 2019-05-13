@@ -57,6 +57,7 @@ const mappedStream = defineStreamMap();
 
 const suite1 = new Benchmark.Suite();
 
+CellStream.setDispatcher(CellStream.recursiveDispatcher);
 console.log("\nDefault Cell Dispatcher");
 suite1
   .add("Mapped Cells (3 inputs)", () => mappedCell("5")("7")("8"))
@@ -83,7 +84,6 @@ suite2
   })
   .on("cycle", ev => console.log(ev.target.toString()))
   .run();
-CellStream.setDispatcher(CellStream.recursiveDispatcher);
 
 const suite3 = new Benchmark.Suite();
 

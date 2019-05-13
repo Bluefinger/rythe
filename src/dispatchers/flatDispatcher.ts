@@ -1,35 +1,21 @@
-import { CellState } from "../constants";
-import { END, SKIP } from "../signal";
 import { Cell, DependentTuple } from "../types";
+import { markActive } from "./helpers/markActive";
 import { markDependencies } from "./helpers/markDependencies";
+import { shouldApplyValue } from "./helpers/shouldApplyValue";
 
-const applyValue = <T>(cell: Cell<T>, value: T) => {
-  if (value === END) {
-    cell.end(true);
-  } else if (value !== SKIP) {
-    cell.val = value;
-    return true;
-  }
-  return false;
-};
-
-function updateDep<T, U>(this: Cell<T>, [dep, fn]: DependentTuple<T, U>) {
-  if (applyValue(dep, fn(this.val))) {
-    flatDispatcher.stack.push(dep);
+function updateCell<T, U>(this: Cell<T>, [dep, fn]: DependentTuple<T, U>) {
+  if (shouldApplyValue(dep, fn(this.val))) {
+    if (dep.dependents.length) {
+      flatDispatcher.stack.push(dep);
+    } else {
+      markActive(dep);
+    }
   }
 }
 
-const notifyDeps = <T>(cell: Cell<T>) => {
-  cell.state = CellState.ACTIVE;
-  if (cell.dependents.length) {
-    cell.dependents.forEach(updateDep, cell);
-  }
-};
-
-const flushQueue = () => {
-  while (flatDispatcher.stack.length) {
-    notifyDeps(flatDispatcher.stack.pop()!);
-  }
+const updateDependencies = <T>(cell: Cell<T>) => {
+  markActive(cell);
+  cell.dependents.forEach(updateCell, cell);
 };
 
 /**
@@ -38,10 +24,16 @@ const flushQueue = () => {
  * dependency traversal).
  */
 export const flatDispatcher = <T>(cell: Cell<T>, value: T) => {
-  if (applyValue(cell, value) && cell.state) {
-    markDependencies(cell);
-    notifyDeps(cell);
-    flushQueue();
+  if (shouldApplyValue(cell, value) && cell.state) {
+    if (cell.dependents.length) {
+      markDependencies(cell);
+      updateDependencies(cell);
+      while (flatDispatcher.stack.length) {
+        updateDependencies(flatDispatcher.stack.pop()!);
+      }
+    } else {
+      markActive(cell);
+    }
   }
 };
 

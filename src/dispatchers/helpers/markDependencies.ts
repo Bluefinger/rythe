@@ -6,14 +6,12 @@ import { Cell } from "../../types";
  * skipping those that have been marked already.
  */
 export const markDependencies = (cell: Cell<any>) => {
+  cell.state = CellState.CHANGING;
   const deps = cell.dependents;
   for (let i = deps.length; i--; ) {
     const dep = deps[i][0];
     if (dep.state !== CellState.CHANGING) {
-      dep.state = CellState.CHANGING;
-      if (dep.dependents.length) {
-        markDependencies(dep);
-      }
+      markDependencies(dep);
     }
   }
 };

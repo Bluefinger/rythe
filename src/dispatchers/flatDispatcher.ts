@@ -20,7 +20,7 @@ const updateDependencies = <T>(cell: Cell<T>) => {
 
 /**
  * Dispatch Function for propagating Cell values across all dependencies.
- * Uses a flat queue broadcast approach (oldest dependency to newest
+ * Uses a flat stack broadcast approach (newest dependency to oldest
  * dependency traversal).
  */
 export const flatDispatcher = <T>(cell: Cell<T>, value: T) => {

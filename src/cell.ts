@@ -29,12 +29,10 @@ function boundPipe<T>(
 }
 
 const close = <T>(cell: Cell<T>) => {
-  if (cell.parents) {
-    if (Array.isArray(cell.parents)) {
-      cell.parents.forEach(removeDep, cell);
-    } else {
-      removeDep.call(cell, cell.parents);
-    }
+  if (Array.isArray(cell.parents)) {
+    cell.parents.forEach(removeDep, cell);
+  } else if (cell.parents) {
+    removeDep.call(cell, cell.parents);
   }
   cell.dependents.length = 0;
   cell.parents = null;

@@ -6,9 +6,8 @@ import { shouldApplyValue } from "./helpers/shouldApplyValue";
 const updateDependencies = <T>(cell: Cell<T>) => {
   markActive(cell);
   const deps = cell.dependents;
-  let len = deps.length;
-  while (len--) {
-    const [dep, fn] = deps[len];
+  for (let i = deps.length; i--; ) {
+    const [dep, fn] = deps[i];
     if (shouldApplyValue(dep, fn(cell.val))) {
       updateDependencies(dep);
     }

@@ -47,7 +47,7 @@ const mappedCell = defineCellMap();
 const mappedSubject = defineSubjectMap();
 const mappedStream = defineStreamMap();
 
-console.log("Defining Maps");
+console.log("\nDefining Maps");
 suite1
   .add("Map Cell", () => {
     defineCellMap();

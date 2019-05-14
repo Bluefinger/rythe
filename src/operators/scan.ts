@@ -16,7 +16,8 @@ export function scan<T, U>(
 ): OperatorFn<T, U>;
 /**
  * Accumulates values from a source Cell and outputs the accumulated value.
- * Always emits the initial value.
+ * Always emits the initial value. Scan function should not be used to return
+ * signals, such as END or SKIP. Always return a value.
  */
 export function scan(
   scanFn: (acc: any, newValue: any) => any,

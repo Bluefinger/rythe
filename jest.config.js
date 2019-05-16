@@ -11,7 +11,7 @@ module.exports = {
     "!**/.vscode/**"
   ],
   coverageDirectory: "./coverage",
-  coverageReporters: ["html", "text-summary"],
+  coverageReporters: ["html", "text"],
   coverageThreshold: {
     global: {
       branches: 90,

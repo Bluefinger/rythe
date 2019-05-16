@@ -6,7 +6,8 @@
   "module": "dist/esm/index.mjs",
   "types": "dist/types/index.d.ts",
   "scripts": {
-    "build": "gulp debugBuild",
+    "build:full": "gulp build",
+    "build:dev": "gulp dev-build",
     "watch": "gulp watch",
     "test": "gulp test",
     "clear:test": "jest --clearCache"

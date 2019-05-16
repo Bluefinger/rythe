@@ -18,6 +18,6 @@ exports.printFastest = function(suite) {
       fastest[0].name +
       " is " +
       formatNumber(percent < 1 ? percent.toFixed(2) : Math.round(percent)) +
-      "% faster.\n"
+      "% faster than the slowest.\n"
   );
 };

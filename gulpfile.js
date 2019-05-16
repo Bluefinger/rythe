@@ -26,21 +26,8 @@ const babelConfig = {
   extensions: [".ts", ".js"]
 };
 
-const projectES = ts.createProject("tsconfig.json", {
-  outDir: "./dist/esm",
-  declaration: true,
-  declarationDir: "./dist/types",
-  preserveConstEnums: false,
-  target: "esnext"
-});
-
-const projectCJS = ts.createProject("tsconfig.json", {
-  outDir: "./dist/cjs",
-  module: "commonjs",
-  preserveConstEnums: false,
-  moduleResolution: "node",
-  target: "esnext"
-});
+const projectES = ts.createProject("./config/tsconfig.esm.json");
+const projectCJS = ts.createProject("./config/tsconfig.cjs.json");
 
 const jestResolve = ({ results }) =>
   results.success ? Promise.resolve() : Promise.reject();
@@ -101,9 +88,8 @@ const compile = () => {
   const cjs = sources.pipe(projectCJS(tsReporter));
 
   return merge(
-    esm.dts.pipe(sourceMaps.write("../maps")).pipe(gulp.dest("./dist/types")),
-    cjs.js.pipe(sourceMaps.write("./maps")).pipe(gulp.dest("./dist/cjs")),
-    esm.js.pipe(sourceMaps.write("./maps")).pipe(gulp.dest("./dist/esm"))
+    cjs.pipe(sourceMaps.write("./maps")).pipe(gulp.dest("./dist/cjs")),
+    esm.pipe(sourceMaps.write("./maps")).pipe(gulp.dest("./dist/esm"))
   );
 };
 
@@ -111,19 +97,13 @@ const watcher = () => {
   gulp.watch(paths.scripts.src, gulp.series(lint, quickTest, compile));
 };
 
-const devWatcher = () => {
-  gulp.watch(paths.scripts.src, gulp.series(lint, bundle));
-};
-
-gulp.task("build", gulp.series(clean, lint, fullTest, bundle));
+gulp.task("build", gulp.series(clean, lint, fullTest, gulp.parallel(compile, bundle)));
 
 gulp.task("test", fullTest);
 
 gulp.task(
-  "debugBuild",
+  "dev-build",
   gulp.series(clean, lint, gulp.parallel(compile, bundle))
 );
 
 gulp.task("watch", gulp.series("build", watcher));
-
-gulp.task("devWatch", gulp.series("debugBuild", devWatcher));

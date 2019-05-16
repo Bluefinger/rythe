@@ -3,19 +3,24 @@ import { markActive } from "./helpers/markActive";
 import { markDependencies } from "./helpers/markDependencies";
 import { shouldApplyValue } from "./helpers/shouldApplyValue";
 
-function updateCell<T, U>(this: Cell<T>, [dep, fn]: DependentTuple<T, U>) {
-  if (shouldApplyValue(dep, fn(this.val))) {
+const stack: Array<Cell<any>> = [];
+
+const updateCell = <T, U>(cell: Cell<T>, [dep, fn]: DependentTuple<T, U>) => {
+  if (shouldApplyValue(dep, fn(cell.val))) {
     if (dep.dependents.length) {
-      flatDispatcher.stack.push(dep);
+      stack.push(dep);
     } else {
       markActive(dep);
     }
   }
-}
+};
 
 const updateDependencies = <T>(cell: Cell<T>) => {
   markActive(cell);
-  cell.dependents.forEach(updateCell, cell);
+  const deps = cell.dependents;
+  for (let i = deps.length; i--; ) {
+    updateCell(cell, deps[i]);
+  }
 };
 
 /**
@@ -28,13 +33,11 @@ export const flatDispatcher = <T>(cell: Cell<T>, value: T) => {
     if (cell.dependents.length) {
       markDependencies(cell);
       updateDependencies(cell);
-      while (flatDispatcher.stack.length) {
-        updateDependencies(flatDispatcher.stack.pop()!);
+      while (stack.length) {
+        updateDependencies(stack.pop()!);
       }
     } else {
       markActive(cell);
     }
   }
 };
-
-flatDispatcher.stack = [] as Array<Cell<any>>;

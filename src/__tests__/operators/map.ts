@@ -1,6 +1,5 @@
-import { createCell, setDispatcher } from "../../cell";
+import { createCell } from "../../cell";
 import { CellState } from "../../constants";
-import { flatDispatcher } from "../../dispatchers/flatDispatcher";
 import { map } from "../../operators/map";
 import { END, SKIP } from "../../signal";
 import { Cell } from "../../types";
@@ -91,26 +90,6 @@ describe("map", () => {
     expect(d()).toBe("a");
     expect(e()).toBe(false);
     expect(b.dependents.length).toBe(2);
-  });
-  it("can use alternative dispatcher approaches to update cells", () => {
-    const dispatcher = jest.fn<void, [Cell<any>, any]>(flatDispatcher);
-    const a = createCell<number>();
-    const b = a.pipe(map(val => (val === 8 ? SKIP : val + 1)));
-    setDispatcher(dispatcher);
-    a(5)(8);
-    expect(dispatcher).toBeCalledTimes(2);
-    expect(b()).toBe(6);
-  });
-  it("can use the alternate dispatcher to close cells with an END signal", () => {
-    const dispatcher = jest.fn<void, [Cell<any>, any]>(flatDispatcher);
-    setDispatcher(dispatcher);
-    const a = createCell<number>(5);
-    const b = a.pipe(map(val => val + 1));
-    dispatcher.mockClear();
-    a(END);
-    a(6);
-    expect(dispatcher).toBeCalledTimes(3);
-    expect(b()).toBe(6);
   });
   it("will throw an error if trying to map a non Cell function", () => {
     expect(() =>

@@ -1,8 +1,6 @@
 import { Cell } from "../..";
-import { createCell, setDispatcher } from "../../cell";
+import { createCell } from "../../cell";
 import { CellState } from "../../constants";
-import { flatDispatcher } from "../../dispatchers/flatDispatcher";
-import { recursiveDispatcher } from "../../dispatchers/recursiveDispatcher";
 import { combine, map } from "../../operators/index";
 
 describe("combine()", () => {
@@ -71,66 +69,6 @@ describe("combine()", () => {
 
     expect(atomic).toEqual(["323310", "424410"]);
     expect(f()).toBe(2);
-  });
-  it("combines complicated stream dependencies atomically", () => {
-    const atomic: string[] = [];
-    const a = createCell<string>();
-    const b = createCell<string>();
-    const c = combine((sA, sB) => sA() + sB() + "c", [a, b]);
-    const d = map<string>(val => val + "d")(c);
-    const e = combine((sB, sC) => sB() + sC() + "e", [b, c]);
-    const f = combine(
-      (sD, sE) => {
-        const result = sD() + sE() + "f";
-        atomic.push(result);
-        return result;
-      },
-      [d, e]
-    );
-
-    // Should invoke once once there are no cells pending values
-    a("a");
-    b("b");
-    expect(f()).toBe("abcdbabcef");
-    expect(atomic).toEqual(["abcdbabcef"]);
-    atomic.length = 0;
-    // Should now invoke three times
-    a("A");
-    b("B");
-    a("");
-    expect(f()).toBe("BcdBBcef");
-    expect(atomic).toEqual(["AbcdbAbcef", "ABcdBABcef", "BcdBBcef"]);
-  });
-  it("combines complicated stream dependencies atomically with alternative dispatcher", () => {
-    setDispatcher(flatDispatcher);
-    const atomic: string[] = [];
-    const a = createCell<string>();
-    const b = createCell<string>();
-    const c = combine((sA, sB) => sA() + sB() + "c", [a, b]);
-    const d = map<string>(val => val + "d")(c);
-    const e = combine((sB, sC) => sB() + sC() + "e", [b, c]);
-    const f = combine(
-      (sD, sE) => {
-        const result = sD() + sE() + "f";
-        atomic.push(result);
-        return result;
-      },
-      [d, e]
-    );
-
-    // Should invoke once once there are no cells pending values
-    a("a");
-    b("b");
-    expect(f()).toBe("abcdbabcef");
-    expect(atomic).toEqual(["abcdbabcef"]);
-    atomic.length = 0;
-    // Should now invoke three times
-    a("A");
-    b("B");
-    a("");
-    expect(f()).toBe("BcdBBcef");
-    expect(atomic).toEqual(["AbcdbAbcef", "ABcdBABcef", "BcdBBcef"]);
-    setDispatcher(recursiveDispatcher);
   });
   it("combine continues with ended streams", () => {
     const a = createCell<number>();

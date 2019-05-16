@@ -60,7 +60,7 @@ const cellObj = defineCombinedCell();
 const subjectObj = defineCombinedSubject();
 const streamObj = defineCombinedStream();
 
-console.log("Defining Complex Combine Deps");
+console.log("\nDefining Complex Combine Deps");
 suite1
   .add("Combine Cells", defineCombinedCell)
   .add("Combine Subjects", defineCombinedSubject)

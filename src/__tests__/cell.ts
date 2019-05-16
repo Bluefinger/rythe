@@ -90,11 +90,13 @@ describe("CellStream", () => {
   });
   describe("setDispatcher", () => {
     it("can be set with a new dispatcher function", () => {
-      // tslint:disable-next-line
-      const dispatcher = jest.fn(<T>(cell: Cell<T>, value: T) => {});
+      const dispatcher = jest.fn(<T>(cell: Cell<T>, value: T) => {
+        cell.val = value;
+      });
       const a = createCell<number>();
       setDispatcher(dispatcher);
       a(5);
+      expect(a()).toBe(5);
       expect(dispatcher).toBeCalledTimes(1);
     });
   });

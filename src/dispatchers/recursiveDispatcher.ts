@@ -3,15 +3,10 @@ import { markActive } from "./helpers/markActive";
 import { markDependencies } from "./helpers/markDependencies";
 import { shouldApplyValue } from "./helpers/shouldApplyValue";
 
-const hasDependencies = (cell: Cell<any>, first?: true) => {
+const hasDependencies = (cell: Cell<any>) => {
+  markActive(cell);
   if (cell.dependents.length) {
-    if (first) {
-      markDependencies(cell);
-    }
-    markActive(cell);
     updateDependencies(cell);
-  } else {
-    markActive(cell);
   }
 };
 
@@ -32,6 +27,7 @@ const updateDependencies = <T>(cell: Cell<T>) => {
  */
 export const recursiveDispatcher = <T>(cell: Cell<T>, value: T) => {
   if (shouldApplyValue(cell, value) && cell.state) {
-    hasDependencies(cell, true);
+    markDependencies(cell);
+    hasDependencies(cell);
   }
 };

@@ -14,7 +14,6 @@ describe("flatDispatcher", () => {
   it("can update cells", () => {
     const a = createCell<number>();
     const b = a.pipe(map(val => (val === 8 ? SKIP : val + 1)));
-    setDispatcher(dispatcher);
     a(5)(8);
     expect(dispatcher).toBeCalledTimes(2);
     expect(b()).toBe(6);

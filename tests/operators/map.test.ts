@@ -1,8 +1,8 @@
-import { createCell } from "../../cell";
-import { CellState } from "../../constants";
-import { map } from "../../operators/map";
-import { END, SKIP } from "../../signal";
-import { Cell } from "../../types";
+import { createCell } from "../../src/cell";
+import { CellState } from "../../src/constants";
+import { map } from "../../src/operators/map";
+import { END, SKIP } from "../../src/signal";
+import { Cell } from "../../src/types";
 
 describe("map", () => {
   it("transforms values it receives", () => {

@@ -1,7 +1,7 @@
-import { Cell } from "../..";
-import { createCell } from "../../cell";
-import { CellState } from "../../constants";
-import { combine, map } from "../../operators/index";
+import { Cell } from "../../src";
+import { createCell } from "../../src/cell";
+import { CellState } from "../../src/constants";
+import { combine, map } from "../../src/operators/index";
 
 describe("combine()", () => {
   it("transforms value", () => {

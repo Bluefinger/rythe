@@ -1,6 +1,6 @@
-import { createCell, isCell } from "../../cell";
-import { map } from "../../operators";
-import { pipe } from "../../utils/pipe";
+import { createCell, isCell } from "../../src/cell";
+import { map } from "../../src/operators";
+import { pipe } from "../../src/utils/pipe";
 
 describe("pipe", () => {
   it("should throw an error if no functions are piped", () => {

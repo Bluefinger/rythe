@@ -1,6 +1,6 @@
-import { createCell } from "../../cell";
-import { CellState } from "../../constants";
-import { filter, map } from "../../operators/index";
+import { createCell } from "../../src/cell";
+import { CellState } from "../../src/constants";
+import { filter, map } from "../../src/operators/index";
 
 describe("filter", () => {
   it("is pipeable", () => {

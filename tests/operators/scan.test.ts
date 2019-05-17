@@ -1,6 +1,6 @@
-import { createCell } from "../../cell";
-import { combine, map, scan } from "../../operators/index";
-import { SKIP } from "../../signal";
+import { createCell } from "../../src/cell";
+import { combine, map, scan } from "../../src/operators/index";
+import { SKIP } from "../../src/signal";
 
 describe("scan", () => {
   it("should default to an initial value", () => {

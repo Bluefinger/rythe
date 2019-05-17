@@ -1,5 +1,5 @@
-import { createCell } from "../../cell";
-import { dropRepeats, map } from "../../operators/index";
+import { createCell } from "../../src/cell";
+import { dropRepeats, map } from "../../src/operators/index";
 
 describe("dropRepeats", () => {
   it("will not pass down repeat values", () => {

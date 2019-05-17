@@ -1,12 +1,12 @@
-import { Cell } from "../..";
-import { createCell, setDispatcher } from "../../cell";
-import { CellState } from "../../constants";
-import { flatDispatcher } from "../../dispatchers/flatDispatcher";
-import { combine, map } from "../../operators/index";
-import { END, SKIP } from "../../signal";
+import { createCell, setDispatcher } from "../../src/cell";
+import { CellState } from "../../src/constants";
+import { recursiveDispatcher } from "../../src/dispatchers/recursiveDispatcher";
+import { combine, map } from "../../src/operators/index";
+import { END, SKIP } from "../../src/signal";
+import { Cell } from "../../src/types";
 
-describe("flatDispatcher", () => {
-  const dispatcher = jest.fn<void, [Cell<any>, any]>(flatDispatcher);
+describe("recursiveDispatcher", () => {
+  const dispatcher = jest.fn<void, [Cell<any>, any]>(recursiveDispatcher);
   setDispatcher(dispatcher);
   beforeEach(() => {
     dispatcher.mockClear();

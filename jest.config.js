@@ -2,8 +2,8 @@ module.exports = {
   testURL: "http://localhost/",
   collectCoverageFrom: [
     "**/*.{ts,tsx}",
-    "!**/src/__tests__/**",
-    "!**/src/index.ts",
+    "!**/tests/**",
+    "!**/src/**/index.ts",
     "!**/dist/**",
     "!**/node_modules/**",
     "!**/coverage/**",

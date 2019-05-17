@@ -1,7 +1,7 @@
-import { createCell, isCell, setDispatcher } from "../cell";
-import { CellState } from "../constants";
-import { END } from "../signal";
-import { Cell } from "../types";
+import { createCell, isCell, setDispatcher } from "../src/cell";
+import { CellState } from "../src/constants";
+import { END } from "../src/signal";
+import { Cell } from "../src/types";
 
 describe("CellStream", () => {
   describe("Cell", () => {

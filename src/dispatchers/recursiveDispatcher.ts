@@ -3,7 +3,7 @@ import { markActive } from "./helpers/markActive";
 import { markDependencies } from "./helpers/markDependencies";
 import { shouldApplyValue } from "./helpers/shouldApplyValue";
 
-const hasDependencies = (cell: Cell<any>) => {
+const hasDependencies = <T>(cell: Cell<T>) => {
   markActive(cell);
   if (cell.dependents.length) {
     updateDependencies(cell);

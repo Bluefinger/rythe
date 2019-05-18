@@ -25,7 +25,7 @@ export function scan(
 ): OperatorFn<any, any> {
   return (source: Cell<any>): Cell<any> => {
     let acc = initial;
-    const scanned = map<any, any>(value => (acc = scanFn(acc, value)))(source);
+    const scanned = map<any, any>((value): any => (acc = scanFn(acc, value)))(source);
     if (scanned.state === CellState.PENDING) {
       scanned(initial);
     }

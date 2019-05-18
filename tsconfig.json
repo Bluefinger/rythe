@@ -14,5 +14,5 @@
     "target": "esnext"
   },
   "include": ["./src/**/*"],
-  "exclude": ["tests/**/*", "./dist/**/*.js"]
+  "exclude": ["tests/**/*", "./dist/**/*.js", "perf/**.*.js"]
 }

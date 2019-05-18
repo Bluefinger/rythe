@@ -5,7 +5,7 @@ import { map } from "./map";
 /**
  * Pushes non-repeating values. Skips any repeated values.
  */
-export const dropRepeats = <T>(source: Cell<T>) => {
+export const dropRepeats = <T>(source: Cell<T>): Cell<T> => {
   let prev: T;
-  return map<T>(next => (next !== prev ? (prev = next) : SKIP))(source);
+  return map<T>((next): T => (next !== prev ? (prev = next) : SKIP))(source);
 };

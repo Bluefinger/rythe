@@ -12,6 +12,6 @@ export function filter<T>(predicate: (value: T) => boolean): OperatorFn<T, T>;
  * allowed and what is not.
  */
 export function filter<T>(predicate: (value: T) => boolean): OperatorFn<T, T> {
-  return (source: Cell<T>) =>
-    map<T>(value => (predicate(value) ? value : SKIP))(source);
+  return (source: Cell<T>): Cell<T> =>
+    map<T>((value): T => (predicate(value) ? value : SKIP))(source);
 }

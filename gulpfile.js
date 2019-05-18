@@ -1,3 +1,5 @@
+/* eslint-env node */
+/* eslint-disable @typescript-eslint/no-var-requires */
 const gulp = require("gulp");
 const sourceMaps = require("gulp-sourcemaps");
 const ts = require("gulp-typescript");

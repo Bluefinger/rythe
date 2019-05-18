@@ -1,13 +1,13 @@
 import { CellState } from "./constants";
 import { recursiveDispatcher } from "./dispatchers/recursiveDispatcher";
-import { Cell, Dispatcher, OperatorFn } from "./types";
+import { Cell, Closer, Dispatcher, OperatorFn } from "./types";
 import { pipeFromArray } from "./utils/pipe";
 
 function toJSON(this: Cell<any>): any {
   return this.val != null && this.val.toJSON ? this.val.toJSON() : this.val;
 }
 
-function removeDep(this: Cell<any>, parent: Cell<any>) {
+function removeDep(this: Cell<any>, parent: Cell<any>): void {
   let index: number;
   const deps = parent.dependents;
   for (index = deps.length; index--; ) {
@@ -20,15 +20,16 @@ function removeDep(this: Cell<any>, parent: Cell<any>) {
 
 function boundPipe<T>(
   this: Cell<T>,
-  ...operators: Array<OperatorFn<any, any>>
-) {
+  ...operators: OperatorFn<any, any>[]
+): Cell<any> {
   if (!operators.length) {
     return this;
   }
   return pipeFromArray(operators)(this);
 }
 
-const close = <T>(cell: Cell<T>) => {
+
+const close: Closer = <T>(cell: Cell<T>): Closer => {
   if (Array.isArray(cell.parents)) {
     cell.parents.forEach(removeDep, cell);
   } else if (cell.parents) {
@@ -69,6 +70,10 @@ export const createCell = <T>(initialValue?: T): Cell<T> => {
     if (!arguments.length) {
       return cell.val;
     }
+    // ESLint and TS unable to determine that if arguments.length is greater than 0,
+    // that value will be explicit. Also, cell typing will reflect if undefined/null
+    // will be passed, so the non-null assertion is required here.
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     dispatch(cell, value!);
     return cell;
   }
@@ -97,6 +102,6 @@ export const createCell = <T>(initialValue?: T): Cell<T> => {
 /**
  * Sets the dispatcher to the provided function. Must match the Dispatcher signature.
  */
-export const setDispatcher = (newDispatcher: Dispatcher) => {
+export const setDispatcher = (newDispatcher: Dispatcher): void => {
   dispatch = newDispatcher;
 };

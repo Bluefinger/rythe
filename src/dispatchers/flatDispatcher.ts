@@ -3,9 +3,9 @@ import { markActive } from "./helpers/markActive";
 import { markDependencies } from "./helpers/markDependencies";
 import { shouldApplyValue } from "./helpers/shouldApplyValue";
 
-const stack: Array<Cell<any>> = [];
+const stack: Cell<any>[] = [];
 
-const updateCell = <T, U>(cell: Cell<T>, [dep, fn]: DependentTuple<T, U>) => {
+const updateCell = <T, U>(cell: Cell<T>, [dep, fn]: DependentTuple<T, U>): void => {
   if (shouldApplyValue(dep, fn(cell.val))) {
     if (dep.dependents.length) {
       stack.push(dep);
@@ -15,7 +15,7 @@ const updateCell = <T, U>(cell: Cell<T>, [dep, fn]: DependentTuple<T, U>) => {
   }
 };
 
-const updateDependencies = <T>(cell: Cell<T>) => {
+const updateDependencies = <T>(cell: Cell<T>): void => {
   markActive(cell);
   const deps = cell.dependents;
   for (let i = deps.length; i--; ) {
@@ -28,12 +28,15 @@ const updateDependencies = <T>(cell: Cell<T>) => {
  * Uses a flat stack broadcast approach (newest dependency to oldest
  * dependency traversal).
  */
-export const flatDispatcher = <T>(cell: Cell<T>, value: T) => {
+export const flatDispatcher = <T>(cell: Cell<T>, value: T): void => {
   if (shouldApplyValue(cell, value) && cell.state) {
     if (cell.dependents.length) {
       markDependencies(cell);
       updateDependencies(cell);
       while (stack.length) {
+        // While stack has a length, that means .pop() will always yield an item.
+        // Therefore, I have to assert to TS that it will always get a value here.
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         updateDependencies(stack.pop()!);
       }
     } else {

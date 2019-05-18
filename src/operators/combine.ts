@@ -3,10 +3,10 @@ import { CellState } from "../constants";
 import { SKIP } from "../signal";
 import { Cell, DependentTuple } from "../types";
 
-const areCellsReady = (source: Cell<any>) =>
+const areCellsReady = <T>(source: Cell<T>): boolean =>
   source.state === CellState.ACTIVE || source.state === CellState.CLOSED;
 
-function applyDepTuple(this: DependentTuple<any, any>, source: Cell<any>) {
+function applyDepTuple(this: DependentTuple<any, any>, source: Cell<any>): void {
   source.dependents.push(this);
 }
 
@@ -43,20 +43,20 @@ export function combine<A, B, C, D, E, F, G, U>(
   sources: [Cell<A>, Cell<B>, Cell<C>, Cell<D>, Cell<E>, Cell<F>, Cell<G>]
 ): Cell<U>;
 export function combine<A, U>(
-  combineFn: (...sources: Array<Cell<A>>) => U,
-  sources: Array<Cell<A>>
+  combineFn: (...sources: Cell<any>[]) => U,
+  sources: Cell<any>[]
 ): Cell<U>;
 export function combine<U>(
-  combineFn: (...sources: Array<Cell<any>>) => U,
-  sources: Array<Cell<any>>
+  combineFn: (...sources: Cell<any>[]) => U,
+  sources: Cell<any>[]
 ): Cell<U>;
 
 /**
  * Combines many Cell sources into a single output.
  */
 export function combine(
-  combineFn: (...sources: Array<Cell<any>>) => any,
-  sources: Array<Cell<any>>
+  combineFn: (...sources: Cell<any>[]) => any,
+  sources: Cell<any>[]
 ): Cell<any> {
   if (!sources.every(isCell)) {
     throw new Error("All sources must be a Cell object");
@@ -65,7 +65,7 @@ export function combine(
   combinedCell.parents = sources;
   const depTuple: DependentTuple<any, any> = [
     combinedCell,
-    () => (sources.every(areCellsReady) ? combineFn(...sources) : SKIP)
+    (): void => (sources.every(areCellsReady) ? combineFn(...sources) : SKIP)
   ];
 
   // Many Parents to One Cell Subscription

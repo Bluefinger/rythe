@@ -51,12 +51,12 @@ export interface Cell<T> {
    * The value functions transform the parent Cell's value to the Dependent Cell's
    * value type.
    */
-  dependents: Array<DependentTuple<any, any>>;
+  dependents: DependentTuple<any, any>[];
   /**
    * The Parent Cell or Cells that the current Cell is subscribed to. If it not subscribed
    * to any other cells, it is null.
    */
-  parents: Array<Cell<any>> | Cell<any> | null;
+  parents: Cell<any>[] | Cell<any> | null;
 
   pipe(): Cell<T>;
   pipe<A>(fn1: OperatorFn<T, A>): Cell<A>;
@@ -127,9 +127,9 @@ export interface Cell<T> {
     fn7: OperatorFn<F, G>,
     fn8: OperatorFn<G, H>,
     fn9: OperatorFn<H, I>,
-    ...fns: Array<OperatorFn<any, any>>
+    ...fns: OperatorFn<any, any>[]
   ): Cell<any>;
-  pipe<U>(...operators: Array<OperatorFn<any, any>>): Cell<U>;
+  pipe<U>(...operators: OperatorFn<any, any>[]): Cell<U>;
   toJSON(): any;
 }
 
@@ -137,3 +137,10 @@ export interface Cell<T> {
  * Signature definition for a Dispatcher function. Must receive a Cell and a value.
  */
 export type Dispatcher = <T>(cell: Cell<T>, value: T) => void;
+
+/**
+ * Close Function interface. Returns itself to allow terse multilple invocations.
+ */
+export interface Closer {
+  <T>(cell: Cell<T>): this
+}

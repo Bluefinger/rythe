@@ -1,16 +1,16 @@
 import { Cell, OperatorFn } from "../types";
 
-const pipeFn = <T, U>(cell: Cell<any>, operatorFn: OperatorFn<T, U>) =>
+const pipeFn = <T, U>(cell: Cell<any>, operatorFn: OperatorFn<T, U>): Cell<U> =>
   operatorFn(cell);
 
-export const pipeFromArray = (operators: Array<OperatorFn<any, any>>) => {
+export const pipeFromArray = (operators: OperatorFn<any, any>[]): OperatorFn<any, any> => {
   if (!operators.length) {
     throw new Error("Can't pipe with no functions");
   }
   if (operators.length === 1) {
     return operators[0];
   }
-  return (source: Cell<any>) => operators.reduce(pipeFn, source);
+  return (source: Cell<any>): Cell<any> => operators.reduce(pipeFn, source);
 };
 
 export function pipe(): never;
@@ -85,9 +85,9 @@ export function pipe<T, A, B, C, D, E, F, G, H, I>(
   fn7: OperatorFn<F, G>,
   fn8: OperatorFn<G, H>,
   fn9: OperatorFn<H, I>,
-  ...fns: Array<OperatorFn<any, any>>
+  ...fns: OperatorFn<any, any>[]
 ): OperatorFn<T, {}>;
 
-export function pipe(...operators: Array<OperatorFn<any, any>>) {
+export function pipe(...operators: OperatorFn<any, any>[]): OperatorFn<any, any> {
   return pipeFromArray(operators);
 }

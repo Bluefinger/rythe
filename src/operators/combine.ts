@@ -6,7 +6,10 @@ import { Cell, DependentTuple } from "../types";
 const areCellsReady = <T>(source: Cell<T>): boolean =>
   source.state === CellState.ACTIVE || source.state === CellState.CLOSED;
 
-function applyDepTuple(this: DependentTuple<any, any>, source: Cell<any>): void {
+function applyDepTuple(
+  this: DependentTuple<any, any>,
+  source: Cell<any>
+): void {
   source.dependents.push(this);
 }
 

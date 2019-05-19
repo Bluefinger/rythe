@@ -28,7 +28,6 @@ function boundPipe<T>(
   return pipeFromArray(operators)(this);
 }
 
-
 const close: Closer = <T>(cell: Cell<T>): Closer => {
   if (Array.isArray(cell.parents)) {
     cell.parents.forEach(removeDep, cell);
@@ -88,7 +87,7 @@ export const createCell = <T>(initialValue?: T): Cell<T> => {
     }
     return cell.end;
   }
-  
+
   cell = initCell<T>(next as Partial<Cell<T>>);
   cell.end = initCell<boolean>(complete as Partial<Cell<boolean>>);
   cell.end.val = false;

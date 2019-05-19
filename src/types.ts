@@ -142,5 +142,5 @@ export type Dispatcher = <T>(cell: Cell<T>, value: T) => void;
  * Close Function interface. Returns itself to allow terse multilple invocations.
  */
 export interface Closer {
-  <T>(cell: Cell<T>): this
+  <T>(cell: Cell<T>): this;
 }

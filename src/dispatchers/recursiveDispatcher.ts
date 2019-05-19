@@ -12,7 +12,10 @@ const hasDependencies = <T>(cell: Cell<T>): void => {
   }
 };
 
-const updateDependencies = <T>(value: T, deps: DependentTuple<T, any>[]): void => {
+const updateDependencies = <T>(
+  value: T,
+  deps: DependentTuple<T, any>[]
+): void => {
   for (let i = deps.length; i--; ) {
     const [dep, fn] = deps[i];
     if (shouldApplyValue(dep, fn(value))) {

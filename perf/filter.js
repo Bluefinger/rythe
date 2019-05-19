@@ -64,7 +64,7 @@ suite2
     filteredCell(5)(4);
   })
   .add("Update Filtered Subject", () => {
-    filteredSubject.next(5)
+    filteredSubject.next(5);
     filteredSubject.next(4);
   })
   .add("Update Filtered Stream", () => {

@@ -3,7 +3,7 @@ const CellStream = require("../dist/cjs/index");
 const rxjs = require("rxjs");
 const rxOps = require("rxjs/operators");
 const flyd = require("flyd");
-const flydDrop = require('flyd/module/droprepeats').dropRepeats;
+const flydDrop = require("flyd/module/droprepeats").dropRepeats;
 const utils = require("./utils");
 
 // CellStream.setDispatcher(CellStream.flatDispatcher);

@@ -3,7 +3,9 @@ import { Cell, OperatorFn } from "../types";
 const pipeFn = <T, U>(cell: Cell<any>, operatorFn: OperatorFn<T, U>): Cell<U> =>
   operatorFn(cell);
 
-export const pipeFromArray = (operators: OperatorFn<any, any>[]): OperatorFn<any, any> => {
+export const pipeFromArray = (
+  operators: OperatorFn<any, any>[]
+): OperatorFn<any, any> => {
   if (!operators.length) {
     throw new Error("Can't pipe with no functions");
   }
@@ -88,6 +90,8 @@ export function pipe<T, A, B, C, D, E, F, G, H, I>(
   ...fns: OperatorFn<any, any>[]
 ): OperatorFn<T, {}>;
 
-export function pipe(...operators: OperatorFn<any, any>[]): OperatorFn<any, any> {
+export function pipe(
+  ...operators: OperatorFn<any, any>[]
+): OperatorFn<any, any> {
   return pipeFromArray(operators);
 }

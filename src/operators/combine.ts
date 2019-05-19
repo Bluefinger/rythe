@@ -68,7 +68,7 @@ export function combine(
   combinedCell.parents = sources;
   const depTuple: DependentTuple<any, any> = [
     combinedCell,
-    (): void => (sources.every(areCellsReady) ? combineFn(...sources) : SKIP)
+    (): any => (sources.every(areCellsReady) ? combineFn(...sources) : SKIP)
   ];
 
   // Many Parents to One Cell Subscription

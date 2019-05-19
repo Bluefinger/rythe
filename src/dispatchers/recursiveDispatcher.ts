@@ -1,4 +1,4 @@
-import { Cell } from "../types";
+import { Cell, DependentTuple } from "../types";
 import { markActive } from "./helpers/markActive";
 import { markDependencies } from "./helpers/markDependencies";
 import { shouldApplyValue } from "./helpers/shouldApplyValue";
@@ -6,15 +6,16 @@ import { shouldApplyValue } from "./helpers/shouldApplyValue";
 const hasDependencies = <T>(cell: Cell<T>): void => {
   markActive(cell);
   if (cell.dependents.length) {
-    updateDependencies(cell);
+    // Recursive, so it has to rely on hoisting.
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    updateDependencies(cell.val, cell.dependents);
   }
 };
 
-const updateDependencies = <T>(cell: Cell<T>): void => {
-  const deps = cell.dependents;
+const updateDependencies = <T>(value: T, deps: DependentTuple<T, any>[]): void => {
   for (let i = deps.length; i--; ) {
     const [dep, fn] = deps[i];
-    if (shouldApplyValue(dep, fn(cell.val))) {
+    if (shouldApplyValue(dep, fn(value))) {
       hasDependencies(dep);
     }
   }

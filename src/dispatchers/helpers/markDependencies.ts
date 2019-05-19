@@ -5,7 +5,7 @@ import { Cell } from "../../types";
  * Mark all Cell Dependencies recursively. Goes from newest dependency to old,
  * skipping those that have been marked already.
  */
-export const markDependencies = (cell: Cell<any>) => {
+export const markDependencies = (cell: Cell<any>): void => {
   cell.state = CellState.CHANGING;
   const deps = cell.dependents;
   for (let i = deps.length; i--; ) {

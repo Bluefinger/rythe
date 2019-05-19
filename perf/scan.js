@@ -60,13 +60,14 @@ const suite2 = new Benchmark.Suite();
 console.log("Updating Scans");
 suite2
   .add("Update Scanned Cell", () => {
-    scannedCell(5);
+    scannedCell(5)(6);
   })
   .add("Update Scanned Subject", () => {
     scannedSubject.next(5);
+    scannedSubject.next(6);
   })
   .add("Update Scanned Stream", () => {
-    scannedStream(5);
+    scannedStream(5)(6);
   })
   .on("cycle", ev => console.log(ev.target.toString()))
   .on("complete", function() {

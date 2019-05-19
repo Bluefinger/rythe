@@ -66,6 +66,8 @@ export const isCell = (obj: any): boolean =>
  * the initial value, or by the type definition.
  */
 export const createCell = <T>(initialValue?: T): Cell<T> => {
+  let cell: Cell<T>;
+
   function next(value?: T): T | Cell<T> {
     if (!arguments.length) {
       return cell.val;
@@ -86,8 +88,8 @@ export const createCell = <T>(initialValue?: T): Cell<T> => {
     }
     return cell.end;
   }
-
-  const cell = initCell<T>(next as Partial<Cell<T>>);
+  
+  cell = initCell<T>(next as Partial<Cell<T>>);
   cell.end = initCell<boolean>(complete as Partial<Cell<boolean>>);
   cell.end.val = false;
   cell.end.end = cell.end;

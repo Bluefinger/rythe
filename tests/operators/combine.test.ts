@@ -17,11 +17,14 @@ describe("combine()", () => {
   });
   it("transforms multiple values", () => {
     const a = createCell<number>();
-    const b = createCell<number>();
-    const c = combine((sA, sB) => sA() + sB(), [a, b]);
+    const b = createCell<string>();
+    const c = combine<[Cell<number>, Cell<string>], string>(
+      (sA, sB) => sA() + sB(),
+      [a, b]
+    );
     a(1);
-    b(5);
-    expect(c()).toBe(6);
+    b("5");
+    expect(c()).toBe("15");
   });
   it("transforms multiple default values", () => {
     const a = createCell<number>(2);
@@ -42,7 +45,9 @@ describe("combine()", () => {
     const a = createCell<number>();
     const b = a.pipe(map(num => num + 2));
     const c = a.pipe(map(num => num * 10));
-    const d = combine((sA, sB) => atomic.push(sA() + sB()), [b, c]);
+    const testInference = (sA: Cell<number>, sB: Cell<number>): number =>
+      atomic.push(sA() + sB());
+    const d = combine(testInference, [b, c]);
     a(3)(4);
     expect(d()).toBe(2);
     expect(atomic).toEqual([35, 46]);
@@ -108,6 +113,7 @@ describe("combine()", () => {
     expect(c()).toBe(false);
   });
   it("throws an error if the sources are not Cell functions", () => {
-    expect(() => combine(() => true, [(() => true) as Cell<any>])).toThrow();
+    const fakeCell = (() => true) as Cell<boolean>;
+    expect(() => combine(fake => fake(), [fakeCell])).toThrow();
   });
 });

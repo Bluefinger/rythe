@@ -17,8 +17,8 @@ export function map<T, U>(
  * new Cell of the map function's output type. Can ignore the initial value
  * from the source Cell.
  */
-export function map(
-  mapFn: (value: any) => any,
+export function map<T>(
+  mapFn: (value: T) => any,
   ignoreInitial?: SKIP
 ): OperatorFn<any, any> {
   return (source: Cell<any>): Cell<any> => {

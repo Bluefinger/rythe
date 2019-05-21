@@ -1,24 +1,24 @@
 const Benchmark = require("benchmark");
-const CellStream = require("../dist/cjs/index");
+const Rythe = require("../dist/cjs/index");
 const rxjs = require("rxjs");
 const rxOps = require("rxjs/operators");
 const flyd = require("flyd");
 const utils = require("./utils");
 
-// CellStream.setDispatcher(CellStream.flatDispatcher);
+// Rythe.setDispatcher(Rythe.flatDispatcher);
 
 const suite1 = new Benchmark.Suite();
 
 let output;
 
-const defineCellMap = () => {
-  const cell = CellStream.createCell();
-  cell.pipe(
-    CellStream.map(value => value + 1),
-    CellStream.map(value => value ** 2),
-    CellStream.map(value => value / 2)
+const defineRytheMap = () => {
+  const stream = Rythe.createStream();
+  stream.pipe(
+    Rythe.map(value => value + 1),
+    Rythe.map(value => value ** 2),
+    Rythe.map(value => value / 2)
   );
-  return cell;
+  return stream;
 };
 
 const defineSubjectMap = () => {
@@ -43,19 +43,19 @@ const defineStreamMap = () => {
   return stream;
 };
 
-const mappedCell = defineCellMap();
+const mappedRythe = defineRytheMap();
 const mappedSubject = defineSubjectMap();
 const mappedStream = defineStreamMap();
 
 console.log("\nDefining Maps");
 suite1
-  .add("Map Cell", () => {
-    defineCellMap();
+  .add("Map Rythe Stream", () => {
+    defineRytheMap();
   })
   .add("Map Subject", () => {
     defineSubjectMap();
   })
-  .add("Map Stream", () => {
+  .add("Map Flyd Stream", () => {
     defineStreamMap();
   })
   .on("cycle", ev => console.log(ev.target.toString()))
@@ -68,13 +68,13 @@ const suite2 = new Benchmark.Suite();
 
 console.log("Updating Maps");
 suite2
-  .add("Update Mapped Cell", () => {
-    mappedCell(5);
+  .add("Update Mapped Rythe Stream", () => {
+    mappedRythe(5);
   })
   .add("Update Mapped Subject", () => {
     mappedSubject.next(5);
   })
-  .add("Update Mapped Stream", () => {
+  .add("Update Mapped Flyd Stream", () => {
     mappedStream(5);
   })
   .on("cycle", ev => console.log(ev.target.toString()))

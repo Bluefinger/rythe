@@ -1,7 +1,7 @@
-import { createCell, isCell } from "../cell";
-import { CellState } from "../constants";
+import { createStream, isStream } from "../stream";
+import { StreamState } from "../constants";
 import { SKIP } from "../signal";
-import { Cell, OperatorFn } from "../types";
+import { Stream, OperatorFn } from "../types";
 
 export function map<T>(
   mapFn: (value: T) => T,
@@ -13,20 +13,20 @@ export function map<T, U>(
 ): OperatorFn<T, U>;
 
 /**
- * Map operator. Takes the current Cell and applies a function to yield a
- * new Cell of the map function's output type. Can ignore the initial value
- * from the source Cell.
+ * Map operator. Takes the current Stream and applies a function to yield a
+ * new Stream of the map function's output type. Can ignore the initial value
+ * from the source Stream.
  */
 export function map<T>(
   mapFn: (value: T) => any,
   ignoreInitial?: SKIP
 ): OperatorFn<any, any> {
-  return (source: Cell<any>): Cell<any> => {
-    if (!isCell(source)) {
-      throw new Error("Source must be a Cell object");
+  return (source: Stream<any>): Stream<any> => {
+    if (!isStream(source)) {
+      throw new Error("Source must be a Stream object");
     }
-    const mapCell = createCell<any>();
-    if (source.state >= CellState.ACTIVE && ignoreInitial !== SKIP) {
+    const mapCell = createStream<any>();
+    if (source.state >= StreamState.ACTIVE && ignoreInitial !== SKIP) {
       mapCell(mapFn(source.val));
     }
     source.dependents.push([mapCell, mapFn]);

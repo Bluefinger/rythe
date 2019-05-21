@@ -1,10 +1,10 @@
-import { createCell } from "../../src/cell";
-import { CellState } from "../../src/constants";
+import { createStream } from "../../src/stream";
+import { StreamState } from "../../src/constants";
 import { filter, map } from "../../src/operators/index";
 
 describe("filter", () => {
   it("is pipeable", () => {
-    const a = createCell<number>();
+    const a = createStream<number>();
     const b = a.pipe(
       filter(value => value % 2 !== 1),
       map(value => value ** 2)
@@ -13,7 +13,7 @@ describe("filter", () => {
     expect(b()).toBe(16);
   });
   it("will filter values from being emitted if they don't pass its predicate function", () => {
-    const a = createCell<number>();
+    const a = createStream<number>();
     const mockFn = jest.fn((value: number) => value ** 2);
     const b = a.pipe(
       filter(value => value % 2 !== 1),
@@ -33,13 +33,13 @@ describe("filter", () => {
     expect(mockFn).toBeCalledWith(2);
   });
   it("will filter initial values", () => {
-    const a = createCell<number>(5);
+    const a = createStream<number>(5);
     const mockFn = jest.fn((value: number) => value ** 2);
     const b = a.pipe(
       filter(value => value % 2 !== 1),
       map(mockFn)
     );
     expect(mockFn).toBeCalledTimes(0);
-    expect(b.state).toBe(CellState.PENDING);
+    expect(b.state).toBe(StreamState.PENDING);
   });
 });

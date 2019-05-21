@@ -1,15 +1,15 @@
 import { END, SKIP } from "../../signal";
-import { Cell } from "../../types";
+import { Stream } from "../../types";
 
 /**
- * Checks the incoming value for END or SKIP signals, otherwise it updates the cell
+ * Checks the incoming value for END or SKIP signals, otherwise it updates the stream
  * value and returns true to initiate a broadcast.
  */
-export const shouldApplyValue = <T>(cell: Cell<T>, value: T): boolean => {
+export const shouldApplyValue = <T>(stream: Stream<T>, value: T): boolean => {
   if (value === END) {
-    cell.end(true);
+    stream.end(true);
   } else if (value !== SKIP) {
-    cell.val = value;
+    stream.val = value;
     return true;
   }
   return false;

@@ -1,4 +1,4 @@
-# CellStream
+# Rythe
 A tiny, heavily tree-shakeable Reactive Stream library
 
 ## HEAVY WORK IN PROGRESS

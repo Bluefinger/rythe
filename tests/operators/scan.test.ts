@@ -1,21 +1,21 @@
-import { createCell } from "../../src/cell";
+import { createStream } from "../../src/stream";
 import { combine, map, scan } from "../../src/operators/index";
 import { SKIP } from "../../src/signal";
 
 describe("scan", () => {
   it("should default to an initial value", () => {
-    const a = createCell<number>();
+    const a = createStream<number>();
     const s = scan((acc, value) => acc + value, 0)(a);
     expect(s()).toBe(0);
   });
   it("should accumulate values", () => {
-    const a = createCell<number>(0);
+    const a = createStream<number>(0);
     const s = scan<number, string>((acc, value) => acc + value, "")(a);
     a(1)(2)(3);
     expect(s()).toBe("0123");
   });
   it("can be mapped", () => {
-    const a = createCell<number>();
+    const a = createStream<number>();
     const m = a.pipe(
       scan((acc, value) => acc + value, 0),
       map(value => value + 1)
@@ -26,7 +26,7 @@ describe("scan", () => {
   it("pushes initial value down first", () => {
     const atomic: number[] = [];
     const scanFn = jest.fn((acc: number, value: number) => acc + value);
-    const a = createCell<number>();
+    const a = createStream<number>();
     const m = a.pipe(
       scan(scanFn, 0),
       map(value => atomic.push(value))
@@ -39,8 +39,8 @@ describe("scan", () => {
   it("should accumulate atomically", () => {
     const atomic: number[] = [];
     const scanFn = jest.fn((acc: number, value: number) => acc + value);
-    const a = createCell<number>();
-    const b = createCell<number>();
+    const a = createStream<number>();
+    const b = createStream<number>();
     const aM = map<number>(n => n)(a);
     const c = combine((sA, sB) => sA() + sB(), [aM, b]);
     const s = scan(scanFn, 0)(c);
@@ -53,7 +53,7 @@ describe("scan", () => {
     expect(scanFn).toBeCalledTimes(3);
   });
   it("stops accumulating after .end is invoked", () => {
-    const a = createCell<number>();
+    const a = createStream<number>();
     const scanFn = jest.fn((acc: number, value: number) => acc + value);
     const s = scan(scanFn, 0)(a);
 

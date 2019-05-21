@@ -1,7 +1,7 @@
 {
-  "name": "cellstream",
+  "name": "rythe",
   "version": "0.1.0",
-  "description": "CellStream, a tiny, heavily tree-shakeable Reactive Stream library",
+  "description": "Rythe, a tiny, heavily tree-shakeable Reactive Stream library",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "types": "dist/esm/index.d.ts",

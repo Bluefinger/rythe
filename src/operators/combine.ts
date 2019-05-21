@@ -1,41 +1,41 @@
-import { createCell, isCell } from "../cell";
-import { CellState } from "../constants";
+import { createStream, isStream } from "../stream";
+import { StreamState } from "../constants";
 import { SKIP } from "../signal";
-import { Cell, DependentTuple } from "../types";
+import { Stream, DependentTuple } from "../types";
 
-const areCellsReady = <T>(source: Cell<T>): boolean =>
-  source.state === CellState.ACTIVE || source.state === CellState.CLOSED;
+const areStreamsReady = <T>(source: Stream<T>): boolean =>
+  source.state === StreamState.ACTIVE || source.state === StreamState.CLOSED;
 
 function applyDepTuple<T, U>(
   this: DependentTuple<T, U>,
-  source: Cell<T>
+  source: Stream<T>
 ): void {
   source.dependents.push(this);
 }
 
 /**
- * Combines many Cell sources into a single output.
+ * Combines many Stream sources into a single output.
  */
-export function combine<T extends Cell<any>[], U>(
+export function combine<T extends Stream<any>[], U>(
   combineFn: (...sources: T) => U,
   sources: T
-): Cell<U> {
-  if (!sources.every(isCell)) {
-    throw new Error("All sources must be a Cell object");
+): Stream<U> {
+  if (!sources.every(isStream)) {
+    throw new Error("All sources must be a Stream object");
   }
-  const combinedCell = createCell<U>();
-  combinedCell.parents = sources;
+  const combinedStream = createStream<U>();
+  combinedStream.parents = sources;
   const depTuple: DependentTuple<any, U> = [
-    combinedCell,
-    (): U => (sources.every(areCellsReady) ? combineFn(...sources) : SKIP)
+    combinedStream,
+    (): U => (sources.every(areStreamsReady) ? combineFn(...sources) : SKIP)
   ];
 
-  // Many Parents to One Cell Subscription
+  // Many Parents to One Stream Subscription
   sources.forEach(applyDepTuple, depTuple);
 
-  if (sources.length && sources.every(areCellsReady)) {
-    combinedCell(combineFn(...sources));
+  if (sources.length && sources.every(areStreamsReady)) {
+    combinedStream(combineFn(...sources));
   }
 
-  return combinedCell;
+  return combinedStream;
 }

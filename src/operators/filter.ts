@@ -1,5 +1,5 @@
 import { SKIP } from "../signal";
-import { Cell, OperatorFn } from "../types";
+import { Stream, OperatorFn } from "../types";
 import { map } from "./map";
 
 export function filter<T, U extends T>(
@@ -12,6 +12,6 @@ export function filter<T>(predicate: (value: T) => boolean): OperatorFn<T, T>;
  * allowed and what is not.
  */
 export function filter<T>(predicate: (value: T) => boolean): OperatorFn<T, T> {
-  return (source: Cell<T>): Cell<T> =>
+  return (source: Stream<T>): Stream<T> =>
     map<T>((value): T => (predicate(value) ? value : SKIP))(source);
 }

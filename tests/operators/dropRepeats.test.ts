@@ -1,9 +1,9 @@
-import { createCell } from "../../src/cell";
+import { createStream } from "../../src/stream";
 import { dropRepeats, map } from "../../src/operators/index";
 
 describe("dropRepeats", () => {
   it("will not pass down repeat values", () => {
-    const a = createCell<number>();
+    const a = createStream<number>();
     const mapFn = jest.fn((n: number) => n);
     const m = a.pipe(
       dropRepeats,
@@ -14,7 +14,7 @@ describe("dropRepeats", () => {
     expect(mapFn).toBeCalledTimes(3);
   });
   it("passes down initial value immediately", () => {
-    const a = createCell<number>(1);
+    const a = createStream<number>(1);
     const mapFn = jest.fn((n: number) => n);
     const m = a.pipe(
       dropRepeats,
@@ -24,7 +24,7 @@ describe("dropRepeats", () => {
     expect(mapFn).toBeCalledTimes(1);
   });
   it("handles explicit undefined values", () => {
-    const a = createCell<number | undefined>();
+    const a = createStream<number | undefined>();
     const mapFn = jest.fn((n: number | undefined) => n);
     const m = a.pipe(
       dropRepeats,
@@ -35,7 +35,7 @@ describe("dropRepeats", () => {
     expect(mapFn).toBeCalledTimes(4);
   });
   it("handles explicit null values", () => {
-    const a = createCell<number | null>();
+    const a = createStream<number | null>();
     const mapFn = jest.fn((n: number | null) => n);
     const m = a.pipe(
       dropRepeats,
@@ -48,7 +48,7 @@ describe("dropRepeats", () => {
   it("uses strict equality to check for repeats", () => {
     const objA = { a: 1 };
     const objB = { a: 1 };
-    const a = createCell<any>();
+    const a = createStream<any>();
     const mapFn = jest.fn((n: any) => n);
     const m = a.pipe(
       dropRepeats,
@@ -76,7 +76,7 @@ describe("dropRepeats", () => {
     expect(mapFn).toBeCalledTimes(2);
   });
   it("doesn't push values down after .end is invoked", () => {
-    const a = createCell<number>();
+    const a = createStream<number>();
     const dr = dropRepeats(a);
     const mapFn = jest.fn((n: number) => n);
     const m = map(mapFn)(dr);

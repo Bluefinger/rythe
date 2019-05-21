@@ -1,19 +1,19 @@
 const Benchmark = require("benchmark");
-const CellStream = require("../dist/cjs/index");
+const Rythe = require("../dist/cjs/index");
 const rxjs = require("rxjs");
 const rxOps = require("rxjs/operators");
 const flyd = require("flyd");
 const flydDrop = require("flyd/module/droprepeats").dropRepeats;
 const utils = require("./utils");
 
-// CellStream.setDispatcher(CellStream.flatDispatcher);
+// Rythe.setDispatcher(Rythe.flatDispatcher);
 
 let output;
 
-const defineCellDrop = () => {
-  const cell = CellStream.createCell();
-  cell.pipe(CellStream.dropRepeats);
-  return cell;
+const defineRytheDrop = () => {
+  const stream = Rythe.createStream();
+  stream.pipe(Rythe.dropRepeats);
+  return stream;
 };
 
 const defineSubjectDrop = () => {
@@ -31,7 +31,7 @@ const defineStreamDrop = () => {
   return stream;
 };
 
-const droppedCell = defineCellDrop();
+const droppedRythe = defineRytheDrop();
 const droppedSubject = defineSubjectDrop();
 const droppedStream = defineStreamDrop();
 
@@ -39,13 +39,13 @@ const suite1 = new Benchmark.Suite();
 
 console.log("\nDefining DropRepeats");
 suite1
-  .add("Drop Cell", () => {
-    defineCellDrop();
+  .add("Drop Rythe Stream", () => {
+    defineRytheDrop();
   })
   .add("Drop Subject", () => {
     defineSubjectDrop();
   })
-  .add("Drop Stream", () => {
+  .add("Drop Flyd Stream", () => {
     defineStreamDrop();
   })
   .on("cycle", ev => console.log(ev.target.toString()))
@@ -58,8 +58,8 @@ const suite2 = new Benchmark.Suite();
 
 console.log("Updating DropRepeats");
 suite2
-  .add("Update Dropped Cell", () => {
-    droppedCell(5)(5)(6)(7)(7);
+  .add("Update Dropped Rythe Stream", () => {
+    droppedRythe(5)(5)(6)(7)(7);
   })
   .add("Update Dropped Subject", () => {
     droppedSubject.next(5);
@@ -68,7 +68,7 @@ suite2
     droppedSubject.next(7);
     droppedSubject.next(7);
   })
-  .add("Update Dropped Stream", () => {
+  .add("Update Dropped Flyd Stream", () => {
     droppedStream(5)(5)(6)(7)(7);
   })
   .on("cycle", ev => console.log(ev.target.toString()))

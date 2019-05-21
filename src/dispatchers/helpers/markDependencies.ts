@@ -1,16 +1,16 @@
-import { CellState } from "../../constants";
-import { Cell } from "../../types";
+import { StreamState } from "../../constants";
+import { Stream } from "../../types";
 
 /**
- * Mark all Cell Dependencies recursively. Goes from newest dependency to old,
+ * Mark all Stream Dependencies recursively. Goes from newest dependency to old,
  * skipping those that have been marked already.
  */
-export const markDependencies = (cell: Cell<any>): void => {
-  cell.state = CellState.CHANGING;
-  const deps = cell.dependents;
+export const markDependencies = (stream: Stream<any>): void => {
+  stream.state = StreamState.CHANGING;
+  const deps = stream.dependents;
   for (let i = deps.length; i--; ) {
     const dep = deps[i][0];
-    if (dep.state !== CellState.CHANGING) {
+    if (dep.state !== StreamState.CHANGING) {
       markDependencies(dep);
     }
   }

@@ -1,7 +1,7 @@
-import { CellState } from "../../constants";
-import { Cell } from "../../types";
+import { StreamState } from "../../constants";
+import { Stream } from "../../types";
 
-/** Mark a Cell as ACTIVE */
-export const markActive = (cell: Cell<any>): void => {
-  cell.state = CellState.ACTIVE;
+/** Mark a Stream as ACTIVE */
+export const markActive = (stream: Stream<any>): void => {
+  stream.state = StreamState.ACTIVE;
 };

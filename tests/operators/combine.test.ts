@@ -1,24 +1,24 @@
-import { Cell } from "../../src";
-import { createCell } from "../../src/cell";
-import { CellState } from "../../src/constants";
+import { Stream } from "../../src";
+import { createStream } from "../../src/stream";
+import { StreamState } from "../../src/constants";
 import { combine, map } from "../../src/operators/index";
 
 describe("combine()", () => {
   it("transforms value", () => {
-    const a = createCell<number>();
+    const a = createStream<number>();
     const b = combine(sA => sA() + 1, [a]);
     a(2);
     expect(b()).toBe(3);
   });
   it("transforms default value", () => {
-    const a = createCell<number>(4);
+    const a = createStream<number>(4);
     const b = combine(sA => sA() - 1, [a]);
     expect(b()).toBe(3);
   });
   it("transforms multiple values", () => {
-    const a = createCell<number>();
-    const b = createCell<string>();
-    const c = combine<[Cell<number>, Cell<string>], string>(
+    const a = createStream<number>();
+    const b = createStream<string>();
+    const c = combine<[Stream<number>, Stream<string>], string>(
       (sA, sB) => sA() + sB(),
       [a, b]
     );
@@ -27,25 +27,25 @@ describe("combine()", () => {
     expect(c()).toBe("15");
   });
   it("transforms multiple default values", () => {
-    const a = createCell<number>(2);
-    const b = createCell<number>(4);
+    const a = createStream<number>(2);
+    const b = createStream<number>(4);
     const c = combine((sA, sB) => sA() + sB(), [a, b]);
 
     expect(c()).toBe(6);
   });
   it("transforms mixed default and emitted values", () => {
-    const a = createCell<number>(5);
-    const b = createCell<number>();
+    const a = createStream<number>(5);
+    const b = createStream<number>();
     const c = combine((sA, sB) => sA() + sB(), [a, b]);
     b(1);
     expect(c()).toBe(6);
   });
   it("combines value atomically", () => {
     const atomic: number[] = [];
-    const a = createCell<number>();
+    const a = createStream<number>();
     const b = a.pipe(map(num => num + 2));
     const c = a.pipe(map(num => num * 10));
-    const testInference = (sA: Cell<number>, sB: Cell<number>): number =>
+    const testInference = (sA: Stream<number>, sB: Stream<number>): number =>
       atomic.push(sA() + sB());
     const d = combine(testInference, [b, c]);
     a(3)(4);
@@ -54,7 +54,7 @@ describe("combine()", () => {
   });
   it("combines default value atomically", () => {
     const atomic: number[] = [];
-    const a = createCell<number>(4);
+    const a = createStream<number>(4);
     const b = a.pipe(map(num => num + 2));
     const c = a.pipe(map(num => num * 10));
     const d = combine((sA, sB) => atomic.push(sA() + sB()), [b, c]);
@@ -63,7 +63,7 @@ describe("combine()", () => {
   });
   it("combines and maps nested streams atomically", () => {
     const atomic: string[] = [];
-    const a = createCell<string>();
+    const a = createStream<string>();
     const b = combine(sA => sA() + 2, [a]);
     const c = combine(sA => sA() + sA(), [a]);
     const d = c.pipe(map(x => x + 1));
@@ -76,8 +76,8 @@ describe("combine()", () => {
     expect(f()).toBe(2);
   });
   it("combine continues with ended streams", () => {
-    const a = createCell<number>();
-    const b = createCell<number>();
+    const a = createStream<number>();
+    const b = createStream<number>();
     const combined = combine((sA, sB) => sA() + sB(), [a, b]);
 
     a(3);
@@ -88,8 +88,8 @@ describe("combine()", () => {
     expect(combined()).toBe(8);
   });
   it("combine removes all listeners with .end", () => {
-    const a = createCell<number>();
-    const b = createCell<number>();
+    const a = createStream<number>();
+    const b = createStream<number>();
     const c = combine((sA, sB) => sA() + sB(), [b, a]);
 
     expect(c.parents!.length).toBe(2);
@@ -104,16 +104,16 @@ describe("combine()", () => {
     expect(b.dependents.length).toBe(0);
     expect(a.dependents.length).toBe(0);
   });
-  it("creates a pending cell with an empty array as sources", () => {
+  it("creates a pending stream with an empty array as sources", () => {
     const c = combine(() => true, []);
-    expect(c.state).toBe(CellState.PENDING);
+    expect(c.state).toBe(StreamState.PENDING);
     expect(c()).toBeUndefined();
     c(false);
-    expect(c.state).toBe(CellState.ACTIVE);
+    expect(c.state).toBe(StreamState.ACTIVE);
     expect(c()).toBe(false);
   });
-  it("throws an error if the sources are not Cell functions", () => {
-    const fakeCell = (() => true) as Cell<boolean>;
+  it("throws an error if the sources are not Stream functions", () => {
+    const fakeCell = (() => true) as Stream<boolean>;
     expect(() => combine(fake => fake(), [fakeCell])).toThrow();
   });
 });

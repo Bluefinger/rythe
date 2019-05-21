@@ -1,4 +1,4 @@
-import { createCell, isCell } from "../../src/cell";
+import { createStream, isStream } from "../../src/stream";
 import { map } from "../../src/operators";
 import { pipe } from "../../src/utils/pipe";
 
@@ -10,16 +10,16 @@ describe("pipe", () => {
     const piped = pipe(map((n: number) => n + 1));
     expect(typeof piped).toBe("function");
   });
-  it("should apply piped functions to Cells and return a new Cell", () => {
+  it("should apply piped functions to Streams and return a new Stream", () => {
     const piped = pipe(
       map<number>(n => n + 1),
       map(n => n.toString(16)),
       map(s => s + "b")
     );
-    const a = createCell<number>();
+    const a = createStream<number>();
     const b = piped(a);
     expect(a).not.toBe(b);
-    expect(isCell(b)).toBe(true);
+    expect(isStream(b)).toBe(true);
     a(9);
     expect(a()).toBe(9);
     expect(b()).toBe("ab");

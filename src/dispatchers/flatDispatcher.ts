@@ -1,9 +1,9 @@
-import { Cell, DependentTuple } from "../types";
+import { Stream, DependentTuple } from "../types";
 import { markActive } from "./helpers/markActive";
 import { markDependencies } from "./helpers/markDependencies";
 import { shouldApplyValue } from "./helpers/shouldApplyValue";
 
-const stack: Cell<any>[] = [];
+const stack: Stream<any>[] = [];
 
 const updateCell = <T, U>(value: T, [dep, fn]: DependentTuple<T, U>): void => {
   if (shouldApplyValue(dep, fn(value))) {
@@ -15,25 +15,25 @@ const updateCell = <T, U>(value: T, [dep, fn]: DependentTuple<T, U>): void => {
   }
 };
 
-const updateDependencies = <T>(cell: Cell<T>): void => {
-  markActive(cell);
-  const deps = cell.dependents;
-  const value = cell.val;
+const updateDependencies = <T>(stream: Stream<T>): void => {
+  markActive(stream);
+  const deps = stream.dependents;
+  const value = stream.val;
   for (let i = deps.length; i--; ) {
     updateCell(value, deps[i]);
   }
 };
 
 /**
- * Dispatch Function for propagating Cell values across all dependencies.
+ * Dispatch Function for propagating Stream values across all dependencies.
  * Uses a flat stack broadcast approach (newest dependency to oldest
  * dependency traversal).
  */
-export const flatDispatcher = <T>(cell: Cell<T>, value: T): void => {
-  if (shouldApplyValue(cell, value) && cell.state) {
-    if (cell.dependents.length) {
-      markDependencies(cell);
-      updateDependencies(cell);
+export const flatDispatcher = <T>(stream: Stream<T>, value: T): void => {
+  if (shouldApplyValue(stream, value) && stream.state) {
+    if (stream.dependents.length) {
+      markDependencies(stream);
+      updateDependencies(stream);
       while (stack.length) {
         // While stack has a length over 0, that means .pop() will always yield an item.
         // Therefore, I have to assert to TS that it will always get a value here.
@@ -41,7 +41,7 @@ export const flatDispatcher = <T>(cell: Cell<T>, value: T): void => {
         updateDependencies(stack.pop()!);
       }
     } else {
-      markActive(cell);
+      markActive(stream);
     }
   }
 };

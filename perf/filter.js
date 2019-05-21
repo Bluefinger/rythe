@@ -1,21 +1,21 @@
 const Benchmark = require("benchmark");
-const CellStream = require("../dist/cjs/index");
+const Rythe = require("../dist/cjs/index");
 const rxjs = require("rxjs");
 const rxOps = require("rxjs/operators");
 const flyd = require("flyd");
 const flydFilter = require("flyd/module/filter");
 const utils = require("./utils");
 
-// CellStream.setDispatcher(CellStream.flatDispatcher);
+// Rythe.setDispatcher(Rythe.flatDispatcher);
 
 let output;
 
 const predicate = value => value % 2 !== 1;
 
-const defineCellFilter = () => {
-  const cell = CellStream.createCell();
-  cell.pipe(CellStream.filter(predicate));
-  return cell;
+const defineRytheFilter = () => {
+  const stream = Rythe.createStream();
+  stream.pipe(Rythe.filter(predicate));
+  return stream;
 };
 
 const defineSubjectFilter = () => {
@@ -33,7 +33,7 @@ const defineStreamFilter = () => {
   return stream;
 };
 
-const filteredCell = defineCellFilter();
+const filteredRythe = defineRytheFilter();
 const filteredSubject = defineSubjectFilter();
 const filteredStream = defineStreamFilter();
 
@@ -41,13 +41,13 @@ const suite1 = new Benchmark.Suite();
 
 console.log("\nDefining Filters");
 suite1
-  .add("Filter Cell", () => {
-    defineCellFilter();
+  .add("Filter Rythe Stream", () => {
+    defineRytheFilter();
   })
   .add("Filter Subject", () => {
     defineSubjectFilter();
   })
-  .add("Filter Stream", () => {
+  .add("Filter Flyd Stream", () => {
     defineStreamFilter();
   })
   .on("cycle", ev => console.log(ev.target.toString()))
@@ -60,14 +60,14 @@ const suite2 = new Benchmark.Suite();
 
 console.log("Updating Filters");
 suite2
-  .add("Update Filtered Cell", () => {
-    filteredCell(5)(4);
+  .add("Update Filtered Rythe Stream", () => {
+    filteredRythe(5)(4);
   })
   .add("Update Filtered Subject", () => {
     filteredSubject.next(5);
     filteredSubject.next(4);
   })
-  .add("Update Filtered Stream", () => {
+  .add("Update Filtered Flyd Stream", () => {
     filteredStream(5)(4);
   })
   .on("cycle", ev => console.log(ev.target.toString()))

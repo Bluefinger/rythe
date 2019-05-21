@@ -1,7 +1,9 @@
-import { Cell, OperatorFn } from "../types";
+import { Stream, OperatorFn } from "../types";
 
-const pipeFn = <T, U>(cell: Cell<any>, operatorFn: OperatorFn<T, U>): Cell<U> =>
-  operatorFn(cell);
+const pipeFn = <T, U>(
+  stream: Stream<any>,
+  operatorFn: OperatorFn<T, U>
+): Stream<U> => operatorFn(stream);
 
 export const pipeFromArray = (
   operators: OperatorFn<any, any>[]
@@ -12,7 +14,7 @@ export const pipeFromArray = (
   if (operators.length === 1) {
     return operators[0];
   }
-  return (source: Cell<any>): Cell<any> => operators.reduce(pipeFn, source);
+  return (source: Stream<any>): Stream<any> => operators.reduce(pipeFn, source);
 };
 
 export function pipe(): never;

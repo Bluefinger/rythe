@@ -1,11 +1,11 @@
 const Benchmark = require("benchmark");
-const CellStream = require("../dist/cjs/index");
+const Rythe = require("../dist/cjs/index");
 const rxjs = require("rxjs");
 const rxOps = require("rxjs/operators");
 const flyd = require("flyd");
 const utils = require("./utils");
 
-// CellStream.setDispatcher(CellStream.flatDispatcher);
+// Rythe.setDispatcher(Rythe.flatDispatcher);
 
 const suite1 = new Benchmark.Suite();
 
@@ -20,14 +20,14 @@ const liftDE = (a, d, e) => a + d + e + "f";
 
 let output;
 
-const defineCombinedCell = () => {
-  const cA = CellStream.createCell();
-  const cB = CellStream.createCell();
+const defineCombinedRythe = () => {
+  const cA = Rythe.createStream();
+  const cB = Rythe.createStream();
   const sources = [cA, cB];
-  const cC = CellStream.combine(combineAB, sources);
-  const cD = cC.pipe(CellStream.map(mapD));
-  const cE = CellStream.combine(combineBC, [cB, cC]);
-  const cF = CellStream.combine(combineDE, [cA, cD, cE]);
+  const cC = Rythe.combine(combineAB, sources);
+  const cD = cC.pipe(Rythe.map(mapD));
+  const cE = Rythe.combine(combineBC, [cB, cC]);
+  const cF = Rythe.combine(combineDE, [cA, cD, cE]);
   return { inputs: sources, output: cF };
 };
 
@@ -56,15 +56,15 @@ const defineCombinedStream = () => {
   return { inputs: sources, output: sF };
 };
 
-const cellObj = defineCombinedCell();
+const rytheObj = defineCombinedRythe();
 const subjectObj = defineCombinedSubject();
 const streamObj = defineCombinedStream();
 
 console.log("\nDefining Complex Combine Deps");
 suite1
-  .add("Combine Cells", defineCombinedCell)
+  .add("Combine Rythe Streams", defineCombinedRythe)
   .add("Combine Subjects", defineCombinedSubject)
-  .add("Combine Streams", defineCombinedStream)
+  .add("Combine Flyd Streams", defineCombinedStream)
   .on("cycle", ev => console.log(ev.target.toString()))
   .on("complete", function() {
     utils.printFastest(this);
@@ -74,12 +74,11 @@ suite1
 console.log("Resolving Complex Combine Deps");
 const suite2 = new Benchmark.Suite();
 suite2
-  .add("Combine Cells", () => {
-    const [a, b] = cellObj.inputs;
+  .add("Combine Rythe Streams", () => {
+    const [a, b] = rytheObj.inputs;
     a("a");
     b("b");
     a("A");
-    output = cellObj.output();
   })
   .add("Combine Subjects", () => {
     const [a, b] = subjectObj.inputs;
@@ -87,12 +86,11 @@ suite2
     b.next("b");
     a.next("A");
   })
-  .add("Combine Streams", () => {
+  .add("Combine Flyd Streams", () => {
     const [a, b] = streamObj.inputs;
     a("a");
     b("b");
     a("A");
-    output = streamObj.output();
   })
   .on("cycle", ev => console.log(ev.target.toString()))
   .on("complete", function() {

@@ -18,9 +18,9 @@ export default {
     })
   ],
   output: {
-    file: "./dist/umd/index.min.js",
+    file: "./dist/umd/rythe.min.js",
     format: "umd",
-    name: "cellstream",
+    name: "rythe",
     sourcemap: true
   }
 };

@@ -1,14 +1,14 @@
-import { Cell, DependentTuple } from "../types";
+import { Stream, DependentTuple } from "../types";
 import { markActive } from "./helpers/markActive";
 import { markDependencies } from "./helpers/markDependencies";
 import { shouldApplyValue } from "./helpers/shouldApplyValue";
 
-const hasDependencies = <T>(cell: Cell<T>): void => {
-  markActive(cell);
-  if (cell.dependents.length) {
+const hasDependencies = <T>(stream: Stream<T>): void => {
+  markActive(stream);
+  if (stream.dependents.length) {
     // Recursive, so it has to rely on hoisting.
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
-    updateDependencies(cell.val, cell.dependents);
+    updateDependencies(stream.val, stream.dependents);
   }
 };
 
@@ -25,13 +25,13 @@ const updateDependencies = <T>(
 };
 
 /**
- * Dispatch Function for propagating Cell values across all dependencies.
+ * Dispatch Function for propagating Stream values across all dependencies.
  * Uses a recursive broadcast approach (newest dependency to oldest
  * dependency traversal).
  */
-export const recursiveDispatcher = <T>(cell: Cell<T>, value: T): void => {
-  if (shouldApplyValue(cell, value) && cell.state) {
-    markDependencies(cell);
-    hasDependencies(cell);
+export const recursiveDispatcher = <T>(stream: Stream<T>, value: T): void => {
+  if (shouldApplyValue(stream, value) && stream.state) {
+    markDependencies(stream);
+    hasDependencies(stream);
   }
 };

@@ -11,14 +11,14 @@ describe("flatDispatcher", () => {
   beforeEach(() => {
     dispatcher.mockClear();
   });
-  it("can update cells", () => {
+  it("can update streams", () => {
     const a = createStream<number>();
     const b = a.pipe(map(val => (val === 8 ? SKIP : val + 1)));
     a(5)(8);
     expect(dispatcher).toBeCalledTimes(2);
     expect(b()).toBe(6);
   });
-  it("can close cells with an END signal", () => {
+  it("can close streams with an END signal", () => {
     const a = createStream<number>(5);
     const b = a.pipe(map(val => val + 1));
     expect(dispatcher).toBeCalledTimes(2);
@@ -47,7 +47,7 @@ describe("flatDispatcher", () => {
       [d, e]
     );
 
-    // Should invoke once once there are no cells pending values
+    // Should invoke once once there are no streams pending values
     a("a");
     b("b");
     expect(f()).toBe("abcdbabcef");

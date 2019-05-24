@@ -29,7 +29,8 @@ export interface Stream<T> {
    */
   (value: T): this;
   /**
-   * Current number of parents that the Stream is waiting on to resolve or change.
+   * Semphore for tracking when all the parent streams have resolved or changed so that
+   * the current Stream can update.
    */
   waiting: number;
   /**
@@ -139,6 +140,7 @@ export interface Stream<T> {
 
 /**
  * Signature definition for a Dispatcher function. Must receive a Stream and a value.
+ * @internal
  */
 export type Dispatcher = <T>(stream: Stream<T>, value: T) => void;
 

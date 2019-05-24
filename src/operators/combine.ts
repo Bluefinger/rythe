@@ -1,16 +1,19 @@
 import { createStream, isStream } from "../stream";
-import { StreamState } from "../constants";
+import { StreamState, StreamError } from "../constants";
 import { Stream, DependentTuple } from "../types";
+
+const { PENDING } = StreamState;
 
 function applyDepTuple(
   this: DependentTuple<any, any>,
   source: Stream<any>
 ): void {
+  const { dependents, state } = source;
   if (!isStream(source)) {
-    throw new Error("All sources must be a Stream function");
+    throw new Error(StreamError.SOURCE_ERROR);
   }
-  source.dependents.push(this);
-  this[0].waiting += source.state === StreamState.PENDING ? 1 : 0;
+  dependents.push(this);
+  this[0].waiting += state === PENDING ? 1 : 0;
 }
 
 /**

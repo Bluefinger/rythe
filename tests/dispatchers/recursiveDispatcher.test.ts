@@ -1,13 +1,21 @@
-import { createStream, setDispatcher } from "../../src/stream";
+import { createStream } from "../../src/stream";
 import { StreamState } from "../../src/constants";
 import { recursiveDispatcher } from "../../src/dispatchers/recursiveDispatcher";
 import { combine, map } from "../../src/operators/index";
 import { END, SKIP } from "../../src/signal";
-import { Stream } from "../../src/types";
+
+jest.mock("../../src/dispatchers/recursiveDispatcher", () => {
+  const { recursiveDispatcher } = jest.requireActual(
+    "../../src/dispatchers/recursiveDispatcher"
+  );
+  return {
+    recursiveDispatcher: jest.fn(recursiveDispatcher)
+  };
+});
 
 describe("recursiveDispatcher", () => {
-  const dispatcher = jest.fn<void, [Stream<any>, any]>(recursiveDispatcher);
-  setDispatcher(dispatcher);
+  const dispatcher = recursiveDispatcher as jest.Mock;
+
   beforeEach(() => {
     dispatcher.mockClear();
   });

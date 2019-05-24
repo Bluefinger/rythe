@@ -1,7 +1,9 @@
 import { createStream, isStream } from "../stream";
-import { StreamState } from "../constants";
+import { StreamState, StreamError } from "../constants";
 import { SKIP } from "../signal";
 import { Stream, OperatorFn } from "../types";
+
+const { ACTIVE, PENDING } = StreamState;
 
 export function map<T>(
   mapFn: (value: T) => T,
@@ -22,16 +24,17 @@ export function map<T>(
   ignoreInitial?: SKIP
 ): OperatorFn<any, any> {
   return (source: Stream<any>): Stream<any> => {
+    const { state, dependents, val } = source;
     if (!isStream(source)) {
-      throw new Error("Source must be a Stream function");
+      throw new Error(StreamError.SOURCE_ERROR);
     }
     const mapStream = createStream<any>();
-    if (source.state >= StreamState.ACTIVE && ignoreInitial !== SKIP) {
-      mapStream(mapFn(source.val));
-    } else if (source.state === StreamState.PENDING) {
+    if (state === ACTIVE && ignoreInitial !== SKIP) {
+      mapStream(mapFn(val));
+    } else if (state === PENDING) {
       mapStream.waiting = 1;
     }
-    source.dependents.push([mapStream, mapFn]);
+    dependents.push([mapStream, mapFn]);
     mapStream.parents = source;
     return mapStream;
   };

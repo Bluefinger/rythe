@@ -1,4 +1,5 @@
 import { Stream, OperatorFn } from "../types";
+import { StreamError } from "../constants";
 
 const pipeFn = <T, U>(
   stream: Stream<any>,
@@ -9,7 +10,7 @@ export const pipeFromArray = (
   operators: OperatorFn<any, any>[]
 ): OperatorFn<any, any> => {
   if (!operators.length) {
-    throw new Error("Can't pipe with no functions");
+    throw new Error(StreamError.PIPE_ERROR);
   }
   if (operators.length === 1) {
     return operators[0];

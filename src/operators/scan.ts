@@ -2,6 +2,8 @@ import { StreamState } from "../constants";
 import { Stream, OperatorFn } from "../types";
 import { map } from "./map";
 
+const { PENDING } = StreamState;
+
 export function scan<T>(
   scanFn: (acc: T, newValue: T) => T,
   initial: T
@@ -28,7 +30,7 @@ export function scan(
     const scanned = map<any, any>((value): any => (acc = scanFn(acc, value)))(
       source
     );
-    if (scanned.state === StreamState.PENDING) {
+    if (scanned.state === PENDING) {
       scanned(initial);
     }
     return scanned;

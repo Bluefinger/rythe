@@ -1,18 +1,13 @@
-import { createStream, isStream, setDispatcher } from "./stream";
+import { createStream, isStream } from "./stream";
 import { StreamState } from "./constants";
-import { flatDispatcher } from "./dispatchers/flatDispatcher";
-import { recursiveDispatcher } from "./dispatchers/recursiveDispatcher";
 import { combine, dropRepeats, filter, map, scan } from "./operators/index";
 import { END, SKIP } from "./signal";
-import { Stream, StreamFn, DependentTuple, Dispatcher } from "./types";
+import { Stream, StreamFn, DependentTuple } from "./types";
 
 export {
   createStream,
   isStream,
-  setDispatcher,
   StreamState,
-  flatDispatcher,
-  recursiveDispatcher,
   combine,
   dropRepeats,
   filter,
@@ -22,6 +17,5 @@ export {
   SKIP,
   Stream,
   StreamFn,
-  DependentTuple,
-  Dispatcher
+  DependentTuple
 };

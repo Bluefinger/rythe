@@ -1,16 +1,19 @@
 import { createStream, isStream } from "../stream";
-import { StreamState } from "../constants";
-import { SKIP } from "../signal";
+import { StreamState, StreamError } from "../constants";
 import { Stream, DependentTuple } from "../types";
 
-const areStreamsReady = <T>(source: Stream<T>): boolean =>
-  source.state === StreamState.ACTIVE || source.state === StreamState.CLOSED;
+const { PENDING } = StreamState;
 
-function applyDepTuple<T, U>(
-  this: DependentTuple<T, U>,
-  source: Stream<T>
+function applyDepTuple(
+  this: DependentTuple<any, any>,
+  source: Stream<any>
 ): void {
-  source.dependents.push(this);
+  const { dependents, state } = source;
+  if (!isStream(source)) {
+    throw new Error(StreamError.SOURCE_ERROR);
+  }
+  dependents.push(this);
+  this[0].waiting += state === PENDING ? 1 : 0;
 }
 
 /**
@@ -20,20 +23,17 @@ export function combine<T extends Stream<any>[], U>(
   combineFn: (...sources: T) => U,
   sources: T
 ): Stream<U> {
-  if (!sources.every(isStream)) {
-    throw new Error("All sources must be a Stream object");
-  }
   const combinedStream = createStream<U>();
   combinedStream.parents = sources;
   const depTuple: DependentTuple<any, U> = [
     combinedStream,
-    (): U => (sources.every(areStreamsReady) ? combineFn(...sources) : SKIP)
+    (): U => combineFn(...sources)
   ];
 
   // Many Parents to One Stream Subscription
   sources.forEach(applyDepTuple, depTuple);
 
-  if (sources.length && sources.every(areStreamsReady)) {
+  if (sources.length && !combinedStream.waiting) {
     combinedStream(combineFn(...sources));
   }
 

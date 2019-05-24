@@ -5,9 +5,14 @@
  * 2. ACTIVE
  * 3. CHANGING
  */
-export const enum StreamState {
+export enum StreamState {
   CLOSED,
   PENDING,
   ACTIVE,
   CHANGING
+}
+
+export enum StreamError {
+  SOURCE_ERROR = "Source(s) must be a Stream function",
+  PIPE_ERROR = "Can't pipe with no functions"
 }

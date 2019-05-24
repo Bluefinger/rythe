@@ -29,6 +29,11 @@ export interface Stream<T> {
    */
   (value: T): this;
   /**
+   * Semphore for tracking when all the parent streams have resolved or changed so that
+   * the current Stream can update.
+   */
+  waiting: number;
+  /**
    * Current State of the Stream. Possible state values:
    * 0. CLOSED: The Stream is closed. It won't notify any dependents nor be updated by any parents.
    * 1. PENDING: The Stream is pending an update. It has not received any values yet.
@@ -135,6 +140,7 @@ export interface Stream<T> {
 
 /**
  * Signature definition for a Dispatcher function. Must receive a Stream and a value.
+ * @internal
  */
 export type Dispatcher = <T>(stream: Stream<T>, value: T) => void;
 

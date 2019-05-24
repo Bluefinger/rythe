@@ -1,14 +1,19 @@
-import { Stream, DependentTuple } from "../types";
-import { markActive } from "./helpers/markActive";
-import { markDependencies } from "./helpers/markDependencies";
-import { shouldApplyValue } from "./helpers/shouldApplyValue";
+import { Stream, DependentTuple, Dispatcher } from "../types";
+import {
+  markActive,
+  markDependencies,
+  shouldApplyValue
+} from "./dispatcherHelpers";
+
+const isReady = (stream: Stream<any>): boolean => !--stream.waiting;
 
 const hasDependencies = <T>(stream: Stream<T>): void => {
   markActive(stream);
-  if (stream.dependents.length) {
+  const { dependents, val } = stream;
+  if (dependents.length) {
     // Recursive, so it has to rely on hoisting.
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
-    updateDependencies(stream.val, stream.dependents);
+    updateDependencies(val, dependents);
   }
 };
 
@@ -18,7 +23,7 @@ const updateDependencies = <T>(
 ): void => {
   for (let i = deps.length; i--; ) {
     const [dep, fn] = deps[i];
-    if (shouldApplyValue(dep, fn(value))) {
+    if (isReady(dep) && shouldApplyValue(dep, fn(value))) {
       hasDependencies(dep);
     }
   }
@@ -29,7 +34,10 @@ const updateDependencies = <T>(
  * Uses a recursive broadcast approach (newest dependency to oldest
  * dependency traversal).
  */
-export const recursiveDispatcher = <T>(stream: Stream<T>, value: T): void => {
+export const recursiveDispatcher: Dispatcher = <T>(
+  stream: Stream<T>,
+  value: T
+): void => {
   if (shouldApplyValue(stream, value) && stream.state) {
     markDependencies(stream);
     hasDependencies(stream);

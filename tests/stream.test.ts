@@ -1,4 +1,4 @@
-import { createStream, isStream, setDispatcher } from "../src/stream";
+import { createStream, isStream } from "../src/stream";
 import { StreamState } from "../src/constants";
 import { END } from "../src/signal";
 import { Stream } from "../src/types";
@@ -86,18 +86,6 @@ describe("Rythe", () => {
       const f = createStream<any>(null);
       const json = JSON.stringify({ a, b, c, d, e, f });
       expect(json).toBe('{"a":2,"b":"foo","c":2,"d":{"e":true},"f":null}');
-    });
-  });
-  describe("setDispatcher", () => {
-    it("can be set with a new dispatcher function", () => {
-      const dispatcher = jest.fn(<T>(stream: Stream<T>, value: T) => {
-        stream.val = value;
-      });
-      const a = createStream<number>();
-      setDispatcher(dispatcher);
-      a(5);
-      expect(a()).toBe(5);
-      expect(dispatcher).toBeCalledTimes(1);
     });
   });
 });

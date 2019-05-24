@@ -1,7 +1,9 @@
 import { StreamState } from "./constants";
-import { recursiveDispatcher } from "./dispatchers/recursiveDispatcher";
-import { Stream, Closer, Dispatcher, OperatorFn } from "./types";
+import { recursiveDispatcher as dispatch } from "./dispatchers/recursiveDispatcher";
+import { Stream, Closer, OperatorFn } from "./types";
 import { pipeFromArray } from "./utils/pipe";
+
+const { CLOSED, PENDING } = StreamState;
 
 function toJSON(this: Stream<any>): any {
   return this.val != null && this.val.toJSON ? this.val.toJSON() : this.val;
@@ -36,16 +38,15 @@ const close: Closer = <T>(stream: Stream<T>): Closer => {
   }
   stream.dependents.length = 0;
   stream.parents = null;
-  stream.state = StreamState.CLOSED;
+  stream.state = CLOSED;
   return close;
 };
-
-let dispatch: Dispatcher = recursiveDispatcher;
 
 const initStream = <T>(stream: Partial<Stream<T>>): Stream<T> => {
   stream.dependents = [];
   stream.parents = null;
-  stream.state = StreamState.PENDING;
+  stream.state = PENDING;
+  stream.waiting = 0;
 
   stream.pipe = boundPipe;
   stream.toJSON = toJSON;
@@ -98,11 +99,4 @@ export const createStream = <T>(initialValue?: T): Stream<T> => {
   }
 
   return stream;
-};
-
-/**
- * Sets the dispatcher to the provided function. Must match the Dispatcher signature.
- */
-export const setDispatcher = (newDispatcher: Dispatcher): void => {
-  dispatch = newDispatcher;
 };

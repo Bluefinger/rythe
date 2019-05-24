@@ -16,7 +16,7 @@ const defineRytheMap = () => {
   stream.pipe(
     Rythe.map(value => value + 1),
     Rythe.map(value => value ** 2),
-    Rythe.map(value => value / 2)
+    Rythe.map(value => value * 3)
   );
   return stream;
 };
@@ -26,7 +26,7 @@ const defineSubjectMap = () => {
   const out = subject.pipe(
     rxOps.map(value => value + 1),
     rxOps.map(value => value ** 2),
-    rxOps.map(value => value / 2)
+    rxOps.map(value => value * 3)
   );
   out.subscribe(val => {
     output = val;
@@ -39,7 +39,7 @@ const defineStreamMap = () => {
   stream
     .map(value => value + 1)
     .map(value => value ** 2)
-    .map(value => value / 2);
+    .map(value => value * 3);
   return stream;
 };
 
@@ -66,16 +66,17 @@ suite1
 
 const suite2 = new Benchmark.Suite();
 
-console.log("Updating Maps");
+console.log("Updating Maps (3 Maps deep, invoked 2x)");
 suite2
   .add("Update Mapped Rythe Stream", () => {
-    mappedRythe(5);
+    mappedRythe(5)(6);
   })
   .add("Update Mapped Subject", () => {
     mappedSubject.next(5);
+    mappedSubject.next(6);
   })
   .add("Update Mapped Flyd Stream", () => {
-    mappedStream(5);
+    mappedStream(5)(6);
   })
   .on("cycle", ev => console.log(ev.target.toString()))
   .on("complete", function() {

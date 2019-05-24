@@ -23,14 +23,16 @@ export function map<T>(
 ): OperatorFn<any, any> {
   return (source: Stream<any>): Stream<any> => {
     if (!isStream(source)) {
-      throw new Error("Source must be a Stream object");
+      throw new Error("Source must be a Stream function");
     }
-    const mapCell = createStream<any>();
+    const mapStream = createStream<any>();
     if (source.state >= StreamState.ACTIVE && ignoreInitial !== SKIP) {
-      mapCell(mapFn(source.val));
+      mapStream(mapFn(source.val));
+    } else if (source.state === StreamState.PENDING) {
+      mapStream.waiting = 1;
     }
-    source.dependents.push([mapCell, mapFn]);
-    mapCell.parents = source;
-    return mapCell;
+    source.dependents.push([mapStream, mapFn]);
+    mapStream.parents = source;
+    return mapStream;
   };
 }

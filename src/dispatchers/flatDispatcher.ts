@@ -6,7 +6,8 @@ import { shouldApplyValue } from "./helpers/shouldApplyValue";
 const stack: Stream<any>[] = [];
 
 const updateCell = <T, U>(value: T, [dep, fn]: DependentTuple<T, U>): void => {
-  if (shouldApplyValue(dep, fn(value))) {
+  --dep.waiting;
+  if (!dep.waiting && shouldApplyValue(dep, fn(value))) {
     if (dep.dependents.length) {
       stack.push(dep);
     } else {

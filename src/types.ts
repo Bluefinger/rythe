@@ -29,6 +29,10 @@ export interface Stream<T> {
    */
   (value: T): this;
   /**
+   * Current number of parents that the Stream is waiting on to resolve or change.
+   */
+  waiting: number;
+  /**
    * Current State of the Stream. Possible state values:
    * 0. CLOSED: The Stream is closed. It won't notify any dependents nor be updated by any parents.
    * 1. PENDING: The Stream is pending an update. It has not received any values yet.

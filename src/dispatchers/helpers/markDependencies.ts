@@ -6,10 +6,12 @@ import { Stream } from "../../types";
  * skipping those that have been marked already.
  */
 export const markDependencies = (stream: Stream<any>): void => {
+  const { state, dependents } = stream;
+  const wasPending = state === StreamState.PENDING;
   stream.state = StreamState.CHANGING;
-  const deps = stream.dependents;
-  for (let i = deps.length; i--; ) {
-    const dep = deps[i][0];
+  for (let i = dependents.length; i--; ) {
+    const dep = dependents[i][0];
+    dep.waiting += wasPending ? 0 : 1;
     if (dep.state !== StreamState.CHANGING) {
       markDependencies(dep);
     }

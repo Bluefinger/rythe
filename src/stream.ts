@@ -46,6 +46,7 @@ const initStream = <T>(stream: Partial<Stream<T>>): Stream<T> => {
   stream.dependents = [];
   stream.parents = null;
   stream.state = StreamState.PENDING;
+  stream.waiting = 0;
 
   stream.pipe = boundPipe;
   stream.toJSON = toJSON;

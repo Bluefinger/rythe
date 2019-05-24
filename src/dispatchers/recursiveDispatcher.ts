@@ -3,6 +3,8 @@ import { markActive } from "./helpers/markActive";
 import { markDependencies } from "./helpers/markDependencies";
 import { shouldApplyValue } from "./helpers/shouldApplyValue";
 
+const isReady = (stream: Stream<any>): boolean => !--stream.waiting;
+
 const hasDependencies = <T>(stream: Stream<T>): void => {
   markActive(stream);
   if (stream.dependents.length) {
@@ -18,7 +20,7 @@ const updateDependencies = <T>(
 ): void => {
   for (let i = deps.length; i--; ) {
     const [dep, fn] = deps[i];
-    if (shouldApplyValue(dep, fn(value))) {
+    if (isReady(dep) && shouldApplyValue(dep, fn(value))) {
       hasDependencies(dep);
     }
   }

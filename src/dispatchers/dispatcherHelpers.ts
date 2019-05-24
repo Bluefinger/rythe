@@ -17,7 +17,6 @@ export const markActive = (stream: Stream<any>): void => {
  */
 export const markDependencies = (stream: Stream<any>): void => {
   const { state, dependents } = stream;
-  stream.state = CHANGING;
   for (let i = dependents.length; i--; ) {
     const [dep] = dependents[i];
     dep.waiting += state === PENDING ? 0 : 1;
@@ -25,6 +24,7 @@ export const markDependencies = (stream: Stream<any>): void => {
       markDependencies(dep);
     }
   }
+  stream.state = CHANGING;
 };
 
 /**

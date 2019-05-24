@@ -1,11 +1,10 @@
 import { Stream, DependentTuple, Dispatcher } from "../types";
 import {
+  isReady,
   markActive,
   markDependencies,
   shouldApplyValue
 } from "./dispatcherHelpers";
-
-const isReady = (stream: Stream<any>): boolean => !--stream.waiting;
 
 const hasDependencies = <T>(stream: Stream<T>): void => {
   markActive(stream);

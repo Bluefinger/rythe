@@ -9,11 +9,12 @@ function applyDepTuple(
   source: Stream<any>
 ): void {
   const { dependents, state } = source;
+  const [combinedStream] = this;
   if (!isStream(source)) {
     throw new Error(StreamError.SOURCE_ERROR);
   }
   dependents.push(this);
-  this[0].waiting += state === PENDING ? 1 : 0;
+  combinedStream.waiting += state === PENDING ? 1 : 0;
 }
 
 /**

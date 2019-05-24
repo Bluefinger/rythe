@@ -68,18 +68,14 @@ export const isStream = (obj: any): boolean =>
 export const createStream = <T>(initialValue?: T): Stream<T> => {
   let stream: Stream<T>;
 
-  function next(value?: T): T | Stream<T> {
+  function next(value: T): T | Stream<T> {
     if (!arguments.length) {
       return stream.val;
     }
-    // ESLint and TS unable to determine that if arguments.length is greater than 0,
-    // that value will be explicit. Also, Stream typing will reflect if undefined/null
-    // will be passed, so the non-null assertion is required here.
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    dispatch(stream, value!);
+    dispatch(stream, value);
     return stream;
   }
-  function complete(value?: boolean): boolean | Stream<boolean> {
+  function complete(value: boolean): boolean | Stream<boolean> {
     if (!arguments.length) {
       return stream.end.val;
     } else if (stream.end.state && value && typeof value === "boolean") {

@@ -31,6 +31,7 @@ export interface Stream<T> {
   /**
    * Semphore for tracking when all the parent streams have resolved or changed so that
    * the current Stream can update.
+   * @internal
    */
   waiting: number;
   /**
@@ -146,6 +147,7 @@ export type Dispatcher = <T>(stream: Stream<T>, value: T) => void;
 
 /**
  * Close Function interface. Returns itself to allow terse multilple invocations.
+ * @internal
  */
 export interface Closer {
   <T>(stream: Stream<T>): this;

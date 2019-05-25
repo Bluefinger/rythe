@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "baseUrl": "./src",
     "incremental": true,
     "tsBuildInfoFile": "./.rpt2_cache/tsBuildInfo",
     "outDir": "./dist/umd",
@@ -10,10 +11,16 @@
     "strict": true,
     "noUnusedLocals": true,
     "esModuleInterop": true,
-    "module": "esnext",
+    "module":"esnext",
     "moduleResolution": "node",
-    "target": "esnext"
+    "target": "esnext",
+    "paths": {
+      "rythe": ["./"],
+      "rythe/*": ["./*"]
+    },
+    "rootDir": "./src"
   },
-  "include": ["./src/**/*"],
-  "exclude": ["tests/**/*", "./dist/**/*.js", "perf/**.*.js"]
+  "include": [
+    "./src/**/*"
+  ]
 }

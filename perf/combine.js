@@ -5,8 +5,6 @@ const rxOps = require("rxjs/operators");
 const flyd = require("flyd");
 const utils = require("./utils");
 
-// Rythe.setDispatcher(Rythe.flatDispatcher);
-
 const suite1 = new Benchmark.Suite();
 
 const combineAB = (sA, sB) => sA() + sB() + "c";

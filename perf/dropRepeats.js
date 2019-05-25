@@ -6,8 +6,6 @@ const flyd = require("flyd");
 const flydDrop = require("flyd/module/droprepeats").dropRepeats;
 const utils = require("./utils");
 
-// Rythe.setDispatcher(Rythe.flatDispatcher);
-
 let output;
 
 const defineRytheDrop = () => {

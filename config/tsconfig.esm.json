@@ -3,6 +3,7 @@
   "compilerOptions": {
     "outDir": "../dist/esm",
     "declarationDir": "../dist/esm",
-    "preserveConstEnums": true
+    "preserveConstEnums": true,
+    "sourceRoot": "../../src"
   }
 }

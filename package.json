@@ -6,13 +6,12 @@
   "module": "dist/esm/index.js",
   "types": "dist/esm/index.d.ts",
   "scripts": {
-    "build": "npm-run-all clean build:esm build:cjs build:umd",
-    "build:esm": "tsc --build ./config/tsconfig.esm.json --pretty",
-    "build:cjs": "tsc --build ./config/tsconfig.cjs.json --pretty",
+    "build": "npm-run-all clean build:all build:umd",
+    "build:all": "tsc --build ./config/tsconfig.esm.json ./config/tsconfig.cjs.json --pretty",
     "build:umd": "rollup -c",
     "clean": "rimraf ./dist/*",
     "test": "npm-run-all test:lint test:unit",
-    "test:lint": "eslint --fix ./src/**/*.ts",
+    "test:lint": "eslint --fix \"./+(src|tests)/**/*.ts\" --cache --cache-location \"./.rpt2_cache/\"",
     "test:unit": "jest --all --coverage",
     "clear:test": "jest --clearCache",
     "tsc:help": "tsc -h --all",
@@ -23,6 +22,18 @@
     "email": "bluefinger@gmail.com",
     "url": "https://codepayne.com/"
   },
+  "keywords": [
+    "functional",
+    "reactive",
+    "modular",
+    "library",
+    "typescript",
+    "streams"
+  ],
+  "bugs": {
+    "url": "https://github.com/Bluefinger/rythe/issues"
+  },
+  "homepage": "https://github.com/Bluefinger/rythe",
   "license": "MIT",
   "dependencies": {
     "tslib": "^1.9.3"

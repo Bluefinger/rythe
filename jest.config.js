@@ -1,5 +1,7 @@
+/* eslint-env node */
+
 module.exports = {
-  testURL: "http://localhost/",
+  preset: "ts-jest",
   collectCoverageFrom: [
     "**/*.{ts,tsx}",
     "!**/tests/**",
@@ -20,9 +22,12 @@ module.exports = {
       statements: -10
     }
   },
-  transform: {
-    "^.+\\.tsx?$": "ts-jest"
+  globals: {
+    "ts-lint": {
+      tsConfig: "./tests/tsconfig.json"
+    }
   },
+  testMatch: null,
   testRegex: "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
   testEnvironment: "node",
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"]

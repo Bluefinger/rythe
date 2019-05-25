@@ -6,8 +6,6 @@ const flyd = require("flyd");
 const flydFilter = require("flyd/module/filter");
 const utils = require("./utils");
 
-// Rythe.setDispatcher(Rythe.flatDispatcher);
-
 let output;
 
 const predicate = value => value % 2 !== 1;

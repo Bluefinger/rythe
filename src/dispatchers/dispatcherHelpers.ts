@@ -1,5 +1,4 @@
 import { StreamState } from "../constants";
-import { END, SKIP } from "../signal";
 import { Stream } from "../types";
 
 const { ACTIVE, CHANGING, PENDING } = StreamState;
@@ -15,28 +14,14 @@ export const markActive = (stream: Stream<any>): void => {
  * Mark all Stream Dependencies recursively. Goes from newest dependency to old,
  * skipping those that have been marked already.
  */
-export const markDependencies = (stream: Stream<any>): void => {
+export const markAsChanging = (stream: Stream<any>): void => {
   const { state, dependents } = stream;
   for (let i = dependents.length; i--; ) {
     const [dep] = dependents[i];
     dep.waiting += state === PENDING ? 0 : 1;
     if (dep.state !== CHANGING) {
-      markDependencies(dep);
+      markAsChanging(dep);
     }
   }
   stream.state = CHANGING;
-};
-
-/**
- * Checks the incoming value for END or SKIP signals, otherwise it updates the stream
- * value and returns true to initiate a broadcast.
- */
-export const shouldApplyValue = <T>(stream: Stream<T>, value: T): boolean => {
-  if (value === END) {
-    stream.end(true);
-  } else if (value !== SKIP) {
-    stream.val = value;
-    return true;
-  }
-  return false;
 };

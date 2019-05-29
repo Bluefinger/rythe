@@ -32,7 +32,7 @@ const updateDependencies = <T>(
       }
       dep.updating = 0;
     } else if (updating) {
-      dep.updating++;
+      dep.updating += 1;
     }
   }
 };

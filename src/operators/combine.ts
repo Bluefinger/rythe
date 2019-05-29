@@ -19,7 +19,7 @@ export function combine<T extends Stream<any>[], U>(
   ];
 
   // Many Parents to One Stream Subscription
-  for (let i = 0; i < sources.length; i++) {
+  for (let i = sources.length; i--; ) {
     const source = sources[i];
     const { dependents, state } = source;
     if (!isStream(source)) {

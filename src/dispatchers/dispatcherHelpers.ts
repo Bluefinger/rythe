@@ -3,7 +3,7 @@ import { Stream } from "../types";
 
 const { ACTIVE, CHANGING, PENDING } = StreamState;
 
-export const isReady = (stream: Stream<any>): boolean => !--stream.waiting;
+export const isReady = (stream: Stream<any>): boolean => !(stream.waiting -= 1);
 
 /** Mark a Stream as ACTIVE */
 export const markActive = (stream: Stream<any>): void => {

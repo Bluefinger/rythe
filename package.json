@@ -16,7 +16,8 @@
     "test:unit": "jest --all --coverage",
     "clear:test": "jest --clearCache",
     "tsc:help": "tsc -h --all",
-    "watch": "jest --watch"
+    "watch": "jest --watch",
+    "prepublish": "npm run build"
   },
   "author": {
     "name": "Gonçalo Payne",

@@ -7,3 +7,12 @@ check_task:
     fingerprint_script: cat package-lock.json
     populate_script: npm install
   test_script: npm run test
+
+publish_task:
+  depends_on:
+    - check
+  environment:
+    AUTH_TOKEN: ENCRYPTED[a17b5f2341ac2285c8220b415313aeffac6522f36e9f9092c5d64b9c7403e291be01bd0e5c4432bc3ce948f9f43c12e1]
+  only_if: $CIRRUS_TAG
+  echo_script: echo "//registry.npmjs.org/:_authToken=$AUTH_TOKEN" >> ~/.npmrc
+  deploy_script: npm publish

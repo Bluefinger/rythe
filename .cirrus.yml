@@ -1,5 +1,6 @@
 container:
   image: node:latest
+  cpu: 4
 
 check_task:
   node_modules_cache:
@@ -13,6 +14,6 @@ publish_task:
     - check
   environment:
     AUTH_TOKEN: ENCRYPTED[a17b5f2341ac2285c8220b415313aeffac6522f36e9f9092c5d64b9c7403e291be01bd0e5c4432bc3ce948f9f43c12e1]
-  only_if: $CIRRUS_TAG
+  skip: $CIRRUS_TAG == ""
   echo_script: echo "//registry.npmjs.org/:_authToken=$AUTH_TOKEN" >> ~/.npmrc
   deploy_script: npm publish

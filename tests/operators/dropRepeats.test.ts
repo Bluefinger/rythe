@@ -1,5 +1,5 @@
-import { createStream } from "../../src/stream";
-import { dropRepeats, map } from "../../src/operators/index";
+import { createStream } from "rythe/stream";
+import { dropRepeats, map } from "rythe/operators";
 
 describe("dropRepeats", () => {
   it("will not pass down repeat values", () => {

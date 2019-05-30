@@ -23,12 +23,16 @@ module.exports = {
     }
   },
   globals: {
-    "ts-lint": {
+    "ts-jest": {
       tsConfig: "./tests/tsconfig.json"
     }
   },
   testMatch: null,
   testRegex: "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
   testEnvironment: "node",
+  moduleNameMapper: {
+    "^rythe$": "<rootDir>/src/",
+    "^rythe/(.*)$": "<rootDir>/src/$1"
+  },
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"]
 };

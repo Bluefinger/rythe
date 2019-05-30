@@ -1,6 +1,6 @@
-import { createStream } from "../../src/stream";
-import { combine, map, scan } from "../../src/operators/index";
-import { SKIP } from "../../src/signal";
+import { createStream } from "rythe/stream";
+import { combine, map, scan } from "rythe/operators";
+import { SKIP } from "rythe/signal";
 
 describe("scan", () => {
   it("should default to an initial value", () => {

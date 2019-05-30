@@ -16,12 +16,12 @@ export const markActive = (stream: Stream<any>): void => {
  */
 export const markAsChanging = (stream: Stream<any>): void => {
   const { state, dependents } = stream;
+  stream.state = CHANGING;
   for (let i = dependents.length; i--; ) {
     const [dep] = dependents[i];
-    dep.waiting += state === PENDING ? 0 : 1;
+    if (state !== PENDING) dep.waiting += 1;
     if (dep.state !== CHANGING) {
       markAsChanging(dep);
     }
   }
-  stream.state = CHANGING;
 };

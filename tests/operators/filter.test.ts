@@ -1,7 +1,7 @@
-import { createStream } from "../../src/stream";
-import { StreamState } from "../../src/constants";
-import { filter, map, combine, scan } from "../../src/operators/index";
-import { Stream } from "../../src/types";
+import { createStream } from "rythe/stream";
+import { StreamState } from "rythe/constants";
+import { filter, map, combine, scan } from "rythe/operators";
+import { Stream } from "rythe/types";
 
 describe("filter", () => {
   it("is pipeable", () => {

@@ -1,7 +1,7 @@
-import { Stream } from "../../src";
-import { createStream } from "../../src/stream";
-import { StreamState } from "../../src/constants";
-import { combine, map, scan } from "../../src/operators/index";
+import { Stream } from "rythe/types";
+import { createStream } from "rythe/stream";
+import { StreamState } from "rythe/constants";
+import { combine, map, scan } from "rythe/operators";
 
 describe("combine()", () => {
   it("transforms value", () => {

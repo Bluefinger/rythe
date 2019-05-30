@@ -1,8 +1,8 @@
-import { createStream } from "../../src/stream";
-import { StreamState } from "../../src/constants";
-import { map } from "../../src/operators/map";
-import { END, SKIP } from "../../src/signal";
-import { Stream } from "../../src/types";
+import { createStream } from "rythe/stream";
+import { StreamState } from "rythe/constants";
+import { map } from "rythe/operators";
+import { END, SKIP } from "rythe/signal";
+import { Stream } from "rythe/types";
 
 describe("map", () => {
   it("transforms values it receives", () => {

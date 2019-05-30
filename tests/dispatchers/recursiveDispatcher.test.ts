@@ -1,12 +1,12 @@
-import { createStream } from "../../src/stream";
-import { StreamState } from "../../src/constants";
-import { recursiveDispatcher } from "../../src/dispatchers/recursiveDispatcher";
-import { combine, map } from "../../src/operators/index";
-import { END, SKIP } from "../../src/signal";
+import { createStream } from "rythe/stream";
+import { StreamState } from "rythe/constants";
+import { recursiveDispatcher } from "rythe/dispatchers/recursiveDispatcher";
+import { combine, map } from "rythe/operators";
+import { END, SKIP } from "rythe/signal";
 
-jest.mock("../../src/dispatchers/recursiveDispatcher", () => {
+jest.mock("rythe/dispatchers/recursiveDispatcher", () => {
   const { recursiveDispatcher } = jest.requireActual(
-    "../../src/dispatchers/recursiveDispatcher"
+    "rythe/dispatchers/recursiveDispatcher"
   );
   return {
     recursiveDispatcher: jest.fn(recursiveDispatcher)

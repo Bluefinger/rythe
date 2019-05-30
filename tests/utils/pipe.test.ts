@@ -1,6 +1,6 @@
-import { createStream, isStream } from "../../src/stream";
-import { map } from "../../src/operators";
-import { pipe } from "../../src/utils/pipe";
+import { createStream, isStream } from "rythe/stream";
+import { map } from "rythe/operators";
+import { pipe } from "rythe/utils/pipe";
 
 describe("pipe", () => {
   it("should throw an error if no functions are piped", () => {

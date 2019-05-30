@@ -4,19 +4,6 @@ import { Stream, DependentTuple } from "../types";
 
 const { PENDING } = StreamState;
 
-function applyDepTuple(
-  this: DependentTuple<any, any>,
-  source: Stream<any>
-): void {
-  const { dependents, state } = source;
-  const [combinedStream] = this;
-  if (!isStream(source)) {
-    throw new Error(StreamError.SOURCE_ERROR);
-  }
-  dependents.push(this);
-  combinedStream.waiting += state === PENDING ? 1 : 0;
-}
-
 /**
  * Combines many Stream sources into a single output.
  */
@@ -32,7 +19,15 @@ export function combine<T extends Stream<any>[], U>(
   ];
 
   // Many Parents to One Stream Subscription
-  sources.forEach(applyDepTuple, depTuple);
+  for (let i = sources.length; i--; ) {
+    const source = sources[i];
+    const { dependents, state } = source;
+    if (!isStream(source)) {
+      throw new Error(StreamError.SOURCE_ERROR);
+    }
+    dependents.push(depTuple);
+    combinedStream.waiting += state === PENDING ? 1 : 0;
+  }
 
   if (sources.length && !combinedStream.waiting) {
     combinedStream(combineFn(...sources));

@@ -47,6 +47,7 @@ const initStream = <T>(stream: Partial<Stream<T>>): Stream<T> => {
   stream.parents = null;
   stream.state = PENDING;
   stream.waiting = 0;
+  stream.updating = 0;
 
   stream.pipe = boundPipe;
   stream.toJSON = toJSON;
@@ -66,27 +67,26 @@ export const isStream = (obj: any): boolean =>
  * the initial value, or by the type definition.
  */
 export const createStream = <T>(initialValue?: T): Stream<T> => {
-  let stream: Stream<T>;
-
-  function next(value: T): T | Stream<T> {
+  const next = function(value: T): T | Stream<T> {
     if (!arguments.length) {
-      return stream.val;
+      return next.val;
     }
-    dispatch(stream, value);
-    return stream;
-  }
-  function complete(value: boolean): boolean | Stream<boolean> {
-    if (!arguments.length) {
-      return stream.end.val;
-    } else if (stream.end.state && value && typeof value === "boolean") {
-      dispatch(stream.end, value);
-      close(stream)(stream.end);
-    }
-    return stream.end;
-  }
+    dispatch(next, value);
+    return next;
+  } as Stream<T>;
 
-  stream = initStream<T>(next as Partial<Stream<T>>);
-  stream.end = initStream<boolean>(complete as Partial<Stream<boolean>>);
+  const complete = function(value: boolean): boolean | Stream<boolean> {
+    if (!arguments.length) {
+      return complete.val;
+    } else if (complete.state && value && typeof value === "boolean") {
+      dispatch(complete, value);
+      close(next)(complete);
+    }
+    return complete;
+  } as Stream<boolean>;
+
+  const stream = initStream<T>(next);
+  stream.end = initStream<boolean>(complete);
   stream.end.val = false;
   stream.end.end = stream.end;
 

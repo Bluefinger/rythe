@@ -6,13 +6,17 @@
  * 3. CHANGING
  */
 export enum StreamState {
+  /** Stream is closed. Will no longer emit values. */
   CLOSED,
+  /** Stream is pending. Waiting to receive its first value. */
   PENDING,
+  /** Stream is active. Has received a value and ready to emit. */
   ACTIVE,
+  /** Stream is changing. Has been marked to receive a new value. */
   CHANGING
 }
 
-export enum StreamError {
-  SOURCE_ERROR = "Source(s) must be a Stream function",
-  PIPE_ERROR = "Can't pipe with no functions"
-}
+export const StreamError = {
+  SOURCE_ERROR: "Source(s) must be a Stream function",
+  PIPE_ERROR: "Can't pipe with no functions"
+} as const;

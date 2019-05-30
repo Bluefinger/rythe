@@ -1,7 +1,7 @@
 import { Stream } from "../../src";
 import { createStream } from "../../src/stream";
 import { StreamState } from "../../src/constants";
-import { combine, map } from "../../src/operators/index";
+import { combine, map, scan } from "../../src/operators/index";
 
 describe("combine()", () => {
   it("transforms value", () => {
@@ -41,16 +41,22 @@ describe("combine()", () => {
     expect(c()).toBe(6);
   });
   it("combines value atomically", () => {
-    const atomic: number[] = [];
     const a = createStream<number>();
     const b = a.pipe(map(num => num + 2));
     const c = a.pipe(map(num => num * 10));
     const testInference = (sA: Stream<number>, sB: Stream<number>): number =>
-      atomic.push(sA() + sB());
-    const d = combine(testInference, [b, c]);
+      sA() + sB();
+    const atomic = combine(testInference, [b, c]).pipe(
+      scan(
+        (acc, value: number) => {
+          acc.push(value);
+          return acc;
+        },
+        [] as number[]
+      )
+    );
     a(3)(4);
-    expect(d()).toBe(2);
-    expect(atomic).toEqual([35, 46]);
+    expect(atomic()).toEqual([35, 46]);
   });
   it("combines default value atomically", () => {
     const atomic: number[] = [];

@@ -9,7 +9,7 @@ check_task:
     VCS_BRANCH_NAME: $CIRRUS_BRANCH
     VCS_PULL_REQUEST: $CIRRUS_PR
     VCS_TAG: $CIRRUS_TAG
-    CI_BUILD_URL: "https://cirrus-ci.com/task/$CIRRUS_BUILD_ID"
+    CI_BUILD_URL: "https://cirrus-ci.com/build/$CIRRUS_BUILD_ID"
     CI_BUILD_ID: $CIRRUS_BUILD_ID
     CI_JOB_ID: $CIRRUS_TASK_ID
   node_modules_cache:

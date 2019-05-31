@@ -13,7 +13,7 @@ module.exports = {
     "!**/.vscode/**"
   ],
   coverageDirectory: "./coverage",
-  coverageReporters: ["html", "text"],
+  coverageReporters: ["lcov", "text"],
   coverageThreshold: {
     global: {
       branches: 90,

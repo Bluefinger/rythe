@@ -9,11 +9,19 @@ check_task:
     populate_script: npm install
   test_script: npm run test
 
+coverage_task:
+  depends_on:
+    -check
+  environment:
+    CODECOV_TOKEN: ENCRYPTED[65f6fb1a24984a5502638dd2dd4cde45658ac62662fa075a20f30180c19fb5717211e9e7a3d0caa98bdff651dd1c3cef]
+  upload_script: bash <(curl -s https://codecov.io/bash) -t $CODECOV_TOKEN || echo "Oops! Coverage report upload has failed."
+
 publish_task:
   depends_on:
     - check
+    - coverage
   environment:
-    AUTH_TOKEN: ENCRYPTED[a17b5f2341ac2285c8220b415313aeffac6522f36e9f9092c5d64b9c7403e291be01bd0e5c4432bc3ce948f9f43c12e1]
-  skip: $CIRRUS_TAG == ""
-  echo_script: echo "//registry.npmjs.org/:_authToken=$AUTH_TOKEN" >> ~/.npmrc
+    NPM_TOKEN: ENCRYPTED[a17b5f2341ac2285c8220b415313aeffac6522f36e9f9092c5d64b9c7403e291be01bd0e5c4432bc3ce948f9f43c12e1]
+  only_if: $CIRRUS_USER_COLLABORATOR && $CIRRUS_TAG != ""
+  echo_script: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
   deploy_script: npm publish

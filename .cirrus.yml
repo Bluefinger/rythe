@@ -22,7 +22,6 @@ check_task:
 publish_task:
   depends_on:
     - check
-    - coverage
   environment:
     NPM_TOKEN: ENCRYPTED[a17b5f2341ac2285c8220b415313aeffac6522f36e9f9092c5d64b9c7403e291be01bd0e5c4432bc3ce948f9f43c12e1]
   only_if: $CIRRUS_USER_COLLABORATOR && $CIRRUS_TAG != ""

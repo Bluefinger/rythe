@@ -3,17 +3,13 @@ container:
   cpu: 4
 
 check_task:
+  environment:
+    CODECOV_TOKEN: ENCRYPTED[65f6fb1a24984a5502638dd2dd4cde45658ac62662fa075a20f30180c19fb5717211e9e7a3d0caa98bdff651dd1c3cef]
   node_modules_cache:
     folder: node_modules
     fingerprint_script: cat package-lock.json
     populate_script: npm install
   test_script: npm run test
-
-coverage_task:
-  depends_on:
-    -check
-  environment:
-    CODECOV_TOKEN: ENCRYPTED[65f6fb1a24984a5502638dd2dd4cde45658ac62662fa075a20f30180c19fb5717211e9e7a3d0caa98bdff651dd1c3cef]
   upload_script: bash <(curl -s https://codecov.io/bash) -t $CODECOV_TOKEN || echo "Oops! Coverage report upload has failed."
 
 publish_task:

@@ -3,6 +3,7 @@ import { StreamState } from "./constants";
 import { combine, dropRepeats, filter, map, scan } from "./operators/index";
 import { END, SKIP } from "./signal";
 import { Stream, StreamFn, DependentTuple } from "./types";
+import { fromDOMEvent, fromNodeEvent, fromPromise } from "./helpers";
 
 export {
   createStream,
@@ -17,5 +18,8 @@ export {
   SKIP,
   Stream,
   StreamFn,
-  DependentTuple
+  DependentTuple,
+  fromDOMEvent,
+  fromNodeEvent,
+  fromPromise
 };

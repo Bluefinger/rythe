@@ -1,11 +1,13 @@
 {
   "name": "rythe",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Rythe, a tiny, heavily tree-shakeable Reactive Stream library",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "types": "dist/esm/index.d.ts",
-  "files": ["dist/**/*"],
+  "files": [
+    "dist/**/*"
+  ],
   "scripts": {
     "build": "npm-run-all clean build:all build:umd",
     "build:all": "tsc --build ./config/tsconfig.esm.json ./config/tsconfig.cjs.json --pretty",

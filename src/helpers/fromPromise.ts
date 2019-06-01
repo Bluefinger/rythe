@@ -1,17 +1,12 @@
 import { createStream } from "../stream";
 import { Stream } from "../types";
 import { END } from "../signal";
-import { noop } from "../utils/noop";
 
-export const fromPromise = <T>(
-  promise: Promise<T>,
-  errorHandler: (reason: any) => void = noop
-): Stream<T> => {
+export const fromPromise = <T>(promise: PromiseLike<T>): Stream<T> => {
   const promiseStream = createStream<T>();
-  promise.then(promiseStream, errorHandler).finally(
-    (): void => {
-      promiseStream(END);
-    }
-  );
+  const end = (): void => {
+    promiseStream(END);
+  };
+  promise.then(promiseStream, end).then(end);
   return promiseStream;
 };

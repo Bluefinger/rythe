@@ -5,12 +5,12 @@ node_js:
   - "12"
 cache: npm
 
-env: COVERAGE=false
-
 matrix:
   include:
+    - node_js: "10"
+      env: COVERAGE=false
     - node_js: "12"
-      env: COVERAGE=true
+      end: COVERAGE=true
 
 before_install:
   - npm i -g npm

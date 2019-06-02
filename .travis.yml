@@ -1,0 +1,26 @@
+dist: xenial
+language: node_js
+node_js:
+  - "10"
+  - "12"
+cache: npm
+
+before_install:
+  - npm i -g npm
+
+jobs:
+  include:
+    - stage: coverage
+      node_js: "12"
+      script: bash <(curl -s https://codecov.io/bash)
+      if: branch = master 
+    - stage: npm release
+      node_js: "12"
+      script: echo "Deploying to npm ..."
+      deploy:
+        provider: npm
+        api_key: $NPM_TOKEN
+        email: $NPM_EMAIL
+        skip_cleanup: true
+        on:
+          tags: true

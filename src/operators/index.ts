@@ -3,5 +3,6 @@ import { dropRepeats } from "./dropRepeats";
 import { filter } from "./filter";
 import { map } from "./map";
 import { scan } from "./scan";
+import { endsWith } from "./endsWith";
 
-export { combine, dropRepeats, filter, map, scan };
+export { combine, dropRepeats, endsWith, filter, map, scan };

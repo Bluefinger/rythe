@@ -13,7 +13,7 @@ matrix:
     - node_js: "10"
       env: COVERAGE=true
     - node_js: "12"
-      end: COVERAGE=false
+      env: COVERAGE=false
 
 before_install:
   - npm i -g npm

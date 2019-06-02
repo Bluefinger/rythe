@@ -19,7 +19,7 @@
     "clear:test": "jest --clearCache",
     "tsc:help": "tsc -h --all",
     "watch": "jest --watch",
-    "prepublish": "npm run build"
+    "prepare": "npm run build"
   },
   "author": {
     "name": "Gonçalo Payne",

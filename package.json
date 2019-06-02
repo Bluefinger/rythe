@@ -15,7 +15,7 @@
     "clean": "rimraf ./dist/*",
     "test": "npm-run-all test:lint test:unit",
     "test:lint": "eslint \"./+(src|tests)/**/*.ts\" --cache --cache-location \"./.rpt2_cache/\"",
-    "test:unit": "jest --all --coverage --maxWorkers=3",
+    "test:unit": "jest --all --coverage --maxWorkers=4",
     "clear:test": "jest --clearCache",
     "tsc:help": "tsc -h --all",
     "watch": "jest --watch",

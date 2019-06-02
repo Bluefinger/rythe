@@ -1,11 +1,10 @@
-import { SKIP } from "../signal";
 import { Stream } from "../types";
-import { map } from "./map";
+import { dropWith } from "./dropWith";
+
+const directComparison = <T>(prev: T, next: T): boolean => prev === next;
 
 /**
- * Pushes non-repeating values. Skips any repeated values.
+ * Pushes non-repeating values via direct comparison `prev === next`. Skips any repeated values.
  */
-export const dropRepeats = <T>(source: Stream<T>): Stream<T> => {
-  let prev: T;
-  return map<T>((next): T => (next !== prev ? (prev = next) : SKIP))(source);
-};
+export const dropRepeats = <T>(source: Stream<T>): Stream<T> =>
+  dropWith<T>(directComparison)(source);

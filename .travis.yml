@@ -4,25 +4,13 @@ node_js:
   - "10"
   - "12"
 cache: npm
-env:
-  - COVERAGE=false
-  - COVERAGE=true
-
-matrix:
-  exclude:
-    - node_js: "10"
-      env: COVERAGE=true
-    - node_js: "12"
-      env: COVERAGE=false
 
 before_install:
   - npm i -g npm
 
-install:
-  - npm install
-
-after_success:
-  - bash ./coverage.sh
+script:
+  - npm test
+  - bash <(curl -s https://codecov.io/bash)
 
 jobs:
   include:

@@ -27,7 +27,6 @@ describe("fromPromise", () => {
     jest.runAllTimers();
     await p;
     expect(s()).toBe("foo");
-    await p;
     expect(s.state).toBe(StreamState.CLOSED);
   });
   it("should close if the Promise rejects", async () => {

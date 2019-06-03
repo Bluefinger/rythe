@@ -1,26 +1,14 @@
-import { Stream, DependentTuple, Dispatcher } from "../types";
+import { Stream, Dispatcher } from "../types";
 import { isReady, markActive, markAsChanging } from "./dispatcherHelpers";
 import { END, SKIP } from "../signal";
 
 const pushUpdate = <T>(stream: Stream<T>, updating: boolean): void => {
   markActive(stream);
   const { dependents, val } = stream;
-  if (dependents.length) {
-    // Recursive, so it has to rely on hoisting.
-    // eslint-disable-next-line @typescript-eslint/no-use-before-define
-    updateDependencies(val, dependents, updating);
-  }
-};
-
-const updateDependencies = <T>(
-  value: T,
-  deps: DependentTuple<T, any>[],
-  updating: boolean
-): void => {
-  for (let i = deps.length; i--; ) {
-    const [dep, fn] = deps[i];
+  for (let i = dependents.length; i--; ) {
+    const [dep, fn] = dependents[i];
     if (isReady(dep)) {
-      const newValue = updating || dep.updating ? fn(value) : SKIP;
+      const newValue = updating || dep.updating ? fn(val) : SKIP;
       switch (newValue) {
         case SKIP:
           pushUpdate(dep, false);

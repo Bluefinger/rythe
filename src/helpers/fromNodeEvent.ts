@@ -10,11 +10,7 @@ export const fromNodeEvent = (
   const eventStream = createStream<any>();
 
   target.on(event, eventStream);
-  map<boolean, void>(
-    (): void => {
-      target.off(event, eventStream);
-    }
-  )(eventStream.end);
+  map<boolean, any>(() => target.off(event, eventStream))(eventStream.end);
 
   return eventStream;
 };

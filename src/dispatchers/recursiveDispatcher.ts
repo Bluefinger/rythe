@@ -21,9 +21,9 @@ const pushUpdate = <T>(stream: Stream<T>, updating: boolean): void => {
           dep.val = newValue;
           pushUpdate(dep, true);
       }
-      dep.updating = 0;
+      dep.updating = false;
     } else if (updating) {
-      dep.updating += 1;
+      dep.updating = true;
     }
   }
 };

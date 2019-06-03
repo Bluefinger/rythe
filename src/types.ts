@@ -35,11 +35,11 @@ export interface Stream<T> {
    */
   waiting: number;
   /**
-   * Semphore for tracking how many parents need to update while the current stream is
+   * Semphore for tracking whether any parents need to update while the current stream is
    * waiting for all parents to resolve.
    * @internal
    */
-  updating: number;
+  updating: boolean;
   /**
    * Current State of the Stream. Possible state values:
    * 0. CLOSED: The Stream is closed. It won't notify any dependents nor be updated by any parents.

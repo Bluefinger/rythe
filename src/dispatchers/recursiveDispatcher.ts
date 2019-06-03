@@ -1,6 +1,6 @@
 import { Stream, DependentTuple, Dispatcher } from "../types";
 import { isReady, markActive, markAsChanging } from "./dispatcherHelpers";
-import { END, SKIP, isSignal } from "../signal";
+import { END, SKIP } from "../signal";
 
 const pushUpdate = <T>(stream: Stream<T>, updating: boolean): void => {
   markActive(stream);
@@ -21,14 +21,17 @@ const updateDependencies = <T>(
     const [dep, fn] = deps[i];
     if (isReady(dep)) {
       const newValue = updating || dep.updating ? fn(value) : SKIP;
-      if (isSignal(newValue)) {
-        pushUpdate(dep, false);
-        if (newValue === END) {
+      switch (newValue) {
+        case SKIP:
+          pushUpdate(dep, false);
+          break;
+        case END:
+          pushUpdate(dep, false);
           dep.end(true);
-        }
-      } else {
-        dep.val = newValue;
-        pushUpdate(dep, true);
+          break;
+        default:
+          dep.val = newValue;
+          pushUpdate(dep, true);
       }
       dep.updating = 0;
     } else if (updating) {
@@ -46,13 +49,17 @@ export const recursiveDispatcher: Dispatcher = <T>(
   stream: Stream<T>,
   value: T
 ): void => {
-  if (!isSignal(value)) {
-    stream.val = value;
-    if (stream.state) {
-      markAsChanging(stream);
-      pushUpdate(stream, true);
-    }
-  } else if (value === END) {
-    stream.end(true);
+  switch (value) {
+    case SKIP:
+      break;
+    case END:
+      stream.end(true);
+      break;
+    default:
+      stream.val = value;
+      if (stream.state) {
+        markAsChanging(stream);
+        pushUpdate(stream, true);
+      }
   }
 };

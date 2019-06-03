@@ -30,7 +30,7 @@ stream(5)(6); // mapped emits only 125, 6 is filtered out
 
 ## Goals
 * Provide a tree-shakeable FRP library for use with bundlers like Rollup
-* Have better performance while providing similar ergonomics/API to libraries like Flyd, RxJS
+* Have good performance while providing similar ergonomics/API to libraries like Flyd, RxJS
 * Make use of Typescript as the implementation language for the library for better type documentation and interfaces
 
 ## Documentation

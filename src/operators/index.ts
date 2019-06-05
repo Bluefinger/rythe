@@ -5,5 +5,15 @@ import { filter } from "./filter";
 import { map } from "./map";
 import { scan } from "./scan";
 import { endsWith } from "./endsWith";
+import { flattenPromise } from "./flattenPromise";
 
-export { combine, dropRepeats, dropWith, endsWith, filter, map, scan };
+export {
+  combine,
+  dropRepeats,
+  dropWith,
+  endsWith,
+  filter,
+  map,
+  scan,
+  flattenPromise
+};

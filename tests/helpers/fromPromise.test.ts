@@ -1,6 +1,7 @@
 import { fromPromise } from "rythe/helpers";
 import { isStream } from "rythe/stream";
 import { StreamState } from "rythe/constants";
+import flushPromises from "flush-promises";
 
 const delay = <T>(ms: number, value?: T, fail?: true) =>
   new Promise<T>((resolve, reject) =>
@@ -18,29 +19,23 @@ describe("fromPromise", () => {
   });
   it("should return the resolved value and close once done", async () => {
     expect.assertions(4);
-    const p = delay(100, "foo");
-    const s = fromPromise(p);
+    const s = fromPromise(delay(100, "foo"));
 
     expect(s()).toBeUndefined();
     expect(s.state).toBe(StreamState.PENDING);
 
     jest.runAllTimers();
-    await p;
+    await flushPromises();
     expect(s()).toBe("foo");
     expect(s.state).toBe(StreamState.CLOSED);
   });
   it("should close if the Promise rejects", async () => {
-    expect.assertions(4);
-    const p = delay(100, "Error", true);
-    const s = fromPromise(p);
-    try {
-      expect(s.state).toBe(StreamState.PENDING);
-      jest.runAllTimers();
-      await p;
-    } catch (e) {
-      expect(e).toBe("Error");
-      expect(s()).toBe(undefined);
-      expect(s.state).toBe(StreamState.CLOSED);
-    }
+    expect.assertions(3);
+    const s = fromPromise(delay(100, "Error", true));
+    expect(s.state).toBe(StreamState.PENDING);
+    jest.runAllTimers();
+    await flushPromises();
+    expect(s()).toBe(undefined);
+    expect(s.state).toBe(StreamState.CLOSED);
   });
 });

@@ -7,7 +7,8 @@ import {
   endsWith,
   filter,
   map,
-  scan
+  scan,
+  flattenPromise
 } from "./operators/index";
 import { END, SKIP } from "./signal";
 import { Stream, StreamFn, DependentTuple } from "./types";
@@ -24,6 +25,7 @@ export {
   filter,
   scan,
   map,
+  flattenPromise,
   END,
   SKIP,
   Stream,

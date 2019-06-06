@@ -6,7 +6,7 @@ const applyEventStream = (
   stream: Stream<Event>,
   targets: NodeList | HTMLCollection,
   event: string,
-  eventOptions?: EventListenerOptions
+  eventOptions?: boolean | AddEventListenerOptions
 ): void => {
   for (let i = targets.length; i--; ) {
     const target = targets[i];
@@ -31,7 +31,7 @@ const isNode = (node: Node | NodeList | HTMLCollection): node is Node =>
 export const fromDOMEvent = (
   target: Node | NodeList | HTMLCollection,
   event: string,
-  eventOptions?: EventListenerOptions
+  eventOptions?: boolean | AddEventListenerOptions
 ): Stream<Event> => {
   const eventStream = createStream<Event>();
   let operator: () => void;

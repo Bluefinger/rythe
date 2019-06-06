@@ -59,7 +59,7 @@ describe("scan", () => {
 
     a(1)(2)(3);
     expect(s()).toBe(6);
-    expect(s.parents).toBe(a);
+    expect(s.parents).toEqual([a]);
     expect(scanFn).toBeCalledTimes(3);
 
     scanFn.mockClear();
@@ -67,7 +67,7 @@ describe("scan", () => {
     a(5)(6);
 
     expect(s()).toBe(6);
-    expect(s.parents).toBe(null);
+    expect(s.parents).toEqual([]);
     expect(scanFn).toBeCalledTimes(0);
   });
 });

@@ -20,7 +20,7 @@ export const markAsChanging = (stream: Stream<any>): void => {
   stream.state = CHANGING;
   for (let i = dependents.length; i--; ) {
     const [dep] = dependents[i];
-    if (state !== PENDING) dep.waiting += 1;
+    if (dep.parents.length > 1 && state !== PENDING) dep.waiting += 1;
     if (dep.state !== CHANGING) {
       markAsChanging(dep);
     }

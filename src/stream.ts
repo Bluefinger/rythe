@@ -31,20 +31,15 @@ function boundPipe<T>(
 }
 
 const close: Closer = <T>(stream: Stream<T>): Closer => {
-  if (Array.isArray(stream.parents)) {
-    stream.parents.forEach(removeDep, stream);
-  } else if (stream.parents) {
-    removeDep.call(stream, stream.parents);
-  }
-  stream.dependents.length = 0;
-  stream.parents = null;
+  stream.parents.forEach(removeDep, stream);
+  stream.dependents.length = stream.parents.length = 0;
   stream.state = CLOSED;
   return close;
 };
 
 const initStream = <T>(stream: Partial<Stream<T>>): Stream<T> => {
   stream.dependents = [];
-  stream.parents = null;
+  stream.parents = [];
   stream.state = PENDING;
   stream.waiting = 0;
   stream.updating = false;

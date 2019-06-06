@@ -4,7 +4,7 @@ import { SKIP } from "../signal";
 import { Stream, OperatorFn } from "../types";
 import { subscriber } from "../utils/subscriber";
 
-const { ACTIVE, PENDING } = StreamState;
+const { ACTIVE } = StreamState;
 
 export function map<T>(
   mapFn: (value: T) => T,
@@ -32,8 +32,6 @@ export function map<T>(
     const mapStream = createStream<any>();
     if (state === ACTIVE && ignoreInitial !== SKIP) {
       mapStream(mapFn(val));
-    } else if (state === PENDING) {
-      mapStream.waiting = 1;
     }
     return subscriber(mapStream, source, mapFn);
   };

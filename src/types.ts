@@ -68,7 +68,7 @@ export interface Stream<T> {
    * The Parent Stream or Streams that the current Stream is subscribed to. If it not subscribed
    * to any other Streams, it is null.
    */
-  parents: Stream<any>[] | Stream<any> | null;
+  parents: Stream<any>[];
 
   pipe(): Stream<T>;
   pipe<A>(fn1: OperatorFn<T, A>): Stream<A>;

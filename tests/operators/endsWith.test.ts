@@ -7,9 +7,9 @@ describe("endsWith", () => {
     const a = createStream<number>();
     const b = createStream<string>();
     expect(a.dependents.length).toBe(0);
-    expect(a.parents).toBe(null);
+    expect(a.parents).toEqual([]);
     endsWith<string>(a)(b);
-    expect(b.parents).toBe(a);
+    expect(b.parents).toEqual([a]);
   });
   it("subscribed Streams get ended by updates from the parent Stream", () => {
     const a = createStream<number>();

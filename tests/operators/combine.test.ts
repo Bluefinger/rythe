@@ -106,7 +106,7 @@ describe("combine()", () => {
     b(5);
 
     expect(c()).toBe(7);
-    expect(c.parents).toBe(null);
+    expect(c.parents).toEqual([]);
     expect(b.dependents.length).toBe(0);
     expect(a.dependents.length).toBe(0);
   });

@@ -84,13 +84,13 @@ describe("dropRepeats", () => {
     a(1)(3);
     expect(m()).toBe(3);
     expect(mapFn).toBeCalledTimes(2);
-    expect(dr.parents).toBe(a);
+    expect(dr.parents).toEqual([a]);
 
     mapFn.mockClear();
     dr.end(true);
     a(3)(3)(1);
     expect(m()).toBe(3);
     expect(mapFn).toBeCalledTimes(0);
-    expect(dr.parents).toBe(null);
+    expect(dr.parents).toEqual([]);
   });
 });

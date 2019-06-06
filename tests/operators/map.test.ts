@@ -46,12 +46,12 @@ describe("map", () => {
     const b = a.pipe(map<number>(mapFn));
 
     expect(b()).toBe(2);
-    expect(b.parents).toBe(a);
+    expect(b.parents).toEqual([a]);
     expect(a.dependents.length).toBe(1);
     expect(a.dependents[0]).toEqual([b, mapFn]);
 
     b.end(true);
-    expect(b.parents).toBe(null);
+    expect(b.parents).toEqual([]);
     expect(a.dependents.length).toBe(0);
 
     a(3)(5);

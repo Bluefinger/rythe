@@ -9,15 +9,14 @@ function toJSON(this: Stream<any>): any {
   return this.val != null && this.val.toJSON ? this.val.toJSON() : this.val;
 }
 
-function removeDep(this: Stream<any>, parent: Stream<any>): void {
-  let index: number;
-  const deps = parent.dependents;
-  for (index = deps.length; index--; ) {
-    if (deps[index][0] === this) {
+function removeDep(this: Stream<any>, { dependents }: Stream<any>): void {
+  let index = dependents.length;
+  while (index--) {
+    if (dependents[index][0] === this) {
       break;
     }
   }
-  deps.splice(index, 1);
+  dependents.splice(index, 1);
 }
 
 function boundPipe<T>(

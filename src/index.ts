@@ -12,7 +12,7 @@ import {
 } from "./operators/index";
 import { END, SKIP } from "./signal";
 import { Stream, StreamFn, DependentTuple } from "./types";
-import { fromDOMEvent, fromNodeEvent, fromPromise } from "./helpers";
+import { every, fromDOMEvent, fromNodeEvent, fromPromise } from "./helpers";
 
 export {
   createStream,
@@ -31,6 +31,7 @@ export {
   Stream,
   StreamFn,
   DependentTuple,
+  every,
   fromDOMEvent,
   fromNodeEvent,
   fromPromise

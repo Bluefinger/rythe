@@ -1,4 +1,5 @@
 import { combine } from "./combine";
+import { lift } from "./lift";
 import { dropWith } from "./dropWith";
 import { dropRepeats } from "./dropRepeats";
 import { filter } from "./filter";
@@ -9,6 +10,7 @@ import { flattenPromise } from "./flattenPromise";
 
 export {
   combine,
+  lift,
   dropRepeats,
   dropWith,
   endsWith,

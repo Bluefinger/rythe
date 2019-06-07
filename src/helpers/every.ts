@@ -1,6 +1,6 @@
 import { createStream } from "../stream";
 import { Stream } from "../types";
-import { map } from "rythe/operators";
+import { map } from "../operators";
 
 const timer = (stream: Stream<number>, duration: number, tick: number) => {
   const now = Date.now();

@@ -6,6 +6,7 @@ import {
   dropWith,
   endsWith,
   filter,
+  lift,
   map,
   scan,
   flattenPromise
@@ -23,6 +24,7 @@ export {
   dropWith,
   endsWith,
   filter,
+  lift,
   scan,
   map,
   flattenPromise,

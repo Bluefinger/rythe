@@ -22,7 +22,7 @@ describe("subscriber", () => {
   it("subscribes a stream with many parents already", () => {
     const a = createStream<number>();
     const b = createStream<number>();
-    const c = combine((sA, sB) => sA() + sB(), [a, b]);
+    const c = combine((sA, sB) => sA() + sB(), a, b);
     expect(c.parents).toEqual([a, b]);
     subscriber(c, a.end, () => END);
     expect(c.parents).toEqual([a, b, a.end]);

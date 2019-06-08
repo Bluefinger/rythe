@@ -3,6 +3,11 @@ import { Stream } from "../types";
 
 const { ACTIVE, CHANGING, PENDING } = StreamState;
 
+const shouldIncrementWait = (
+  immediate: true | undefined,
+  state: StreamState
+): boolean => !(immediate || state === PENDING);
+
 export const isReady = (stream: Stream<any>): boolean =>
   !(stream.waiting && --stream.waiting);
 
@@ -20,7 +25,9 @@ export const markAsChanging = (stream: Stream<any>): void => {
   stream.state = CHANGING;
   for (let i = dependents.length; i--; ) {
     const [dep] = dependents[i];
-    if (dep.parents.length > 1 && state !== PENDING) dep.waiting += 1;
+    if (dep.parents.length > 1 && shouldIncrementWait(dep.immediate, state)) {
+      dep.waiting += 1;
+    }
     if (dep.state !== CHANGING) {
       markAsChanging(dep);
     }

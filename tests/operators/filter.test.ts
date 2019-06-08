@@ -57,7 +57,7 @@ describe("filter", () => {
     const b = a.pipe(filter(value => value % 2 === 0));
     const c = a.pipe(filter(value => value < 3 || value > 4));
     const d = a.pipe(filter(value => value !== 3));
-    const atomic = combine(combineFn, [b, c, d]).pipe(
+    const atomic = combine(combineFn, b, c, d).pipe(
       scan<string>(
         (acc, value) => {
           acc.push(value);

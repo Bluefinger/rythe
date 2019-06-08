@@ -8,6 +8,7 @@ import {
   filter,
   lift,
   map,
+  merge,
   scan,
   flattenPromise
 } from "./operators/index";
@@ -27,6 +28,7 @@ export {
   lift,
   scan,
   map,
+  merge,
   flattenPromise,
   END,
   SKIP,

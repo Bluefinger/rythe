@@ -9,7 +9,7 @@ const { PENDING } = StreamState;
  */
 export function combine<T extends Stream<any>[], U>(
   combineFn: (...sources: T) => U,
-  sources: T
+  ...sources: T
 ): Stream<U> {
   const combinedStream = createStream<U>();
   combinedStream.parents = sources;

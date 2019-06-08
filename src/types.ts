@@ -1,5 +1,11 @@
 import { StreamState } from "./constants";
 
+export type StreamValue<T> = T extends Stream<infer V> ? V : any;
+
+export type StreamValuesFromArray<T> = T extends (infer U)[]
+  ? StreamValue<U>
+  : never;
+
 export type OperatorFn<T, U> = (source: Stream<T>) => Stream<U>;
 
 /**
@@ -40,6 +46,11 @@ export interface Stream<T> {
    * @internal
    */
   updating: boolean;
+  /**
+   * Flag for dispatcher to not wait for all parents to resolve in order to execute stream.
+   * @internal
+   */
+  immediate: true | undefined;
   /**
    * Current State of the Stream. Possible state values:
    * 0. CLOSED: The Stream is closed. It won't notify any dependents nor be updated by any parents.

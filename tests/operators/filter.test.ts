@@ -50,8 +50,8 @@ describe("filter", () => {
     expect(b.state).toBe(StreamState.PENDING);
   });
   it("will filter atomically", () => {
-    const combineFn = jest.fn(
-      (...args: Stream<number>[]): string => JSON.stringify(args)
+    const combineFn = jest.fn((...args: Stream<number>[]): string =>
+      JSON.stringify(args)
     );
     const a = createStream<number>();
     const b = a.pipe(filter(value => value % 2 === 0));

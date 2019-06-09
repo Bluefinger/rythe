@@ -27,12 +27,10 @@ export function scan(
 ): OperatorFn<any, any> {
   return (source: Stream<any>): Stream<any> => {
     let acc = initial;
-    const scanned = map<any, any>(
-      (value): any => {
-        acc = scanFn(acc, value);
-        return acc;
-      }
-    )(source);
+    const scanned = map<any, any>((value): any => {
+      acc = scanFn(acc, value);
+      return acc;
+    })(source);
     if (scanned.state === PENDING) {
       scanned(initial);
     }

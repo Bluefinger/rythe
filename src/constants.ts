@@ -18,5 +18,6 @@ export enum StreamState {
 
 export const StreamError = {
   SOURCE_ERROR: "Source(s) must be a Stream function",
-  PIPE_ERROR: "Can't pipe with no functions"
+  PIPE_ERROR: "Can't pipe with no functions",
+  INVALID_ARGUMENTS: "Invalid arguments provided."
 } as const;

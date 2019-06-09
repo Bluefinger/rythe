@@ -9,6 +9,10 @@ function toJSON(this: Stream<any>): any {
   return this.val != null && this.val.toJSON ? this.val.toJSON() : this.val;
 }
 
+function toString(this: Stream<any>): string {
+  return `streamFn{${this.val}}`;
+}
+
 function removeDep(this: Stream<any>, { dependents }: Stream<any>): void {
   let index = dependents.length;
   while (index--) {
@@ -45,6 +49,7 @@ const initStream = <T>(stream: Partial<Stream<T>>): Stream<T> => {
 
   stream.pipe = boundPipe;
   stream.toJSON = toJSON;
+  stream.toString = toString;
   stream.constructor = initStream;
 
   return stream as Stream<T>;

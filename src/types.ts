@@ -1,6 +1,6 @@
 import { StreamState } from "./constants";
 
-export type StreamValue<T> = T extends Stream<infer V> ? V : any;
+export type StreamValue<T> = T extends Stream<infer V> ? V : never;
 
 export type StreamValuesFromArray<T> = T extends (infer U)[]
   ? StreamValue<U>

@@ -23,8 +23,8 @@ describe("subscriber", () => {
     const a = createStream<number>();
     const b = createStream<number>();
     const c = combine((sA, sB) => sA() + sB(), a, b);
-    expect(c.parents).toEqual([a, b]);
+    expect(c.parents).toEqual([b, a]);
     subscriber(c, a.end, () => END);
-    expect(c.parents).toEqual([a, b, a.end]);
+    expect(c.parents).toEqual([b, a, a.end]);
   });
 });

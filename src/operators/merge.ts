@@ -2,16 +2,17 @@ import { Stream, StreamValuesFromArray } from "../types";
 import { createStream, isStream } from "../stream";
 import { StreamState, StreamError } from "../constants";
 import { subscriber } from "../utils/subscriber";
-import { killFn } from "../utils/killFn";
+import { kill } from "../utils/kill";
 
 const { ACTIVE } = StreamState;
 
 const passthrough = <T>(n: T): T => n;
 
-export function merge<T extends Stream<any>[]>(
-  ...sources: T
-): Stream<StreamValuesFromArray<T>> {
-  const merged = createStream<StreamValuesFromArray<T>>();
+export function merge<
+  T extends Stream<any>[],
+  U extends StreamValuesFromArray<T>
+>(...sources: T): Stream<U> {
+  const merged = createStream<U>();
 
   let immediate;
   merged.immediate = true;
@@ -22,7 +23,7 @@ export function merge<T extends Stream<any>[]>(
       throw new Error(StreamError.SOURCE_ERROR);
     }
     subscriber(merged, source, passthrough);
-    subscriber(merged.end, source.end, killFn);
+    subscriber(merged.end, source.end, kill);
     if (!immediate && source.state === ACTIVE) {
       immediate = source;
     }

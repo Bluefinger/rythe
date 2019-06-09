@@ -6,6 +6,8 @@ import { filter } from "./filter";
 import { map } from "./map";
 import { merge } from "./merge";
 import { scan } from "./scan";
+import { skip } from "./skip";
+import { take } from "./take";
 import { endsWith } from "./endsWith";
 import { flattenPromise } from "./flattenPromise";
 
@@ -19,5 +21,7 @@ export {
   map,
   merge,
   scan,
+  skip,
+  take,
   flattenPromise
 };

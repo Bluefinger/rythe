@@ -10,6 +10,8 @@ import {
   map,
   merge,
   scan,
+  skip,
+  take,
   flattenPromise
 } from "./operators/index";
 import { END, SKIP } from "./signal";
@@ -29,6 +31,8 @@ export {
   scan,
   map,
   merge,
+  skip,
+  take,
   flattenPromise,
   END,
   SKIP,

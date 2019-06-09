@@ -3,6 +3,11 @@
   "compilerOptions": {
     "declaration": false,
     "declarationMap": false,
-    "sourceRoot": "../../src"
+    "sourceRoot": "../../src",
+    "target": "es5",
+    "noEmitHelpers": false,
+    "importHelpers": true,
+    "module": "esnext",
+    "outDir": "../dist/umd"
   }
 }

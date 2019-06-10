@@ -13,7 +13,8 @@
     "build:all": "tsc --build ./config/tsconfig.esm.json ./config/tsconfig.cjs.json --pretty",
     "build:umd": "rollup -c",
     "clean": "rimraf ./dist/*",
-    "test": "npm-run-all test:lint test:unit",
+    "test": "npm-run-all test:lint test:deps test:unit",
+    "test:deps": "madge -c --ts-config ./tsconfig.json ./src/index.ts",
     "test:lint": "eslint \"./+(src|tests)/**/*.ts\"",
     "test:unit": "jest --all --coverage --maxWorkers=8",
     "clear:test": "jest --clearCache",
@@ -38,6 +39,9 @@
     "url": "https://github.com/Bluefinger/rythe/issues"
   },
   "homepage": "https://github.com/Bluefinger/rythe",
+  "repository": {
+    "url": "https://github.com/Bluefinger/rythe"
+  },
   "license": "MIT",
   "dependencies": {
     "tslib": "^1.9.3"
@@ -55,6 +59,7 @@
     "jest-cli": "^24.8.0",
     "jest-config": "^24.8.0",
     "jest-date-mock": "^1.0.7",
+    "madge": "^3.4.4",
     "npm-run-all": "^4.1.5",
     "prettier": "^1.18.2",
     "rimraf": "^2.6.3",

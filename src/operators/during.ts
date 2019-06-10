@@ -1,8 +1,12 @@
 import { Stream, OperatorFn } from "../types";
 import { scan } from "./scan";
 import { map } from "./map";
-import { every } from "../helpers";
 import { createStream } from "../stream";
+
+const clearStore = <T>(values: T[], emit: Stream<T[]>) => {
+  emit(values.slice());
+  values.length = 0;
+};
 
 /**
  * Time-slicing Stream. Buffers all values during a set interval into an array,
@@ -18,20 +22,11 @@ export const during = <T>(duration: number): OperatorFn<T, T[]> => (
     stored.push(value);
     return stored;
   }, values)(source);
-  const tick = every(duration);
-  const reset = tick.pipe<void>(
-    map(() => {
-      if (values.length) {
-        emit(values.slice());
-        values.length = 0;
-      }
-    })
-  );
+  const tick = setInterval(clearStore, duration, values, emit);
   emit.end.pipe(
     map(ended => {
-      tick.end(ended);
+      clearInterval(tick);
       accumulator.end(ended);
-      reset.end(ended);
     })
   );
   return emit;

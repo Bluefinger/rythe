@@ -42,7 +42,7 @@ describe("scan", () => {
     const a = createStream<number>();
     const b = createStream<number>();
     const aM = map<number>(n => n)(a);
-    const c = combine((sA, sB) => sA() + sB(), [aM, b]);
+    const c = combine((sA, sB) => sA() + sB(), aM, b);
     const s = scan(scanFn, 0)(c);
     const m = map<number>(value => atomic.push(value), SKIP)(s);
     a(2);
@@ -59,7 +59,7 @@ describe("scan", () => {
 
     a(1)(2)(3);
     expect(s()).toBe(6);
-    expect(s.parents).toBe(a);
+    expect(s.parents).toEqual([a]);
     expect(scanFn).toBeCalledTimes(3);
 
     scanFn.mockClear();
@@ -67,7 +67,7 @@ describe("scan", () => {
     a(5)(6);
 
     expect(s()).toBe(6);
-    expect(s.parents).toBe(null);
+    expect(s.parents).toEqual([]);
     expect(scanFn).toBeCalledTimes(0);
   });
 });

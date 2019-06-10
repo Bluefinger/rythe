@@ -1,5 +1,11 @@
 import { StreamState } from "./constants";
 
+export type StreamValue<T> = T extends Stream<infer V> ? V : never;
+
+export type StreamValuesFromArray<T> = T extends (infer U)[]
+  ? StreamValue<U>
+  : never;
+
 export type OperatorFn<T, U> = (source: Stream<T>) => Stream<U>;
 
 /**
@@ -41,6 +47,11 @@ export interface Stream<T> {
    */
   updating: boolean;
   /**
+   * Flag for dispatcher to not wait for all parents to resolve in order to execute stream.
+   * @internal
+   */
+  immediate: true | undefined;
+  /**
    * Current State of the Stream. Possible state values:
    * 0. CLOSED: The Stream is closed. It won't notify any dependents nor be updated by any parents.
    * 1. PENDING: The Stream is pending an update. It has not received any values yet.
@@ -68,9 +79,10 @@ export interface Stream<T> {
    * The Parent Stream or Streams that the current Stream is subscribed to. If it not subscribed
    * to any other Streams, it is null.
    */
-  parents: Stream<any>[] | Stream<any> | null;
+  parents: Stream<any>[];
 
   pipe(): Stream<T>;
+  pipe(fn1: OperatorFn<T, T>): Stream<T>;
   pipe<A>(fn1: OperatorFn<T, A>): Stream<A>;
   pipe<A, B>(fn1: OperatorFn<T, A>, fn2: OperatorFn<A, B>): Stream<B>;
   pipe<A, B, C>(

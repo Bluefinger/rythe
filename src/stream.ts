@@ -9,15 +9,18 @@ function toJSON(this: Stream<any>): any {
   return this.val != null && this.val.toJSON ? this.val.toJSON() : this.val;
 }
 
-function removeDep(this: Stream<any>, parent: Stream<any>): void {
-  let index: number;
-  const deps = parent.dependents;
-  for (index = deps.length; index--; ) {
-    if (deps[index][0] === this) {
+function toString(this: Stream<any>): string {
+  return `streamFn{${this.val}}`;
+}
+
+function removeDep(this: Stream<any>, { dependents }: Stream<any>): void {
+  let index = dependents.length;
+  while (index--) {
+    if (dependents[index][0] === this) {
       break;
     }
   }
-  deps.splice(index, 1);
+  dependents.splice(index, 1);
 }
 
 function boundPipe<T>(
@@ -31,26 +34,22 @@ function boundPipe<T>(
 }
 
 const close: Closer = <T>(stream: Stream<T>): Closer => {
-  if (Array.isArray(stream.parents)) {
-    stream.parents.forEach(removeDep, stream);
-  } else if (stream.parents) {
-    removeDep.call(stream, stream.parents);
-  }
-  stream.dependents.length = 0;
-  stream.parents = null;
+  stream.parents.forEach(removeDep, stream);
+  stream.dependents.length = stream.parents.length = 0;
   stream.state = CLOSED;
   return close;
 };
 
 const initStream = <T>(stream: Partial<Stream<T>>): Stream<T> => {
   stream.dependents = [];
-  stream.parents = null;
+  stream.parents = [];
   stream.state = PENDING;
   stream.waiting = 0;
   stream.updating = false;
 
   stream.pipe = boundPipe;
   stream.toJSON = toJSON;
+  stream.toString = toString;
   stream.constructor = initStream;
 
   return stream as Stream<T>;

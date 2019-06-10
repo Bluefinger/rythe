@@ -8,23 +8,23 @@ describe("subscriber", () => {
     const a = createStream<number>();
     const b = createStream<string>();
     expect(a.dependents.length).toBe(0);
-    expect(a.parents).toBe(null);
+    expect(a.parents).toEqual([]);
     subscriber<number, string>(b, a, (value: number) => value + "");
-    expect(b.parents).toBe(a);
+    expect(b.parents).toEqual([a]);
   });
   it("subscribes a stream with one parent already", () => {
     const a = createStream<number>();
     const b = a.pipe(map(value => value + ""));
-    expect(b.parents).toBe(a);
+    expect(b.parents).toEqual([a]);
     subscriber(b, a.end, () => END);
     expect(b.parents).toEqual([a, a.end]);
   });
   it("subscribes a stream with many parents already", () => {
     const a = createStream<number>();
     const b = createStream<number>();
-    const c = combine((sA, sB) => sA() + sB(), [a, b]);
-    expect(c.parents).toEqual([a, b]);
+    const c = combine((sA, sB) => sA() + sB(), a, b);
+    expect(c.parents).toEqual([b, a]);
     subscriber(c, a.end, () => END);
-    expect(c.parents).toEqual([a, b, a.end]);
+    expect(c.parents).toEqual([b, a, a.end]);
   });
 });

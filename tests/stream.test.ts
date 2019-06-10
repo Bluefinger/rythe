@@ -77,7 +77,7 @@ describe("Rythe", () => {
     });
   });
   describe("toJSON", () => {
-    it("can serialize into a JSON string", () => {
+    it("can serialise into a JSON string", () => {
       const a = createStream<number>(2);
       const b = createStream<string>("foo");
       const c = createStream<Stream<number>>(a);
@@ -86,6 +86,16 @@ describe("Rythe", () => {
       const f = createStream<any>(null);
       const json = JSON.stringify({ a, b, c, d, e, f });
       expect(json).toBe('{"a":2,"b":"foo","c":2,"d":{"e":true},"f":null}');
+    });
+  });
+  describe("toString", () => {
+    it("can serialise into a plain string", () => {
+      const a = createStream<number>(2);
+      const b = createStream<string>("foo");
+      const c = createStream<Stream<number>>(a);
+      expect(a.toString()).toBe("streamFn{2}");
+      expect(b.toString()).toBe("streamFn{foo}");
+      expect(c.toString()).toBe("streamFn{streamFn{2}}");
     });
   });
 });

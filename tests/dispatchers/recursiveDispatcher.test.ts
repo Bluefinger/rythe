@@ -43,16 +43,17 @@ describe("recursiveDispatcher", () => {
     const atomic: string[] = [];
     const a = createStream<string>();
     const b = createStream<string>();
-    const c = combine((sA, sB) => sA() + sB() + "c", [a, b]);
+    const c = combine((sA, sB) => sA() + sB() + "c", a, b);
     const d = map<string>(val => val + "d")(c);
-    const e = combine((sB, sC) => sB() + sC() + "e", [b, c]);
+    const e = combine((sB, sC) => sB() + sC() + "e", b, c);
     const f = combine(
       (sD, sE) => {
         const result = sD() + sE() + "f";
         atomic.push(result);
         return result;
       },
-      [d, e]
+      d,
+      e
     );
 
     // Should invoke once once there are no streams pending values

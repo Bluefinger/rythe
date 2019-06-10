@@ -4,12 +4,16 @@ import { SKIP } from "../signal";
 import { Stream, OperatorFn } from "../types";
 import { subscriber } from "../utils/subscriber";
 
-const { ACTIVE, PENDING } = StreamState;
+const { ACTIVE } = StreamState;
 
 export function map<T>(
   mapFn: (value: T) => T,
   ignoreInitial?: SKIP
 ): OperatorFn<T, T>;
+export function map<T>(
+  mapFn: (value: T) => T[],
+  ignoreInitial?: SKIP
+): OperatorFn<T, T[]>;
 export function map<T, U>(
   mapFn: (value: T) => U,
   ignoreInitial?: SKIP
@@ -20,20 +24,18 @@ export function map<T, U>(
  * new Stream of the map function's output type. Can ignore the initial value
  * from the source Stream.
  */
-export function map<T>(
-  mapFn: (value: T) => any,
+export function map<T, U>(
+  mapFn: (value: T) => U,
   ignoreInitial?: SKIP
 ): OperatorFn<any, any> {
-  return (source: Stream<any>): Stream<any> => {
+  return (source: Stream<T>): Stream<U> => {
     const { state, val } = source;
     if (!isStream(source)) {
       throw new Error(StreamError.SOURCE_ERROR);
     }
-    const mapStream = createStream<any>();
+    const mapStream = createStream<U>();
     if (state === ACTIVE && ignoreInitial !== SKIP) {
       mapStream(mapFn(val));
-    } else if (state === PENDING) {
-      mapStream.waiting = 1;
     }
     return subscriber(mapStream, source, mapFn);
   };

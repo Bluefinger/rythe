@@ -26,10 +26,10 @@ const defineCombinedRythe = () => {
   const cA = Rythe.createStream();
   const cB = Rythe.createStream();
   const sources = [cA, cB];
-  const cC = Rythe.combine(combineAB, sources);
+  const cC = Rythe.combine(combineAB, ...sources);
   const cD = cC.pipe(Rythe.map(mapD));
-  const cE = Rythe.combine(combineBC, [cB, cC]);
-  const cF = Rythe.combine(combineDE, [cA, cD, cE]);
+  const cE = Rythe.combine(combineBC, cB, cC);
+  const cF = Rythe.combine(combineDE, cA, cD, cE);
   return { inputs: sources, output: cF };
 };
 
@@ -63,7 +63,7 @@ const defineConditionalRythe = () => {
   const a = s.pipe(Rythe.filter(value => value % 2 === 0));
   const b = s.pipe(Rythe.filter(value => value < 3 || value > 4));
   const c = s.pipe(Rythe.filter(value => value !== 3));
-  const o = Rythe.combine(conditionalABC, [a, b, c]);
+  const o = Rythe.combine(conditionalABC, a, b, c);
   return { input: s, o };
 };
 

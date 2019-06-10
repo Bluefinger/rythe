@@ -19,6 +19,7 @@ export const pipeFromArray = (
 };
 
 export function pipe(): never;
+export function pipe<T>(fn1: OperatorFn<T, T>): OperatorFn<T, T>;
 export function pipe<T, A>(fn1: OperatorFn<T, A>): OperatorFn<T, A>;
 export function pipe<T, A, B>(
   fn1: OperatorFn<T, A>,

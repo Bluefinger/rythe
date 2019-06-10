@@ -1,9 +1,11 @@
 import { createStream, isStream } from "./stream";
 import { StreamState } from "./constants";
 import {
+  after,
   combine,
   dropRepeats,
   dropWith,
+  during,
   endsWith,
   filter,
   lift,
@@ -22,9 +24,11 @@ export {
   createStream,
   isStream,
   StreamState,
+  after,
   combine,
   dropRepeats,
   dropWith,
+  during,
   endsWith,
   filter,
   lift,

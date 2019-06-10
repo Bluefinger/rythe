@@ -1,4 +1,6 @@
+import { after } from "./after";
 import { combine } from "./combine";
+import { during } from "./during";
 import { lift } from "./lift";
 import { dropWith } from "./dropWith";
 import { dropRepeats } from "./dropRepeats";
@@ -12,7 +14,9 @@ import { endsWith } from "./endsWith";
 import { flattenPromise } from "./flattenPromise";
 
 export {
+  after,
   combine,
+  during,
   lift,
   dropRepeats,
   dropWith,

@@ -82,6 +82,7 @@ export interface Stream<T> {
   parents: Stream<any>[];
 
   pipe(): Stream<T>;
+  pipe(fn1: OperatorFn<T, T>): Stream<T>;
   pipe<A>(fn1: OperatorFn<T, A>): Stream<A>;
   pipe<A, B>(fn1: OperatorFn<T, A>, fn2: OperatorFn<A, B>): Stream<B>;
   pipe<A, B, C>(

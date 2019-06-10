@@ -50,4 +50,18 @@ describe("during", () => {
     expect(d()).toEqual([1, 2, 3]);
     expect(count()).toBe(1);
   });
+  it("won't emit if it receives no values", () => {
+    const a = createStream<number>();
+    const d = a.pipe(during(100));
+    const count = d.pipe(scan(num => ++num, 0));
+    // Updates here
+    a(1)(2)(3);
+    jest.advanceTimersByTime(100);
+    expect(d()).toEqual([1, 2, 3]);
+    expect(count()).toBe(1);
+    // No updates here
+    jest.advanceTimersByTime(100);
+    expect(d()).toEqual([1, 2, 3]);
+    expect(count()).toBe(1);
+  });
 });

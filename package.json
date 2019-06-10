@@ -40,7 +40,8 @@
   },
   "homepage": "https://github.com/Bluefinger/rythe",
   "repository": {
-    "url": "https://github.com/Bluefinger/rythe"
+    "type": "git",
+    "url": "git+https://github.com/Bluefinger/rythe.git"
   },
   "license": "MIT",
   "dependencies": {

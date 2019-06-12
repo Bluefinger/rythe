@@ -2,13 +2,11 @@ import { Stream, OperatorFn } from "../types";
 import { scan } from "./scan";
 import { map } from "./map";
 import { createStream } from "../stream";
-
-const timers = new WeakMap<Stream<any>, any>();
+import { timers } from "../utils/timers";
 
 const clearStore = <T>(values: T[], emit: Stream<T[]>) => {
   emit(values.slice());
   values.length = 0;
-  timers.delete(emit);
 };
 
 /**
@@ -22,23 +20,17 @@ export const after = <T>(duration: number): OperatorFn<T, T[]> => (
   const accumulator = scan<T>(
     (stored, value) => {
       stored.push(value);
-      const emitter = timers.get(emit);
-      if (emitter) {
-        clearTimeout(emitter);
-      }
-      timers.set(emit, setTimeout(clearStore, duration, stored, emit));
+      timers.clear(emit);
+      timers.add(emit, setTimeout(clearStore, duration, stored, emit));
       return stored;
     },
     [] as T[]
   )(source);
   emit.end.pipe(
-    map(signal => {
-      accumulator.end(signal);
-      const emitter = timers.get(emit);
-      if (emitter) {
-        clearTimeout(emitter);
-        timers.delete(emit);
-      }
+    map(accumulator.end),
+    map(() => {
+      timers.clear(emit);
+      accumulator.val.length = 0;
     })
   );
   return emit;

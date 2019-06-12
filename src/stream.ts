@@ -1,6 +1,6 @@
 import { StreamState } from "./constants";
 import { recursiveDispatcher as dispatch } from "./dispatchers/recursiveDispatcher";
-import { Stream, Closer, OperatorFn } from "./types";
+import { Stream, Closer, OperatorFn, EndStream } from "./types";
 import { pipeFromArray } from "./utils/pipe";
 
 const { CLOSED, PENDING } = StreamState;
@@ -74,15 +74,13 @@ export const createStream = <T>(initialValue?: T): Stream<T> => {
     return next;
   } as Stream<T>;
 
-  const complete = function(value: boolean): boolean | Stream<boolean> {
-    if (!arguments.length) {
-      return complete.val;
-    } else if (complete.state && value && typeof value === "boolean") {
+  const complete = function(value: boolean): boolean {
+    if (complete.state && value && typeof value === "boolean") {
       dispatch(complete, value);
       close(next)(complete);
     }
-    return complete;
-  } as Stream<boolean>;
+    return complete.val;
+  } as EndStream;
 
   const stream = initStream<T>(next);
   stream.end = initStream<boolean>(complete);

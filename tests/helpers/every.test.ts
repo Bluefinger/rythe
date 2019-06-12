@@ -29,10 +29,11 @@ describe("every", () => {
     advanceBy(1000);
     jest.advanceTimersByTime(1000);
     expect(s.val).toBe(2);
-    expect(t.val).toBe(now + 1001);
+    expect(t.val).toBe(now + 1000);
     advanceBy(1001);
     jest.advanceTimersByTime(1001);
     expect(s.val).toBe(3);
+    expect(t.val).toBe(now + 2000);
   });
   it("defaults to 0 duration", () => {
     const t = every();

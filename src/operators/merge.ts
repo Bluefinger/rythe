@@ -2,7 +2,7 @@ import { Stream, StreamValuesFromArray } from "../types";
 import { createStream, isStream } from "../stream";
 import { StreamState, StreamError } from "../constants";
 import { subscriber } from "../utils/subscriber";
-import { kill } from "../utils/kill";
+import { map } from "./map";
 
 const { ACTIVE } = StreamState;
 
@@ -23,7 +23,7 @@ export function merge<
       throw new Error(StreamError.SOURCE_ERROR);
     }
     subscriber(merged, source, passthrough);
-    subscriber(merged.end, source.end, kill);
+    map(merged.end)(source.end);
     if (!immediate && source.state === ACTIVE) {
       immediate = source;
     }

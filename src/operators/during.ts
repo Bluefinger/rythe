@@ -2,6 +2,7 @@ import { Stream, OperatorFn } from "../types";
 import { scan } from "./scan";
 import { map } from "./map";
 import { createStream } from "../stream";
+import { timers } from "../utils/timers";
 
 const clearStore = <T>(values: T[], emit: Stream<T[]>) => {
   if (values.length) {
@@ -23,11 +24,12 @@ export const during = <T>(duration: number): OperatorFn<T, T[]> => (
     stored.push(value);
     return stored;
   }, [])(source);
-  const tick = setInterval(clearStore, duration, accumulator(), emit);
+  const tick = () => clearStore(accumulator(), emit);
+  timers.interval(tick, duration, Date.now());
   emit.end.pipe(
-    map(ended => {
-      clearInterval(tick);
-      accumulator.end(ended);
+    map(accumulator.end),
+    map(() => {
+      timers.clear(tick);
       accumulator.val.length = 0;
     })
   );

@@ -1,18 +1,11 @@
 import { createStream } from "../stream";
 import { Stream } from "../types";
 import { map } from "../operators";
-
-const timer = (stream: Stream<number>, duration: number, tick: number) => {
-  const now = Date.now();
-  stream(now);
-  const target = tick + duration;
-  const delta = target - now;
-  return setTimeout(timer, delta, stream, duration, target);
-};
+import { timers } from "../utils/timers";
 
 export const every = (duration = 0): Stream<number> => {
   const stream = createStream<number>();
-  const interval = timer(stream, duration, Date.now());
-  map<boolean, void>(() => clearTimeout(interval))(stream.end);
+  timers.interval(stream, duration, Date.now());
+  map<boolean, void>(() => timers.clear(stream))(stream.end);
   return stream;
 };

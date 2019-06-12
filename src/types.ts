@@ -68,7 +68,7 @@ export interface Stream<T> {
    * A Stream for ending/completing the parent Stream. Causes all parents/dependents
    * subscriptions to be erased from the Stream, and sets its state to CLOSED.
    */
-  end: Stream<boolean>;
+  end: EndStream;
   /**
    * An Array containing tuple values of Dependent Streams and their value functions.
    * The value functions transform the parent Stream's value to the Dependent Stream's
@@ -155,6 +155,17 @@ export interface Stream<T> {
   ): Stream<any>;
   pipe<U>(...operators: OperatorFn<any, any>[]): Stream<U>;
   toJSON(): any;
+}
+
+export interface EndStream extends Stream<boolean> {
+  /**
+   * Returns the Stream's current value.
+   */
+  (): boolean;
+  /**
+   * Assigns a new value to the Stream and broadcasts it to all its dependencies.
+   */
+  (value: boolean): boolean;
 }
 
 /**

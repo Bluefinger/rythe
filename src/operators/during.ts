@@ -4,11 +4,16 @@ import { map } from "./map";
 import { createStream } from "../stream";
 import { timers } from "../utils/timers";
 
-const clearStore = <T>(values: T[], emit: Stream<T[]>) => {
+const emitValues = <T>(emit: Stream<T[]>, values: T[]) => {
   if (values.length) {
     emit(values.slice());
     values.length = 0;
   }
+};
+
+const bufferValues = <T>(stored: T[], value: T): T[] => {
+  stored.push(value);
+  return stored;
 };
 
 /**
@@ -20,11 +25,8 @@ export const during = <T>(duration: number): OperatorFn<T, T[]> => (
   source: Stream<T>
 ): Stream<T[]> => {
   const emit = createStream<T[]>();
-  const accumulator = scan<T>((stored: T[], value: T): T[] => {
-    stored.push(value);
-    return stored;
-  }, [])(source);
-  const tick = () => clearStore(accumulator(), emit);
+  const accumulator = scan<T>(bufferValues, [])(source);
+  const tick = () => emitValues(emit, accumulator());
   timers.interval(tick, duration, Date.now());
   emit.end.pipe(
     map(accumulator.end),

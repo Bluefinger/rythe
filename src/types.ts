@@ -62,6 +62,7 @@ export interface Stream<T> {
   /**
    * The Stream's current value. Mutating this property won't cause the Stream to update its
    * dependencies.
+   * @internal
    */
   val: T;
   /**
@@ -73,11 +74,12 @@ export interface Stream<T> {
    * An Array containing tuple values of Dependent Streams and their value functions.
    * The value functions transform the parent Stream's value to the Dependent Stream's
    * value type.
+   * @internal
    */
   dependents: DependentTuple<any, any>[];
   /**
-   * The Parent Stream or Streams that the current Stream is subscribed to. If it not subscribed
-   * to any other Streams, it is null.
+   * The Parent Streams that the current Stream is subscribed to. If it not subscribed
+   * to any other Streams, it is empty.
    */
   parents: Stream<any>[];
 

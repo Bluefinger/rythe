@@ -1,10 +1,8 @@
 # Rythe
+
 [![Build Status](https://travis-ci.com/Bluefinger/rythe.svg?branch=master)](https://travis-ci.com/Bluefinger/rythe) [![codecov](https://codecov.io/gh/Bluefinger/rythe/branch/master/graph/badge.svg)](https://codecov.io/gh/Bluefinger/rythe) [![npm version](https://badge.fury.io/js/rythe.svg)](https://badge.fury.io/js/rythe)
 
 A tiny, heavily tree-shakeable Reactive Stream library
-
-## HEAVY WORK IN PROGRESS
-Do not use for production. You have been warned.
 
 ## Installation and Usage
 
@@ -29,10 +27,11 @@ stream(5)(6); // mapped emits only 125, 6 is filtered out
 ```
 
 ## Goals
-* Provide a tree-shakeable FRP library for use with bundlers like Rollup
-* Have good performance while providing similar ergonomics/API to libraries like Flyd, RxJS
-* Make use of Typescript as the implementation language for the library for better type documentation and interfaces
+
+- Provide a tree-shakeable FRP library for use with bundlers like Rollup
+- Have good performance while providing similar ergonomics/API to libraries like Flyd, RxJS
+- Make use of Typescript as the implementation language for the library for better type documentation and interfaces
 
 ## Documentation
 
-Coming Soon.
+Documentation can be read [here](documentation/index.md).

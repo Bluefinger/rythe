@@ -2,8 +2,8 @@
 
 ## Table of Contents:
 
-- [Stream](stream.md)
-- [Signals](signals.md)
+- [Stream](stream/index.md)
+- [Signals](stream/signals.md)
 - [Operators](operators/index.md)
 - [Helpers](helpers/index.md)
 

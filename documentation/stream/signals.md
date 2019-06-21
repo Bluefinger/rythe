@@ -10,7 +10,7 @@ Signals are special values that can be passed into `Stream<T>` functions to acti
 const stream = createStream<number>();
 
 const piped = stream.pipe(
-   // if the number is odd, it will emit the value, else it will emit SKIP
+  // if the number is odd, it will emit the value, else it will emit SKIP
   filter(value => value % 2 !== 0),
   // Receives the value from the above filter
   map(value => value * 2)
@@ -28,9 +28,7 @@ piped(); // returns the value 10, as 6 was skipped and thus the piped() stream d
 ```typescript
 const stream = createStream<number>();
 
-const piped = stream.pipe(
-  map(value => value * 2)
-);
+const piped = stream.pipe(map(value => value * 2));
 
 // The value END will close the Stream, preventing further updates from being emitted to dependents
 stream(5)(END)(6);

@@ -57,11 +57,11 @@ describe("recursiveDispatcher", () => {
     );
 
     // Should invoke once once there are no streams pending values
-    a("a");
+    a("c")("a");
     b("b");
     expect(f()).toBe("abcdbabcef");
     expect(atomic).toEqual(["abcdbabcef"]);
-    expect(dispatcher).toBeCalledTimes(2);
+    expect(dispatcher).toBeCalledTimes(3);
     dispatcher.mockClear();
     atomic.length = 0;
     // Should now invoke three times

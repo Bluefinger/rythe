@@ -7,14 +7,13 @@ const utils = require("./utils");
 const suite = new Benchmark.Suite();
 
 console.log("Stream Creation\n");
-let output;
 
 suite
   .add("Create Rythe Stream", () => {
     Rythe.createStream();
   })
   .add("Create Subject", () => {
-    new rxjs.Subject().subscribe(val => (output = val));
+    new rxjs.Subject();
   })
   .add("Create Flyd Stream", () => {
     flyd.stream();

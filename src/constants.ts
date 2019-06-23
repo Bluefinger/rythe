@@ -1,3 +1,5 @@
+export type StreamState = 0 | 1 | 2 | 3;
+
 /**
  * Stream State enum. Comes with 4 possible states:
  * 0. CLOSED
@@ -5,16 +7,16 @@
  * 2. ACTIVE
  * 3. CHANGING
  */
-export enum StreamState {
+export const StreamState = {
   /** Stream is closed. Will no longer emit values. */
-  CLOSED,
+  CLOSED: 0,
   /** Stream is pending. Waiting to receive its first value. */
-  PENDING,
+  PENDING: 1,
   /** Stream is active. Has received a value and ready to emit. */
-  ACTIVE,
+  ACTIVE: 2,
   /** Stream is changing. Has been marked to receive a new value. */
-  CHANGING
-}
+  CHANGING: 3
+} as const;
 
 export const StreamError = {
   SOURCE_ERROR: "Source(s) must be a Stream function",

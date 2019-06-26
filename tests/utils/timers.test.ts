@@ -1,5 +1,5 @@
 import { advanceBy, advanceTo } from "jest-date-mock";
-import { timers } from "rythe/utils/timers";
+import { addTimer, addInterval, clearTimer } from "rythe/utils/timers";
 
 jest.useFakeTimers();
 
@@ -9,17 +9,17 @@ describe("timers", () => {
   });
   it("adds timers", () => {
     const mockFn = jest.fn();
-    timers.add(mockFn, setTimeout(mockFn, 10, "foo"));
+    addTimer(mockFn, 10, "foo");
     jest.advanceTimersByTime(10);
     expect(mockFn).toBeCalledTimes(1);
     expect(mockFn).toBeCalledWith("foo");
   });
   it("clears timers", () => {
     const mockFn = jest.fn();
-    timers.add(mockFn, setTimeout(mockFn, 10, "foo"));
+    addTimer(mockFn, 10, "foo");
     jest.advanceTimersByTime(5);
     expect(mockFn).toBeCalledTimes(0);
-    timers.clear(mockFn);
+    clearTimer(mockFn);
     jest.advanceTimersByTime(10);
     expect(mockFn).toBeCalledTimes(0);
   });
@@ -27,7 +27,7 @@ describe("timers", () => {
     advanceTo(new Date());
     const mockFn = jest.fn();
     const now = Date.now();
-    timers.interval(mockFn, 20, now);
+    addInterval(mockFn, 20, now);
     // interval executes function once to start at time 0
     expect(mockFn).toBeCalledTimes(1);
     expect(mockFn).toBeCalledWith(now);

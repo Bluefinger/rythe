@@ -1,21 +1,29 @@
-const timerStore = new WeakMap<Function, any>();
+const store = new WeakMap<Function, any>();
 
-export const timers = {
-  add(fn: Function, timer: any) {
-    timerStore.set(fn, timer);
-  },
-  clear(fn: Function) {
-    const timer = timerStore.get(fn);
-    if (timer) {
-      clearTimeout(timer);
-      timerStore.delete(fn);
-    }
-  },
-  interval(fn: (timestamp: number) => any, duration: number, tick: number) {
-    fn(tick);
-    const now = Date.now();
-    const target = tick + duration;
-    const delta = target - now;
-    timers.add(fn, setTimeout(timers.interval, delta, fn, duration, target));
+export const addTimer = (
+  fn: Function,
+  duration: number,
+  ...args: any[]
+): void => {
+  store.set(fn, setTimeout(fn, duration, ...args));
+};
+
+export const clearTimer = (fn: Function): void => {
+  const timer = store.get(fn);
+  if (timer) {
+    clearTimeout(timer);
+    store.delete(fn);
   }
+};
+
+export const addInterval = (
+  fn: (timestamp: number) => any,
+  duration: number,
+  tick: number
+): void => {
+  fn(tick);
+  const now = Date.now();
+  const target = tick + duration;
+  const delta = target - now;
+  store.set(fn, setTimeout(addInterval, delta, fn, duration, target));
 };

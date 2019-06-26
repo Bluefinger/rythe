@@ -2,12 +2,7 @@ import { Stream, OperatorFn } from "../types";
 import { scan } from "./scan";
 import { map } from "./map";
 import { createStream } from "../stream";
-import { timers } from "../utils/timers";
-
-const clearStore = <T>(values: T[], emit: Stream<T[]>) => {
-  emit(values.slice());
-  values.length = 0;
-};
+import { addTimer, clearTimer } from "../utils/timers";
 
 /**
  * Buffering Stream. Accumulates a series of stream events into an array, and
@@ -17,11 +12,15 @@ export const after = <T>(duration: number): OperatorFn<T, T[]> => (
   source: Stream<T>
 ): Stream<T[]> => {
   const emit = createStream<T[]>();
+  const clearStore = (values: T[]) => {
+    emit(values.slice());
+    values.length = 0;
+  };
   const accumulator = scan<T>(
     (stored, value) => {
       stored.push(value);
-      timers.clear(emit);
-      timers.add(emit, setTimeout(clearStore, duration, stored, emit));
+      clearTimer(clearStore);
+      addTimer(clearStore, duration, stored);
       return stored;
     },
     [] as T[]
@@ -29,7 +28,7 @@ export const after = <T>(duration: number): OperatorFn<T, T[]> => (
   emit.end.pipe(
     map(accumulator.end),
     map(() => {
-      timers.clear(emit);
+      clearTimer(clearStore);
       accumulator.val.length = 0;
     })
   );

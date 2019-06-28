@@ -1,5 +1,5 @@
 import { StreamState } from "./constants";
-import { recursiveDispatcher as dispatch } from "./dispatchers/recursiveDispatcher";
+import { dispatcher as push } from "./dispatcher";
 import { Stream, Closer, OperatorFn, EndStream } from "./types";
 import { pipeFromArray } from "./utils/pipe";
 
@@ -70,13 +70,13 @@ export const createStream = <T>(initialValue?: T): Stream<T> => {
     if (!arguments.length) {
       return next.val;
     }
-    dispatch(next, value);
+    push(next, value);
     return next;
   } as Stream<T>;
 
   const complete = function(value: boolean): boolean {
     if (complete.state && value && typeof value === "boolean") {
-      dispatch(complete, value);
+      push(complete, value);
       close(next)(complete);
     }
     return complete.val;

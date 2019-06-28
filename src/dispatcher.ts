@@ -1,9 +1,42 @@
-import { Stream, Dispatcher } from "../types";
-import { isReady, markActive, markAsChanging } from "./dispatcherHelpers";
-import { END, SKIP } from "../signal";
+import { StreamState } from "./constants";
+import { Stream, Dispatcher } from "./types";
+import { END, SKIP } from "./signal";
+
+const { ACTIVE, CHANGING, PENDING } = StreamState;
+
+const shouldIncrementWait = (
+  immediate: true | undefined,
+  state: StreamState
+): boolean => !(immediate || state === PENDING);
+
+const isReady = (stream: Stream<any>): boolean =>
+  !(stream.waiting && --stream.waiting);
+
+/** Mark a Stream as ACTIVE */
+const markAsActive = (stream: Stream<any>): void => {
+  stream.state = ACTIVE;
+};
+
+/**
+ * Mark all Stream Dependencies recursively. Goes from newest dependency to old,
+ * skipping those that have been marked already.
+ */
+const markAsChanging = (stream: Stream<any>): void => {
+  const { state, dependents } = stream;
+  stream.state = CHANGING;
+  for (let i = dependents.length; i--; ) {
+    const [dep] = dependents[i];
+    if (dep.parents.length > 1 && shouldIncrementWait(dep.immediate, state)) {
+      dep.waiting += 1;
+    }
+    if (dep.state !== CHANGING) {
+      markAsChanging(dep);
+    }
+  }
+};
 
 const pushUpdate = <T>(stream: Stream<T>, updating: boolean): void => {
-  markActive(stream);
+  markAsActive(stream);
   const { dependents, val } = stream;
   for (let i = dependents.length; i--; ) {
     const [dep, fn] = dependents[i];
@@ -33,7 +66,7 @@ const pushUpdate = <T>(stream: Stream<T>, updating: boolean): void => {
  * Uses a recursive broadcast approach (newest dependency to oldest
  * dependency traversal).
  */
-export const recursiveDispatcher: Dispatcher = <T>(
+export const dispatcher: Dispatcher = <T>(
   stream: Stream<T>,
   value: T
 ): void => {

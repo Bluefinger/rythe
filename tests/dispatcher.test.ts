@@ -1,41 +1,39 @@
 import { createStream } from "rythe/stream";
 import { StreamState } from "rythe/constants";
-import { recursiveDispatcher } from "rythe/dispatchers/recursiveDispatcher";
+import { dispatcher } from "rythe/dispatcher";
 import { combine, map } from "rythe/operators";
 import { END, SKIP } from "rythe/signal";
 
-jest.mock("rythe/dispatchers/recursiveDispatcher", () => {
-  const { recursiveDispatcher } = jest.requireActual(
-    "rythe/dispatchers/recursiveDispatcher"
-  );
+jest.mock("rythe/dispatcher", () => {
+  const { dispatcher } = jest.requireActual("rythe/dispatcher");
   return {
-    recursiveDispatcher: jest.fn(recursiveDispatcher)
+    dispatcher: jest.fn(dispatcher)
   };
 });
 
 describe("recursiveDispatcher", () => {
-  const dispatcher = recursiveDispatcher as jest.Mock;
+  const dispatch = dispatcher as jest.Mock;
 
   beforeEach(() => {
-    dispatcher.mockClear();
+    dispatch.mockClear();
   });
   it("can update streams", () => {
     const a = createStream<number>();
     const b = a.pipe(map(val => (val === 8 ? SKIP : val + 1)));
     a(5)(8);
-    expect(dispatcher).toBeCalledTimes(2);
+    expect(dispatch).toBeCalledTimes(2);
     expect(b()).toBe(6);
   });
   it("can close streams with an END signal", () => {
     const a = createStream<number>(5);
     const b = a.pipe(map(val => val + 1));
-    expect(dispatcher).toBeCalledTimes(2);
-    dispatcher.mockClear();
+    expect(dispatch).toBeCalledTimes(2);
+    dispatch.mockClear();
     a(END);
-    expect(dispatcher).toBeCalledTimes(2);
-    dispatcher.mockClear();
+    expect(dispatch).toBeCalledTimes(2);
+    dispatch.mockClear();
     a(6);
-    expect(dispatcher).toBeCalledTimes(1);
+    expect(dispatch).toBeCalledTimes(1);
     expect(b()).toBe(6);
     expect(a.state).toBe(StreamState.CLOSED);
   });
@@ -62,7 +60,7 @@ describe("recursiveDispatcher", () => {
     expect(f()).toBe("abcdbabcef");
     expect(atomic).toEqual(["abcdbabcef"]);
     expect(dispatcher).toBeCalledTimes(3);
-    dispatcher.mockClear();
+    dispatch.mockClear();
     atomic.length = 0;
     // Should now invoke three times
     a("A");
@@ -70,6 +68,6 @@ describe("recursiveDispatcher", () => {
     a("");
     expect(f()).toBe("BcdBBcef");
     expect(atomic).toEqual(["AbcdbAbcef", "ABcdBABcef", "BcdBBcef"]);
-    expect(dispatcher).toBeCalledTimes(3);
+    expect(dispatch).toBeCalledTimes(3);
   });
 });

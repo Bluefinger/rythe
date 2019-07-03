@@ -19,7 +19,7 @@ export const clearTimer = (fn: Function): void => {
 export const addInterval = (
   fn: (timestamp: number) => any,
   duration: number,
-  tick: number
+  tick = Date.now()
 ): void => {
   fn(tick);
   const now = Date.now();

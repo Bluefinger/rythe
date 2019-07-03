@@ -5,7 +5,7 @@
 - [Stream](stream/index.md)
 - [Signals](stream/signals.md)
 - [Operators](operators/index.md)
-- [Helpers](helpers/index.md)
+- [Helpers](helpers.md)
 
 ## Concepts
 

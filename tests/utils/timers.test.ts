@@ -27,7 +27,7 @@ describe("timers", () => {
     advanceTo(new Date());
     const mockFn = jest.fn();
     const now = Date.now();
-    addInterval(mockFn, 20, now);
+    addInterval(mockFn, 20);
     // interval executes function once to start at time 0
     expect(mockFn).toBeCalledTimes(1);
     expect(mockFn).toBeCalledWith(now);

@@ -27,7 +27,7 @@ export const during = <T>(duration: number): OperatorFn<T, T[]> => (
   const emit = createStream<T[]>();
   const accumulator = scan<T>(bufferValues, [])(source);
   const tick = () => emitValues(emit, accumulator());
-  addInterval(tick, duration, Date.now());
+  addInterval(tick, duration);
   emit.end.pipe(
     map(accumulator.end),
     map(() => {

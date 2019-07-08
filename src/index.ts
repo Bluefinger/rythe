@@ -17,6 +17,7 @@ import {
 } from "./operators/index";
 import { END, SKIP } from "./signal";
 import { every, fromDOMEvent, fromNodeEvent, fromPromise } from "./helpers";
+import { pipe } from "./utils/pipe";
 
 export {
   createStream,
@@ -40,5 +41,6 @@ export {
   every,
   fromDOMEvent,
   fromNodeEvent,
-  fromPromise
+  fromPromise,
+  pipe
 };

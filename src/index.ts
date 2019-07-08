@@ -16,13 +16,11 @@ import {
   flattenPromise
 } from "./operators/index";
 import { END, SKIP } from "./signal";
-import { Stream, StreamFn, DependentTuple, StreamState } from "./types";
 import { every, fromDOMEvent, fromNodeEvent, fromPromise } from "./helpers";
 
 export {
   createStream,
   isStream,
-  StreamState,
   after,
   combine,
   dropRepeats,
@@ -39,9 +37,6 @@ export {
   flattenPromise,
   END,
   SKIP,
-  Stream,
-  StreamFn,
-  DependentTuple,
   every,
   fromDOMEvent,
   fromNodeEvent,

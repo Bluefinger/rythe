@@ -2,7 +2,7 @@
   "compilerOptions": {
     "baseUrl": "./src",
     "incremental": true,
-    "tsBuildInfoFile": "./.rpt2_cache/tsBuildInfo",
+    "tsBuildInfoFile": "./.cache/tsBuildInfo",
     "sourceMap": true,
     "strict": true,
     "noUnusedLocals": true,

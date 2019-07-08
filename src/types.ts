@@ -1,4 +1,11 @@
-import { StreamState } from "./constants";
+/**
+ * Stream State. Comes with 4 possible states:
+ * 0. CLOSED
+ * 1. PENDING
+ * 2. ACTIVE
+ * 3. CHANGING
+ */
+export type StreamState = 0 | 1 | 2 | 3;
 
 export type StreamValue<T> = T extends Stream<infer V> ? V : never;
 

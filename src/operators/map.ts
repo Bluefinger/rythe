@@ -1,10 +1,9 @@
 import { createStream, isStream } from "../stream";
-import { StreamState, StreamError } from "../constants";
+import { ACTIVE } from "../constants";
+import { SOURCE_ERROR } from "../errors";
 import { SKIP } from "../signal";
 import { Stream, OperatorFn } from "../types";
 import { subscriber } from "../utils/subscriber";
-
-const { ACTIVE } = StreamState;
 
 export function map<T>(
   mapFn: (value: T) => T,
@@ -31,7 +30,7 @@ export function map<T, U>(
   return (source: Stream<T>): Stream<U> => {
     const { state, val } = source;
     if (!isStream(source)) {
-      throw new Error(StreamError.SOURCE_ERROR);
+      throw new Error(SOURCE_ERROR);
     }
     const mapStream = createStream<U>();
     if (state === ACTIVE && ignoreInitial !== SKIP) {

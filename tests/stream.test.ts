@@ -1,5 +1,5 @@
 import { createStream, isStream } from "../src/stream";
-import { StreamState } from "../src/constants";
+import { ACTIVE, CLOSED, PENDING } from "../src/constants";
 import { END } from "../src/signal";
 import { Stream } from "../src/types";
 
@@ -30,10 +30,10 @@ describe("Rythe", () => {
     it("it starts with pending state value and updates to active value", () => {
       const a = createStream<number>();
       expect(a()).toBeUndefined();
-      expect(a.state).toBe(StreamState.PENDING);
+      expect(a.state).toBe(PENDING);
       a(5);
       expect(a()).toBe(5);
-      expect(a.state).toBe(StreamState.ACTIVE);
+      expect(a.state).toBe(ACTIVE);
     });
     it("it can be ended by passing true to .end", () => {
       const a = createStream<number>(5);
@@ -42,12 +42,12 @@ describe("Rythe", () => {
       a.end(true);
       expect(a()).toBe(5);
       expect(a.end()).toBe(true);
-      expect(a.state).toBe(StreamState.CLOSED);
+      expect(a.state).toBe(CLOSED);
 
       // The Stream can still be updated, but it will remain closed and won't push to any dependents
       a(6);
       expect(a()).toBe(6);
-      expect(a.state).toBe(StreamState.CLOSED);
+      expect(a.state).toBe(CLOSED);
     });
     it("it can be ended with END signal", () => {
       const a = createStream<number>(5);
@@ -56,19 +56,19 @@ describe("Rythe", () => {
       a(END);
       expect(a()).toBe(5);
       expect(a.end.val).toBe(true);
-      expect(a.state).toBe(StreamState.CLOSED);
+      expect(a.state).toBe(CLOSED);
     });
     it("won't end if passed anything that isn't a boolean true value into .end", () => {
       const a = createStream<number>(5);
       expect(a()).toBe(5);
       expect(a.end.val).toBe(false);
-      expect(a.state).toBe(StreamState.ACTIVE);
+      expect(a.state).toBe(ACTIVE);
       a.end(false);
-      expect(a.state).toBe(StreamState.ACTIVE);
+      expect(a.state).toBe(ACTIVE);
       a.end(END);
-      expect(a.state).toBe(StreamState.ACTIVE);
+      expect(a.state).toBe(ACTIVE);
       a.end(true);
-      expect(a.state).toBe(StreamState.CLOSED);
+      expect(a.state).toBe(CLOSED);
     });
     it("is pipeable", () => {
       const a = createStream<number>();

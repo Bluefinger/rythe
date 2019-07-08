@@ -1,5 +1,5 @@
 import { createStream } from "rythe/stream";
-import { StreamState } from "rythe/constants";
+import { ACTIVE, CLOSED } from "rythe/constants";
 import { endsWith } from "rythe/operators";
 
 describe("endsWith", () => {
@@ -15,8 +15,8 @@ describe("endsWith", () => {
     const killer = createStream<string>();
     endsWith<string>(killer)(a);
     a(5)(6);
-    expect(a.state).toBe(StreamState.ACTIVE);
+    expect(a.state).toBe(ACTIVE);
     killer("Do it!");
-    expect(a.state).toBe(StreamState.CLOSED);
+    expect(a.state).toBe(CLOSED);
   });
 });

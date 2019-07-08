@@ -1,5 +1,5 @@
 import { createStream } from "rythe/stream";
-import { StreamState } from "rythe/constants";
+import { CLOSED } from "rythe/constants";
 import { dispatcher } from "rythe/dispatcher";
 import { combine, map } from "rythe/operators";
 import { END, SKIP } from "rythe/signal";
@@ -35,7 +35,7 @@ describe("recursiveDispatcher", () => {
     a(6);
     expect(dispatch).toBeCalledTimes(1);
     expect(b()).toBe(6);
-    expect(a.state).toBe(StreamState.CLOSED);
+    expect(a.state).toBe(CLOSED);
   });
   it("combines complicated stream dependencies atomically", () => {
     const atomic: string[] = [];

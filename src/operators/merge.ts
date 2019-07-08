@@ -1,10 +1,9 @@
 import { Stream, StreamValuesFromArray } from "../types";
 import { createStream, isStream } from "../stream";
-import { StreamState, StreamError } from "../constants";
+import { ACTIVE } from "../constants";
+import { SOURCE_ERROR } from "../errors";
 import { subscriber } from "../utils/subscriber";
 import { map } from "./map";
-
-const { ACTIVE } = StreamState;
 
 const passthrough = <T>(n: T): T => n;
 
@@ -20,7 +19,7 @@ export function merge<
   for (let i = sources.length; i--; ) {
     const source = sources[i];
     if (!isStream(source)) {
-      throw new Error(StreamError.SOURCE_ERROR);
+      throw new Error(SOURCE_ERROR);
     }
     subscriber(merged, source, passthrough);
     map(merged.end)(source.end);

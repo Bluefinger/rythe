@@ -1,6 +1,6 @@
 import { Stream } from "rythe/types";
 import { createStream } from "rythe/stream";
-import { StreamState } from "rythe/constants";
+import { ACTIVE, PENDING } from "rythe/constants";
 import { combine, map, scan } from "rythe/operators";
 
 describe("combine()", () => {
@@ -109,10 +109,10 @@ describe("combine()", () => {
   });
   it("creates a pending stream with an empty array as sources", () => {
     const c = combine(() => true);
-    expect(c.state).toBe(StreamState.PENDING);
+    expect(c.state).toBe(PENDING);
     expect(c()).toBeUndefined();
     c(false);
-    expect(c.state).toBe(StreamState.ACTIVE);
+    expect(c.state).toBe(ACTIVE);
     expect(c()).toBe(false);
   });
   it("throws an error if the sources are not Stream functions", () => {

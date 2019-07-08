@@ -1,8 +1,6 @@
-import { StreamState } from "../constants";
+import { PENDING } from "../constants";
 import { Stream, OperatorFn } from "../types";
 import { map } from "./map";
-
-const { PENDING } = StreamState;
 
 export function scan<T>(
   scanFn: (acc: T, newValue: T) => T,

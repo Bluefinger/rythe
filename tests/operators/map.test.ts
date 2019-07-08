@@ -1,5 +1,5 @@
 import { createStream } from "rythe/stream";
-import { StreamState } from "rythe/constants";
+import { ACTIVE, CLOSED } from "rythe/constants";
 import { map } from "rythe/operators";
 import { END, SKIP } from "rythe/signal";
 import { Stream } from "rythe/types";
@@ -58,8 +58,8 @@ describe("map", () => {
     expect(a()).toBe(5);
     expect(b()).toBe(2);
     expect(mapFn).toBeCalledTimes(1);
-    expect(b.state).toBe(StreamState.CLOSED);
-    expect(a.state).toBe(StreamState.ACTIVE);
+    expect(b.state).toBe(CLOSED);
+    expect(a.state).toBe(ACTIVE);
   });
   it("can be ended with END signal", () => {
     const a = createStream<number>(2);
@@ -71,7 +71,7 @@ describe("map", () => {
     expect(a()).toBe(5);
     expect(b()).toBe(2);
     expect(mapFn).toBeCalledTimes(1);
-    expect(b.state).toBe(StreamState.CLOSED);
+    expect(b.state).toBe(CLOSED);
   });
   it("will only push to Streams that aren't closed", () => {
     const a = createStream<number>();

@@ -1,5 +1,5 @@
 import { createStream } from "rythe/stream";
-import { StreamState } from "rythe/constants";
+import { ACTIVE, PENDING } from "rythe/constants";
 import { filter, map, combine, scan } from "rythe/operators";
 import { Stream } from "rythe/types";
 
@@ -31,7 +31,7 @@ describe("filter", () => {
     expect(mockFn).toBeCalledTimes(0);
     a(7);
     expect(b.waiting).toBe(0);
-    expect(b.state).toBe(StreamState.ACTIVE);
+    expect(b.state).toBe(ACTIVE);
     a(2);
 
     expect(b.waiting).toBe(0);
@@ -47,7 +47,7 @@ describe("filter", () => {
       map(mockFn)
     );
     expect(mockFn).toBeCalledTimes(0);
-    expect(b.state).toBe(StreamState.PENDING);
+    expect(b.state).toBe(PENDING);
   });
   it("will filter atomically", () => {
     const combineFn = jest.fn((...args: Stream<number>[]): string =>

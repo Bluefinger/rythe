@@ -1,5 +1,4 @@
 import { createStream, isStream } from "./stream";
-import { StreamState } from "./constants";
 import {
   after,
   combine,
@@ -17,7 +16,7 @@ import {
   flattenPromise
 } from "./operators/index";
 import { END, SKIP } from "./signal";
-import { Stream, StreamFn, DependentTuple } from "./types";
+import { Stream, StreamFn, DependentTuple, StreamState } from "./types";
 import { every, fromDOMEvent, fromNodeEvent, fromPromise } from "./helpers";
 
 export {

@@ -1,8 +1,6 @@
-import { StreamState } from "./constants";
-import { Stream, Dispatcher } from "./types";
+import { ACTIVE, CHANGING, PENDING } from "./constants";
+import { Stream, Dispatcher, StreamState } from "./types";
 import { END, SKIP } from "./signal";
-
-const { ACTIVE, CHANGING, PENDING } = StreamState;
 
 const incrementWait = (stream: Stream<any>, parentState: StreamState): void => {
   if (!(stream.immediate || parentState === PENDING)) {

@@ -1,6 +1,6 @@
 import { createStream, isStream } from "rythe/stream";
 import { take, map } from "rythe/operators";
-import { StreamState } from "rythe/constants";
+import { CLOSED } from "rythe/constants";
 
 describe("skip", () => {
   it("returns a stream", () => {
@@ -19,6 +19,6 @@ describe("skip", () => {
     a(4);
     expect(t()).toBe(3);
     expect(m()).toBe(4);
-    expect(t.state).toBe(StreamState.CLOSED);
+    expect(t.state).toBe(CLOSED);
   });
 });

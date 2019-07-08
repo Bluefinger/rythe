@@ -1,9 +1,8 @@
 import { createStream, isStream } from "../stream";
-import { StreamState, StreamError } from "../constants";
+import { PENDING } from "../constants";
+import { SOURCE_ERROR } from "../errors";
 import { Stream } from "../types";
 import { subscriber } from "../utils/subscriber";
-
-const { PENDING } = StreamState;
 
 /**
  * Combines many Stream sources into a single output.
@@ -19,7 +18,7 @@ export function combine<T extends Stream<any>[], U>(
   for (let i = sources.length; i--; ) {
     const source = sources[i];
     if (!isStream(source)) {
-      throw new Error(StreamError.SOURCE_ERROR);
+      throw new Error(SOURCE_ERROR);
     }
     subscriber(combinedStream, source, subscribeFn);
     combinedStream.waiting += source.state === PENDING ? 1 : 0;

@@ -1,9 +1,7 @@
-import { StreamState } from "./constants";
+import { CLOSED, PENDING } from "./constants";
 import { dispatcher as push } from "./dispatcher";
 import { Stream, Closer, OperatorFn, EndStream } from "./types";
 import { pipeFromArray } from "./utils/pipe";
-
-const { CLOSED, PENDING } = StreamState;
 
 function toJSON(this: Stream<any>): any {
   return this.val != null && this.val.toJSON ? this.val.toJSON() : this.val;

@@ -1,6 +1,6 @@
 import { every } from "rythe/helpers";
 import { isStream } from "rythe/stream";
-import { StreamState } from "rythe/constants";
+import { ACTIVE } from "rythe/constants";
 import { scan } from "rythe/operators";
 import { advanceBy, advanceTo } from "jest-date-mock";
 
@@ -13,7 +13,7 @@ describe("every", () => {
   it("returns a stream", () => {
     const t = every(100);
     expect(isStream(t)).toBe(true);
-    expect(t.state).toBe(StreamState.ACTIVE);
+    expect(t.state).toBe(ACTIVE);
   });
   it("pushes a timestamp every n milliseconds", () => {
     advanceTo(new Date());

@@ -1,7 +1,7 @@
 import { createStream, isStream } from "rythe/stream";
 import { merge } from "rythe/operators";
 import { Stream } from "rythe/types";
-import { StreamState } from "rythe/constants";
+import { ACTIVE, CLOSED, PENDING } from "rythe/constants";
 
 describe("merge", () => {
   it("combines many streams into a single stream", () => {
@@ -35,11 +35,11 @@ describe("merge", () => {
     const c = createStream<boolean>();
     const m = merge(a, b, c);
     expect(m()).toBe("5");
-    expect(m.state).toBe(StreamState.ACTIVE);
+    expect(m.state).toBe(ACTIVE);
     a.end(true);
-    expect(a.state).toBe(StreamState.CLOSED);
-    expect(b.state).toBe(StreamState.ACTIVE);
-    expect(c.state).toBe(StreamState.PENDING);
-    expect(m.state).toBe(StreamState.CLOSED);
+    expect(a.state).toBe(CLOSED);
+    expect(b.state).toBe(ACTIVE);
+    expect(c.state).toBe(PENDING);
+    expect(m.state).toBe(CLOSED);
   });
 });

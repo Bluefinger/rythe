@@ -1,5 +1,5 @@
 import { createStream, isStream } from "rythe/stream";
-import { StreamState } from "rythe/constants";
+import { ACTIVE, PENDING } from "rythe/constants";
 import { flattenPromise, map } from "rythe/operators";
 import flushPromises from "flush-promises";
 
@@ -22,12 +22,12 @@ describe("flattenPromise", () => {
     const a = createStream(promise);
     const b = flattenPromise(a);
     expect(a()).toBe(promise);
-    expect(b.state).toBe(StreamState.PENDING);
+    expect(b.state).toBe(PENDING);
     expect(b()).toBeUndefined();
     jest.runAllTimers();
     const value = await promise;
     expect(a()).resolves.toBe(value);
-    expect(b.state).toBe(StreamState.ACTIVE);
+    expect(b.state).toBe(ACTIVE);
     expect(b()).toBe(value);
   });
   it("is pipeable", async () => {
@@ -51,9 +51,9 @@ describe("flattenPromise", () => {
     const b = flattenPromise(a);
     jest.runAllTimers();
     await flushPromises();
-    expect(a.state).toBe(StreamState.ACTIVE);
+    expect(a.state).toBe(ACTIVE);
     expect(a()).rejects.toBe("Error");
-    expect(b.state).toBe(StreamState.PENDING);
+    expect(b.state).toBe(PENDING);
     expect(b()).toBeUndefined();
   });
   it("allows an error handler to be used to catch errors", async () => {

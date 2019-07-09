@@ -2,20 +2,28 @@ import { ACTIVE, CHANGING, PENDING } from "./constants";
 import { Stream, Dispatcher, StreamState } from "./types";
 import { END, SKIP } from "./signal";
 
-const incrementWait = (stream: Stream<any>, parentState: StreamState): void => {
+const incrementWait = <T>(
+  stream: Stream<T>,
+  parentState: StreamState
+): void => {
   if (!(stream.immediate || parentState === PENDING)) {
     stream.waiting += 1;
   }
 };
 
-const isReady = (stream: Stream<any>): boolean =>
+const isReady = <T>(stream: Stream<T>): boolean =>
   !(stream.waiting && --stream.waiting);
+
+const markAsActive = <T>(stream: Stream<T>): void => {
+  stream.state = ACTIVE;
+  stream.updating = false;
+};
 
 /**
  * Mark all Stream Dependencies recursively. Goes from newest dependency to old,
  * skipping those that have been marked already.
  */
-const markAsChanging = (stream: Stream<any>): void => {
+const markAsChanging = <T>(stream: Stream<T>): void => {
   const { state, dependents } = stream;
   stream.state = CHANGING;
   for (let i = dependents.length; i--; ) {
@@ -29,26 +37,28 @@ const markAsChanging = (stream: Stream<any>): void => {
   }
 };
 
-const pushUpdate = <T>(stream: Stream<T>, updating: boolean): void => {
-  stream.state = ACTIVE;
-  const { dependents, val } = stream;
+const isUpdating = <T>(value: T) => value !== SKIP;
+
+const pushUpdate = <T>(stream: Stream<T>, value: T): void => {
+  markAsActive(stream);
+  const { dependents } = stream;
+  const updating = isUpdating(value);
   for (let i = dependents.length; i--; ) {
     const [dep, fn] = dependents[i];
     if (isReady(dep)) {
-      const newValue = updating || dep.updating ? fn(val) : SKIP;
+      const newValue = updating || dep.updating ? fn(value) : SKIP;
       switch (newValue) {
         case SKIP:
-          pushUpdate(dep, false);
+          pushUpdate(dep, SKIP);
           break;
         case END:
-          pushUpdate(dep, false);
+          pushUpdate(dep, SKIP);
           dep.end(true);
           break;
         default:
           dep.val = newValue;
-          pushUpdate(dep, true);
+          pushUpdate(dep, newValue);
       }
-      dep.updating = false;
     } else if (updating) {
       dep.updating = true;
     }
@@ -65,16 +75,15 @@ export const dispatcher: Dispatcher = <T>(
   value: T
 ): void => {
   switch (value) {
-    case SKIP:
-      break;
     case END:
       stream.end(true);
+    case SKIP:
       break;
     default:
       stream.val = value;
       if (stream.state) {
         markAsChanging(stream);
-        pushUpdate(stream, true);
+        pushUpdate(stream, value);
       }
   }
 };

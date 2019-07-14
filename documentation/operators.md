@@ -16,8 +16,10 @@ An Operator takes an input stream or streams and outputs a new stream, often app
 - [map](#map)
 - [merge](#merge)
 - [scan](#scan)
+- [scanMerge](#scanmerge)
 - [skip](#skip)
 - [take](#take)
+- [zip](#zip)
 
 # after
 
@@ -284,6 +286,28 @@ arr(); // returns [2, 4]
 obj(); // returns { val: 6 }
 ```
 
+#scanMerge
+
+## `scanMerge<T, U>(initialValue: U, ...pairs: [Stream<T>, (acc: U, value: T) => U][]): Stream<U>`
+
+`scanMerge` takes an initial value and an array of Stream/accumulator function pairs and combines them into a single accumulated result. It accumulate into a single value, an array, or into a different value type (such as an object).
+
+```typescript
+const add = createStream<number>();
+const sub = createStream<number>();
+const merged = scanMerge(
+  0,
+  [add, (acc, val) => acc + val],
+  [sub, (acc, val) => acc - val]
+);
+
+add(2)(3);
+sub(1);
+merged(); // will return 4
+```
+
+`scanMerge` does _not_ scan values immediately if the source streams already have values. It will only accumulate upon receiving new values after it has subscribed to the streams. Ending one input stream will close the `scanMerge` stream immediately.
+
 # skip
 
 ## `skip<T>(amount: number): OperatorFn<T, T>`
@@ -320,4 +344,38 @@ taken(); // returns 2, having emitted twice
 
 a(3);
 taken(); // returns 2, taken is now closed
+```
+
+# zip
+
+## `zip(...sources: Stream<any>[]): Stream<any[]>`
+
+`zip` takes a range of input streams and yields a stream containing an array of values from the input streams. The array values are lined up with each other, if a `zip` with two input streams receives `[1,2,3]` in one stream and `["a","b"]` in the other, it will emit `[1, "a"]` and `[2, "b"]` respectively.
+
+```typescript
+const a = createStream<number>();
+const b = createStream<string>();
+const z = zip(a, b);
+expect(isStream(z)).toBe(true);
+a(5)(4)(3);
+b("c");
+z(); // will return [5, "c"]
+b("d");
+z(); // will return [4, "d"]
+```
+
+If an input stream to a `zip` closes, `zip` will continue to be active until that input stream's buffer is empty. Only then will `zip` close.
+
+```typescript
+const a = createStream<number>();
+const b = createStream<string>();
+const z = zip(a, b);
+expect(isStream(z)).toBe(true);
+a(5)(4)(END);
+b("c");
+z(); // will return [5, "c"]
+z.end(); // will return false
+b("d");
+z(); // will return [4, "d"]
+z.end(); // will return true. Won't push any more updates
 ```

@@ -1,5 +1,5 @@
 import { createStream, isStream } from "rythe/stream";
-import { merge } from "rythe/operators";
+import { merge, map } from "rythe/operators";
 import { Stream } from "rythe/types";
 import { ACTIVE, CLOSED, PENDING } from "rythe/constants";
 
@@ -9,13 +9,14 @@ describe("merge", () => {
     const b = createStream<string>();
     const c = createStream<boolean>();
     const m = merge(a, b, c);
+    const v = m.pipe(map(merged => ({ merged })));
     expect(isStream(m)).toBe(true);
     a(5);
-    expect(m()).toBe(5);
+    expect(v().merged).toBe(5);
     b("6");
-    expect(m()).toBe("6");
+    expect(v().merged).toBe("6");
     c(true);
-    expect(m()).toBe(true);
+    expect(v().merged).toBe(true);
   });
   it("immediately returns the newest active parent stream", () => {
     const a = createStream<number>();

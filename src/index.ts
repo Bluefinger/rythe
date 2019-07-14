@@ -11,9 +11,11 @@ import {
   map,
   merge,
   scan,
+  scanMerge,
   skip,
   take,
-  flattenPromise
+  flattenPromise,
+  zip
 } from "./operators/index";
 import { END, SKIP } from "./signal";
 import { every, fromDOMEvent, fromNodeEvent, fromPromise } from "./helpers";
@@ -31,11 +33,13 @@ export {
   filter,
   lift,
   scan,
+  scanMerge,
   map,
   merge,
   skip,
   take,
   flattenPromise,
+  zip,
   END,
   SKIP,
   every,

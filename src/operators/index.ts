@@ -8,10 +8,12 @@ import { filter } from "./filter";
 import { map } from "./map";
 import { merge } from "./merge";
 import { scan } from "./scan";
+import { scanMerge } from "./scanMerge";
 import { skip } from "./skip";
 import { take } from "./take";
 import { endsWith } from "./endsWith";
 import { flattenPromise } from "./flattenPromise";
+import { zip } from "./zip";
 
 export {
   after,
@@ -25,7 +27,9 @@ export {
   map,
   merge,
   scan,
+  scanMerge,
   skip,
   take,
-  flattenPromise
+  flattenPromise,
+  zip
 };

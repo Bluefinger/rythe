@@ -12,7 +12,7 @@
   },
   "plugins": ["@typescript-eslint", "prettier"],
   "parserOptions": {
-    "project": "./tsconfig.json",
+    "project": "./config/tsconfig.eslint.json",
     "ecmaVersion": 2018,
     "sourceType": "module"
   },

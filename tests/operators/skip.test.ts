@@ -9,7 +9,11 @@ test("skip - skips the provided amount of times", assert => {
   assert.equal(isStream(s), true, "returns a valid Stream function");
   a(1)(2)(3);
   assert.equal(s(), undefined, "skip ignores first three updates");
-  assert.equal(m(), undefined, "dependent stream receives no updates from skip");
+  assert.equal(
+    m(),
+    undefined,
+    "dependent stream receives no updates from skip"
+  );
   a(4);
   assert.equal(s(), 4, "skip no longer ignores updates");
   assert.equal(m(), 5, "dependent stream received an updated from skip");

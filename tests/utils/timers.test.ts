@@ -1,45 +1,80 @@
-import { advanceBy, advanceTo } from "jest-date-mock";
-import { addTimer, addInterval, clearTimer } from "rythe/utils/timers";
+import { addTimer, addInterval, clearTimer } from "../../src/utils/timers";
+import { test } from "../testHarness";
+import { useFakeTimers, fake } from "sinon";
 
-jest.useFakeTimers();
+test("Timers - adds timers", assert => {
+  const clock = useFakeTimers();
+  const mockFn = fake();
+  addTimer(mockFn, 10, "foo");
+  assert.equal(
+    mockFn.callCount,
+    0,
+    "timer function is not executed immediately"
+  );
+  clock.tick(10);
+  assert.equal(
+    mockFn.callCount,
+    1,
+    "timer function executes after defined period of time elapses"
+  );
+  assert.equal(
+    mockFn.calledWith("foo"),
+    true,
+    "timer function receives correct arguments"
+  );
+  clock.restore();
+});
 
-describe("timers", () => {
-  afterEach(() => {
-    jest.clearAllTimers();
-  });
-  it("adds timers", () => {
-    const mockFn = jest.fn();
-    addTimer(mockFn, 10, "foo");
-    jest.advanceTimersByTime(10);
-    expect(mockFn).toBeCalledTimes(1);
-    expect(mockFn).toBeCalledWith("foo");
-  });
-  it("clears timers", () => {
-    const mockFn = jest.fn();
-    addTimer(mockFn, 10, "foo");
-    jest.advanceTimersByTime(5);
-    expect(mockFn).toBeCalledTimes(0);
-    clearTimer(mockFn);
-    jest.advanceTimersByTime(10);
-    expect(mockFn).toBeCalledTimes(0);
-  });
-  it("creates self-adjusting interval timers", () => {
-    advanceTo(new Date());
-    const mockFn = jest.fn();
-    const now = Date.now();
-    addInterval(mockFn, 20);
-    // interval executes function once to start at time 0
-    expect(mockFn).toBeCalledTimes(1);
-    expect(mockFn).toBeCalledWith(now);
-    // Introduce a delay on the next execution
-    advanceBy(25);
-    jest.advanceTimersByTime(20);
-    expect(mockFn).toBeCalledTimes(2);
-    expect(mockFn).toBeCalledWith(now + 20);
-    // Check if the delay is compensated for
-    advanceBy(15);
-    jest.advanceTimersByTime(15);
-    expect(mockFn).toBeCalledTimes(3);
-    expect(mockFn).toBeCalledWith(now + 20 + 20);
-  });
+test("Timers - clears timers", assert => {
+  const clock = useFakeTimers();
+  const mockFn = fake();
+  addTimer(mockFn, 10, "foo");
+  clock.tick(5);
+  clearTimer(mockFn);
+  clock.tick(5);
+  assert.equal(
+    mockFn.callCount,
+    0,
+    "timer function does not execute after being cleared"
+  );
+  clock.restore();
+});
+
+test("Timers - creates self-adjusting interval timers", assert => {
+  const clock = useFakeTimers();
+  const mockFn = fake();
+  addInterval(mockFn, 20);
+  assert.equal(
+    mockFn.callCount,
+    1,
+    "interval function executes immediately once"
+  );
+  assert.equal(
+    mockFn.calledWith(0),
+    true,
+    "interval function receives initial timestamp"
+  );
+  clock.tick(25);
+  assert.equal(
+    mockFn.callCount,
+    2,
+    "interval function executes again after elapsed period"
+  );
+  assert.equal(
+    mockFn.calledWith(20),
+    true,
+    "interval function receives target timestamp"
+  );
+  clock.tick(15);
+  assert.equal(
+    mockFn.callCount,
+    3,
+    "interval function executes after adjusting for previous delay"
+  );
+  assert.equal(
+    mockFn.calledWith(40),
+    true,
+    "interval function receives corrected target timestamp"
+  );
+  clock.restore();
 });

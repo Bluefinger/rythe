@@ -8,6 +8,9 @@ cache: npm
 before_install:
   - npm i -g npm
 
+install:
+ - npm i --ignore-scripts
+
 script:
   - npm test
   - bash <(curl -s https://codecov.io/bash)

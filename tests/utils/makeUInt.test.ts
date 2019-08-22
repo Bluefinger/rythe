@@ -1,23 +1,39 @@
-import { makeUInt } from "rythe/utils/makeUInt";
+import { makeUInt } from "../../src/utils/makeUInt";
+import { test } from "../testHarness";
 
-describe("makeUInt", () => {
-  it("takes a float and returns an integer", () => {
-    expect(makeUInt(3.5)).toBe(3);
-  });
-  it("takes a negative number/float and returns a positive number", () => {
-    expect(makeUInt(-3)).toBe(3);
-    expect(makeUInt(-3.5)).toBe(3);
-  });
-  it("guards against non-number types", () => {
-    expect(() => makeUInt("3" as any)).toThrow();
-    expect(() => makeUInt(true as any)).toThrow();
-    expect(() => makeUInt({} as any)).toThrow();
-    expect(() => makeUInt([] as any)).toThrow();
-    expect(() => makeUInt((() => {}) as any)).toThrow();
-    expect(() => makeUInt(null as any)).toThrow();
-    expect(() => makeUInt(undefined as any)).toThrow();
-  });
-  it("guards against NaN", () => {
-    expect(() => makeUInt(NaN)).toThrow();
-  });
+test("makeUInt - takes a float and returns an integer", assert => {
+  assert.equal(makeUInt(3.5), 3, "returns an integer");
+});
+
+test("makeUInt - takes a negative number/float and returns a positive integer", assert => {
+  assert.equal(
+    makeUInt(-3),
+    3,
+    "negative integers are returned as positive integers"
+  );
+  assert.equal(
+    makeUInt(-3.5),
+    3,
+    "negative floats are returned as positive integers"
+  );
+});
+
+test("makeUInt - guards against non-number types", assert => {
+  assert.throws(() => makeUInt("3" as any), "throws when passed a string");
+  assert.throws(() => makeUInt(true as any), "throws when passed a boolean");
+  assert.throws(() => makeUInt({} as any), "throws when passed a plain object");
+  assert.throws(() => makeUInt([] as any), "throws when passed an array");
+  assert.throws(
+    () => makeUInt((() => {}) as any),
+    "throws when passed a function"
+  );
+  assert.throws(() => makeUInt(null as any), "throws when passed null");
+  assert.throws(
+    () => makeUInt(undefined as any),
+    "throws when passed undefined"
+  );
+});
+
+test("makeUInt - guards again NaN", assert => {
+  assert.throws(() => makeUInt(NaN), "throws when passed NaN");
 });

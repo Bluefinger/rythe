@@ -1,81 +1,95 @@
-import { createStream } from "rythe/stream";
-import { ACTIVE, PENDING } from "rythe/constants";
-import { filter, map, combine, scan } from "rythe/operators";
-import { Stream } from "rythe/types";
+import { createStream } from "../../src/stream";
+import { PENDING } from "../../src/constants";
+import { filter, map, combine, scan } from "../../src/operators";
+import { Stream } from "../../src/types";
+import { test } from "../testHarness";
+import { spy } from "sinon";
 
-describe("filter", () => {
-  it("is pipeable", () => {
-    const a = createStream<number>();
-    const b = a.pipe(
-      filter(value => value % 2 !== 1),
-      map(value => value ** 2)
-    );
-    a(4);
-    expect(b()).toBe(16);
-  });
-  it("will filter values from being emitted if they don't pass its predicate function", () => {
-    const a = createStream<number>();
-    const mockFn = jest.fn((value: number) => value ** 2);
-    const b = a.pipe(
-      filter(value => value % 2 !== 1),
-      map(mockFn)
-    );
-    a(4);
-    expect(b()).toBe(16);
-    expect(mockFn).toBeCalledTimes(1);
-    expect(mockFn).toBeCalledWith(4);
-    mockFn.mockClear();
-    a(5);
-    expect(b()).toBe(16);
-    expect(b.waiting).toBe(0);
-    expect(mockFn).toBeCalledTimes(0);
-    a(7);
-    expect(b.waiting).toBe(0);
-    expect(b.state).toBe(ACTIVE);
-    a(2);
+test("filter - is pipeable", assert => {
+  const a = createStream<number>();
+  const b = a.pipe(
+    filter(value => value % 2 !== 1),
+    map(value => value ** 2)
+  );
+  a(4);
+  assert.equal(
+    b(),
+    16,
+    "should receive value after passing the filter predicate"
+  );
+});
 
-    expect(b.waiting).toBe(0);
-    expect(b()).toBe(4);
-    expect(mockFn).toBeCalledTimes(1);
-    expect(mockFn).toBeCalledWith(2);
-  });
-  it("will filter initial values", () => {
-    const a = createStream<number>(5);
-    const mockFn = jest.fn((value: number) => value ** 2);
-    const b = a.pipe(
-      filter(value => value % 2 !== 1),
-      map(mockFn)
-    );
-    expect(mockFn).toBeCalledTimes(0);
-    expect(b.state).toBe(PENDING);
-  });
-  it("will filter atomically", () => {
-    const combineFn = jest.fn((...args: Stream<number>[]): string =>
-      JSON.stringify(args)
-    );
-    const a = createStream<number>();
-    const b = a.pipe(filter(value => value % 2 === 0));
-    const c = a.pipe(filter(value => value < 3 || value > 4));
-    const d = a.pipe(filter(value => value !== 3));
-    const atomic = combine(combineFn, b, c, d).pipe(
-      scan<string>(
-        (acc, value) => {
-          acc.push(value);
-          return acc;
-        },
-        [] as string[]
-      )
-    );
-    // All filters will update
-    a(2);
-    expect(combineFn).toBeCalledTimes(1);
-    // All filters should exclude this value
-    a(3);
-    // Two filters will pass this
-    a(4);
-    expect(combineFn).toBeCalledTimes(2);
-    a(5)(6);
-    expect(combineFn).toBeCalledTimes(4);
-    expect(atomic()).toEqual(["[2,2,2]", "[4,2,4]", "[4,5,5]", "[6,6,6]"]);
-  });
+test("filter - will filter values from being emitted if they don't pass its predicate function", assert => {
+  const a = createStream<number>();
+  const mockFn = spy((value: number) => value ** 2);
+  const b = a.pipe(
+    filter(value => value % 2 !== 1),
+    map(mockFn)
+  );
+  a(4);
+  assert.equal(
+    mockFn.callCount,
+    1,
+    "map function should be called once with value that passes the filter predicate"
+  );
+  assert.equal(
+    mockFn.calledWith(4),
+    true,
+    "map function receives correct value"
+  );
+  mockFn.resetHistory();
+  a(5);
+  assert.equal(
+    b(),
+    16,
+    "shouldn't update with value that fails the filter predicate"
+  );
+  assert.equal(
+    mockFn.callCount,
+    0,
+    "map function is not called with filtered value"
+  );
+});
+
+test("filter - will filter initial values", assert => {
+  const a = createStream<number>(5);
+  const mockFn = spy((value: number) => value ** 2);
+  const b = a.pipe(
+    filter(value => value % 2 !== 1),
+    map(mockFn)
+  );
+  assert.equal(
+    mockFn.callCount,
+    0,
+    "initial value should be filtered as it doesn't pass the filter predicate"
+  );
+  assert.equal(b.state, PENDING, "dependent stream should remain as PENDING");
+});
+
+test("filter - will filter atomically", assert => {
+  const combineFn = spy((...args: Stream<number>[]): string =>
+    JSON.stringify(args)
+  );
+  const a = createStream<number>();
+  const b = a.pipe(filter(value => value % 2 === 0));
+  const c = a.pipe(filter(value => value < 3 || value > 4));
+  const d = a.pipe(filter(value => value !== 3));
+  const atomic = combine(combineFn, b, c, d).pipe(
+    scan<string>((acc, value) => acc.concat(value), [] as string[])
+  );
+  a(2);
+  assert.equal(combineFn.callCount, 1, "all filters will update once");
+  a(3)(4);
+  assert.equal(
+    combineFn.callCount,
+    2,
+    "all filters will SKIP 3, two update on 4"
+  );
+  a(5)(6);
+  assert.equal(combineFn.callCount, 4, "filters will update twice");
+  assert.deepEqual(
+    atomic(),
+    ["[2,2,2]", "[4,2,4]", "[4,5,5]", "[6,6,6]"],
+    "should have four results from four updates and one SKIP"
+  );
 });

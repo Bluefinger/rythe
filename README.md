@@ -13,8 +13,7 @@ npm install rythe
 ```
 
 ```js
-import { createStream } from "rythe";
-import { filter, map } from "rythe/operators";
+import { createStream, filter, map } from "rythe";
 
 const stream = createStream();
 

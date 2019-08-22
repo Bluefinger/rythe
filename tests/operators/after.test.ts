@@ -1,67 +1,80 @@
-import { isStream, createStream } from "rythe/stream";
-import { scan, after } from "rythe/operators";
+import { isStream, createStream } from "../../src/stream";
+import { scan, after } from "../../src/operators";
+import { test } from "../testHarness";
+import { useFakeTimers } from "sinon";
 
-jest.useFakeTimers();
+test("after - returns a stream", assert => {
+  const a = createStream<number>();
+  const af = a.pipe(after(100));
+  assert.equal(isStream(af), true, "produces a valid Stream function");
+});
 
-describe("after", () => {
-  afterEach(() => {
-    jest.clearAllTimers();
-  });
-  it("returns a stream", () => {
-    const a = createStream<number>();
-    const af = a.pipe(after(100));
-    expect(isStream(af)).toBe(true);
-  });
-  it("emits a list of accumulated after a specified period of no updates", () => {
-    const a = createStream<number>();
-    const af = a.pipe(after(100));
-    const count = af.pipe(scan(num => ++num, 0));
-    expect(af()).toBeUndefined();
-    expect(count()).toBe(0);
-    a(2);
-    jest.advanceTimersByTime(80);
-    expect(af()).toBeUndefined();
-    expect(count()).toBe(0);
-    a(4);
-    jest.advanceTimersByTime(20);
-    expect(af()).toBeUndefined();
-    expect(count()).toBe(0);
-    a(6);
-    jest.advanceTimersByTime(100);
-    expect(af()).toEqual([2, 4, 6]);
-    expect(count()).toBe(1);
-    a(8)(10);
-    jest.advanceTimersByTime(100);
-    expect(af()).toEqual([8, 10]);
-    expect(count()).toBe(2);
-  });
-  it("stops accumulating after being ended", () => {
-    const a = createStream<number>();
-    const af = a.pipe(after(100));
-    const count = af.pipe(scan(num => ++num, 0));
-    a(2)(4);
-    jest.advanceTimersByTime(100);
-    expect(af()).toEqual([2, 4]);
-    expect(count()).toBe(1);
-    af.end(true);
-    a(6)(8);
-    jest.advanceTimersByTime(100);
-    expect(af()).toEqual([2, 4]);
-    expect(count()).toBe(1);
-  });
-  it("clears existing timers if ended after receiving updates during its waiting period", () => {
-    const a = createStream<number>();
-    const af = a.pipe(after(100));
-    const count = af.pipe(scan(num => ++num, 0));
-    a(2)(4);
-    jest.advanceTimersByTime(100);
-    expect(af()).toEqual([2, 4]);
-    expect(count()).toBe(1);
-    a(6)(8);
-    jest.advanceTimersByTime(20);
-    af.end(true);
-    jest.advanceTimersByTime(100);
-    expect(af()).toEqual([2, 4]);
-    expect(count()).toBe(1);
-  });
+test("after - emits a list of accumulated values after a specified period of no updates", assert => {
+  const clock = useFakeTimers();
+  const a = createStream<number>();
+  const af = a.pipe(after(100));
+  const count = af.pipe(scan(num => ++num, 0));
+  assert.equal(af(), undefined, "should be initialised with no value");
+  assert.equal(count(), 0, "should not emit anything after initialisation");
+  a(2);
+  clock.tick(80);
+  assert.equal(
+    af(),
+    undefined,
+    "after should not update before its defined waiting period"
+  );
+  assert.equal(count(), 0, "should not emit before its waiting period");
+  a(4);
+  clock.tick(20);
+  assert.equal(
+    af(),
+    undefined,
+    "after's waiting period reset after another value is received"
+  );
+  assert.equal(
+    count(),
+    0,
+    "after should still not emit while still receiving values within waiting period"
+  );
+  a(6);
+  clock.tick(100);
+  assert.deepEqual(
+    af(),
+    [2, 4, 6],
+    "after should update now that waiting period has expired"
+  );
+  assert.equal(count(), 1, "after should emit once to dependents");
+  a(8)(10);
+  clock.tick(100);
+  assert.deepEqual(
+    af(),
+    [8, 10],
+    "after should not store values from previous emit, only those that are collected in a new waiting period"
+  );
+  assert.equal(count(), 2, "after should emit a second time");
+  clock.restore();
+});
+
+test("after - stops accumulating after being ended", assert => {
+  const clock = useFakeTimers();
+  const a = createStream<number>();
+  const af = a.pipe(after(100));
+  const count = af.pipe(scan(num => ++num, 0));
+  a(2)(4);
+  clock.tick(100);
+  a(6)(8);
+  clock.tick(20);
+  af.end(true);
+  clock.tick(100);
+  assert.deepEqual(
+    af(),
+    [2, 4],
+    "after should only contain values from before it was ended"
+  );
+  assert.equal(
+    count(),
+    1,
+    "after should only have emitted once and not after being ended"
+  );
+  clock.restore();
 });

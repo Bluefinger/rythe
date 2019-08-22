@@ -1,73 +1,79 @@
-import { createStream } from "rythe/stream";
-import { combine, map, scan } from "rythe/operators";
-import { SKIP } from "rythe/signal";
+import { createStream, isStream } from "../../src/stream";
+import { map, scan } from "../../src/operators";
+import { test } from "../testHarness";
+import { spy } from "sinon";
 
-describe("scan", () => {
-  it("should default to an initial value", () => {
-    const a = createStream<number>();
-    const s = scan((acc, value) => acc + value, 0)(a);
-    expect(s()).toBe(0);
-  });
-  it("should accumulate values", () => {
-    const a = createStream<number>(0);
-    const s = scan<number, string>((acc, value) => acc + value, "")(a);
-    a(1)(2)(3);
-    expect(s()).toBe("0123");
-  });
-  it("can be mapped", () => {
-    const a = createStream<number>();
-    const m = a.pipe(
-      scan((acc, value) => acc + value, 0),
-      map(value => value + 1)
-    );
-    a(1)(2)(3);
-    expect(m()).toBe(7);
-  });
-  it("pushes initial value down first", () => {
-    const atomic: number[] = [];
-    const scanFn = jest.fn((acc: number, value: number) => acc + value);
-    const a = createStream<number>();
-    const m = a.pipe(
-      scan(scanFn, 0),
-      map(value => atomic.push(value))
-    );
+test("scan - should default to an initial value", assert => {
+  const a = createStream<number>();
+  const s = scan((acc, value) => acc + value, 0)(a);
+  assert.equal(isStream(s), true, "returns a valid Stream function");
+  assert.equal(s(), 0, "always emits the initial value");
+});
 
-    expect(m()).toBe(1);
-    expect(atomic).toEqual([0]);
-    expect(scanFn).toBeCalledTimes(0);
-  });
-  it("should accumulate atomically", () => {
-    const atomic: number[] = [];
-    const scanFn = jest.fn((acc: number, value: number) => acc + value);
-    const a = createStream<number>();
-    const b = createStream<number>();
-    const aM = map<number>(n => n)(a);
-    const c = combine((sA, sB) => sA() + sB(), aM, b);
-    const s = scan(scanFn, 0)(c);
-    const m = map<number>(value => atomic.push(value), SKIP)(s);
-    a(2);
-    b(2)(5);
-    a(3);
-    expect(m()).toBe(3);
-    expect(atomic).toEqual([4, 11, 19]);
-    expect(scanFn).toBeCalledTimes(3);
-  });
-  it("stops accumulating after .end is invoked", () => {
-    const a = createStream<number>();
-    const scanFn = jest.fn((acc: number, value: number) => acc + value);
-    const s = scan(scanFn, 0)(a);
+test("scan - should accumulate values", assert => {
+  const a = createStream<number>(0);
+  const s = scan<number, string>((acc, value) => acc + value, "")(a);
+  a(1)(2)(3);
+  assert.equal(
+    s(),
+    "0123",
+    "accumulates emitted values from source and then emits accumulated result"
+  );
+});
 
-    a(1)(2)(3);
-    expect(s()).toBe(6);
-    expect(s.parents).toEqual([a]);
-    expect(scanFn).toBeCalledTimes(3);
+test("scan - is pipeable", assert => {
+  const a = createStream<number>();
+  const m = a.pipe(
+    scan((acc, value) => acc + value, 0),
+    map(value => value + 1)
+  );
+  a(1)(2)(3);
+  assert.equal(
+    m(),
+    7,
+    "dependent stream receives emitted value from scan stream correctly"
+  );
+});
 
-    scanFn.mockClear();
-    s.end(true);
-    a(5)(6);
+test("scan - emits initial value to dependent streams", assert => {
+  const atomic: number[] = [];
+  const scanFn = spy((acc: number, value: number) => acc + value);
+  const a = createStream<number>();
+  a.pipe(
+    scan(scanFn, 0),
+    map(value => atomic.push(value))
+  );
+  assert.deepEqual(
+    atomic,
+    [0],
+    "dependent stream receives initial value from scan immediately"
+  );
+  assert.equal(
+    scanFn.callCount,
+    0,
+    "scan stream wasn't called to accumulate a value"
+  );
+});
 
-    expect(s()).toBe(6);
-    expect(s.parents).toEqual([]);
-    expect(scanFn).toBeCalledTimes(0);
-  });
+test("scan - stops accumulating after .end is invoked", assert => {
+  const a = createStream<number>();
+  const scanFn = spy((acc: number, value: number) => acc + value);
+  const s = scan(scanFn, 0)(a);
+
+  a(1)(2)(3);
+  assert.deepEqual(
+    s.parents,
+    [a],
+    "scan function initially is subscribed to parent stream for updates"
+  );
+  assert.equal(scanFn.callCount, 3, "scan is updated three times while ACTIVE");
+  scanFn.resetHistory();
+  s.end(true);
+  a(5)(6);
+  assert.deepEqual(
+    s.parents,
+    [],
+    "scan function is no longer subscribed to parent stream for updates"
+  );
+  assert.equal(scanFn.callCount, 0, "scan no longer updates now it is CLOSED");
 });

@@ -1,64 +1,79 @@
-/**
- * @jest-environment jsdom
- */
-import { fromDOMEvent } from "rythe/helpers";
-import { isStream } from "rythe/stream";
-import { ACTIVE, CLOSED, PENDING } from "rythe/constants";
+import { fromDOMEvent } from "../../src/helpers";
+import { isStream } from "../../src/stream";
+import { ACTIVE, CLOSED, PENDING } from "../../src/constants";
+import { test } from "../testHarness";
+import { JSDOM } from "jsdom";
 
-describe("fromDOMEvent", () => {
-  it("should return a stream", () => {
-    const element = document.createElement("div");
-    const s = fromDOMEvent(element, "click");
-    expect(isStream(s)).toBe(true);
-    expect(s.state).toBe(PENDING);
-  });
-  it("should resolve events from a single DOM element", () => {
-    const element = document.createElement("div");
-    const s = fromDOMEvent(element, "click");
-    const clickEvent = new Event("click");
-    element.dispatchEvent(clickEvent);
+const { document, Event } = new JSDOM().window;
 
-    expect(s()).toBe(clickEvent);
-    expect(s().type).toBe("click");
-    expect(s().target).toBe(element);
-    expect(s.state).toBe(ACTIVE);
-  });
-  it("should resolve events from many DOM elements", () => {
-    const element = document.createElement("div");
-    element.innerHTML = "<div></div><div></div>";
-    const elements = element.children;
-    const s = fromDOMEvent(elements, "click");
-    const clickEvent = new Event("click");
-    element.children[1].dispatchEvent(clickEvent);
+test("fromDOMEvent - should return a stream", assert => {
+  const element = document.createElement("div");
+  const s = fromDOMEvent(element, "click");
+  assert.equal(isStream(s), true, "returns a valid Stream function");
+  assert.equal(s.state, PENDING, "defaults to PENDING state");
+});
 
-    expect(s()).toBe(clickEvent);
-    expect(s().target).toBe(element.children[1]);
-    expect(s.state).toBe(ACTIVE);
-  });
-  it("should remove its event listener from a single DOM element on END", () => {
-    const element = document.createElement("div");
-    const s = fromDOMEvent(element, "click");
+test("fromDOMEvent - should resolve events from a single DOM Element", assert => {
+  const element = document.createElement("div");
+  const s = fromDOMEvent(element, "click");
+  const clickEvent = new Event("click");
+  element.dispatchEvent(clickEvent);
+  assert.equal(s(), clickEvent, "emits received Event object");
+  assert.equal(s().type, "click", "emitted event is a click");
+  assert.equal(
+    s().target,
+    element,
+    "event comes from the element the Stream watches"
+  );
+  assert.equal(s.state, ACTIVE, "updates to ACTIVE state after emitting");
+});
 
-    s.end(true);
+test("fromDOMEvent - should resolve events from many DOM elements", assert => {
+  const element = document.createElement("div");
+  element.innerHTML = "<div></div><div></div>";
+  const elements = element.children;
+  const s = fromDOMEvent(elements, "click");
+  const clickEvent = new Event("click");
+  element.children[1].dispatchEvent(clickEvent);
+  assert.equal(s(), clickEvent, "emits received Event object");
+  assert.equal(
+    s().target,
+    element.children[1],
+    "event comes from one of the elements the Stream watches"
+  );
+});
 
-    const clickEvent = new Event("click");
-    element.dispatchEvent(clickEvent);
+test("fromDOMEvent - should remove its event listener from a single DOM element on END", assert => {
+  const element = document.createElement("div");
+  const s = fromDOMEvent(element, "click");
 
-    expect(s()).toBeUndefined();
-    expect(s.state).toBe(CLOSED);
-  });
-  it("should remove its event listener from many DOM elements on END", () => {
-    const element = document.createElement("div");
-    element.innerHTML = "<div></div><div></div>";
-    const elements = element.children;
-    const s = fromDOMEvent(elements, "click");
+  s.end(true);
 
-    s.end(true);
+  const clickEvent = new Event("click");
+  element.dispatchEvent(clickEvent);
 
-    const clickEvent = new Event("click");
-    element.children[1].dispatchEvent(clickEvent);
+  assert.equal(
+    s(),
+    undefined,
+    "doesn't listen to events from one element after being closed"
+  );
+  assert.equal(s.state, CLOSED, "has state set to CLOSED correctly");
+});
 
-    expect(s()).toBeUndefined();
-    expect(s.state).toBe(CLOSED);
-  });
+test("fromDOMEvent - should remove its event listener from many DOM elements on END", assert => {
+  const element = document.createElement("div");
+  element.innerHTML = "<div></div><div></div>";
+  const elements = element.children;
+  const s = fromDOMEvent(elements, "click");
+
+  s.end(true);
+
+  const clickEvent = new Event("click");
+  element.children[1].dispatchEvent(clickEvent);
+  assert.equal(
+    s(),
+    undefined,
+    "doesn't listen to events from many elements after being closed"
+  );
+  assert.equal(s.state, CLOSED, "has state set to CLOSED correctly");
 });

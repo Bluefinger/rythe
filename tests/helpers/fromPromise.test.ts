@@ -1,41 +1,39 @@
-import { fromPromise } from "rythe/helpers";
-import { isStream } from "rythe/stream";
-import { CLOSED, PENDING } from "rythe/constants";
+import { fromPromise } from "../../src/helpers";
+import { isStream } from "../../src/stream";
+import { CLOSED, PENDING } from "../../src/constants";
 import flushPromises from "flush-promises";
+import { test } from "../testHarness";
+import { delay } from "../testUtils";
+import { useFakeTimers } from "sinon";
 
-const delay = <T>(ms: number, value?: T, fail?: true) =>
-  new Promise<T>((resolve, reject) =>
-    setTimeout(fail ? reject : resolve, ms, value)
+test("fromPromise - should return a Stream that is waiting for the Promise to resolve", assert => {
+  const p = delay(100);
+  const s = fromPromise(p);
+  assert.equal(isStream(s), true, "returns a valid Stream function");
+  assert.equal(s.state, PENDING, "is set to PENDING state");
+});
+
+test("fromPromise - should return the resolved value and close once done", async assert => {
+  const clock = useFakeTimers();
+  const s = fromPromise(delay(100, "foo"));
+  assert.equal(s(), undefined, "has no initial value");
+  clock.runAll();
+  await flushPromises();
+  assert.equal(s(), "foo", "emits the value yielded by the Promise");
+  assert.equal(
+    s.state,
+    CLOSED,
+    "closes after emitting the value from the Promise"
   );
+  clock.restore();
+});
 
-jest.useFakeTimers();
-
-describe("fromPromise", () => {
-  it("should return a Stream that is waiting for the Promise to resolve", () => {
-    const p = delay(100);
-    const s = fromPromise(p);
-    expect(isStream(s)).toBe(true);
-    expect(s.state).toBe(PENDING);
-  });
-  it("should return the resolved value and close once done", async () => {
-    expect.assertions(4);
-    const s = fromPromise(delay(100, "foo"));
-
-    expect(s()).toBeUndefined();
-    expect(s.state).toBe(PENDING);
-
-    jest.runAllTimers();
-    await flushPromises();
-    expect(s()).toBe("foo");
-    expect(s.state).toBe(CLOSED);
-  });
-  it("should close if the Promise rejects", async () => {
-    expect.assertions(3);
-    const s = fromPromise(delay(100, "Error", true));
-    expect(s.state).toBe(PENDING);
-    jest.runAllTimers();
-    await flushPromises();
-    expect(s()).toBe(undefined);
-    expect(s.state).toBe(CLOSED);
-  });
+test("fromPromise - should close if the Promise rejects", async assert => {
+  const clock = useFakeTimers();
+  const s = fromPromise(delay(100, "Error", true));
+  clock.runAll();
+  await flushPromises();
+  assert.equal(s(), undefined, "doesn't emit a value from a rejected Promise");
+  assert.equal(s.state, CLOSED, "closes after a rejected Promise");
+  clock.restore();
 });

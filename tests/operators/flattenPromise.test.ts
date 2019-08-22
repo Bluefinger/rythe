@@ -1,69 +1,101 @@
-import { createStream, isStream } from "rythe/stream";
-import { ACTIVE, PENDING } from "rythe/constants";
-import { flattenPromise, map } from "rythe/operators";
+import { createStream, isStream } from "../../src/stream";
+import { ACTIVE, PENDING } from "../../src/constants";
+import { flattenPromise, map } from "../../src/operators";
+import { test } from "../testHarness";
+import { delay } from "../testUtils";
+import { useFakeTimers, spy } from "sinon";
 import flushPromises from "flush-promises";
 
-jest.useFakeTimers();
+test("flattenPromise - returns a stream", assert => {
+  const a = createStream(Promise.resolve(1));
+  const b = flattenPromise(a);
+  assert.equal(isStream(b), true, "produces a valid Stream function");
+});
 
-const delay = <T>(ms: number, value: T, error?: true) =>
-  new Promise<T>((resolve, reject) =>
-    setTimeout(error ? reject : resolve, ms, value)
+test("flattenPromise - flattens the stream to return a promise's value", async assert => {
+  const clock = useFakeTimers();
+  const promise = delay(100, 1);
+  const a = createStream(promise);
+  const b = flattenPromise(a);
+  assert.equal(
+    b.state,
+    PENDING,
+    "received Promise doesn't update it to ACTIVE state, remains PENDING"
   );
 
-describe("flattenPromise", () => {
-  it("returns a stream", () => {
-    const a = createStream(Promise.resolve(1));
-    const b = flattenPromise(a);
-    expect(isStream(b)).toBe(true);
-  });
-  it("flattens the stream to return a promise's value", async () => {
-    expect.assertions(6);
-    const promise = delay(100, 1);
-    const a = createStream(promise);
-    const b = flattenPromise(a);
-    expect(a()).toBe(promise);
-    expect(b.state).toBe(PENDING);
-    expect(b()).toBeUndefined();
-    jest.runAllTimers();
-    const value = await promise;
-    expect(a()).resolves.toBe(value);
-    expect(b.state).toBe(ACTIVE);
-    expect(b()).toBe(value);
-  });
-  it("is pipeable", async () => {
-    expect.assertions(3);
-    const a = createStream<number>();
-    const b = a.pipe(
-      map(value => delay(100, value)),
-      flattenPromise,
-      map(value => value + 2)
+  clock.runAll();
+  const value = await promise;
+  assert.equal(
+    b.state,
+    ACTIVE,
+    "updates to ACTIVE state once Promise is resolved"
+  );
+  assert.equal(
+    b(),
+    value,
+    "updates with the value yielded by the returned Promise"
+  );
+
+  clock.restore();
+});
+
+test("flattenPromise - is pipeable", async assert => {
+  const clock = useFakeTimers();
+  const a = createStream<number>();
+  const b = a.pipe(
+    map(value => delay(100, value)),
+    flattenPromise,
+    map(value => value + 2)
+  );
+  a(5);
+  clock.runAll();
+  await flushPromises();
+  assert.equal(
+    b(),
+    7,
+    "final dependent stream receives value from flattened Promise"
+  );
+  clock.restore();
+});
+
+test("flattenPromise - skips rejected promises", async assert => {
+  const clock = useFakeTimers();
+  const a = createStream(delay(100, "Error", true));
+  const b = flattenPromise(a);
+  clock.runAll();
+  try {
+    await a();
+  } catch (error) {
+    assert.equal(
+      b.state,
+      PENDING,
+      "remains in PENDING state after Promise is rejected"
     );
-    expect(isStream(b)).toBe(true);
-    a(5);
-    expect(b()).toBeUndefined();
-    jest.runAllTimers();
-    await flushPromises();
-    expect(b()).toBe(7);
-  });
-  it("skips rejected promises", async () => {
-    expect.assertions(4);
-    const a = createStream(delay(100, "Error", true));
-    const b = flattenPromise(a);
-    jest.runAllTimers();
-    await flushPromises();
-    expect(a.state).toBe(ACTIVE);
-    expect(a()).rejects.toBe("Error");
-    expect(b.state).toBe(PENDING);
-    expect(b()).toBeUndefined();
-  });
-  it("allows an error handler to be used to catch errors", async () => {
-    expect.assertions(2);
-    const handler = jest.fn();
-    const a = createStream(delay(100, "Error", true));
-    const b = flattenPromise(a, handler);
-    jest.runAllTimers();
-    await flushPromises();
-    expect(b()).toBeUndefined();
-    expect(handler).toBeCalledWith("Error");
-  });
+    assert.equal(
+      b(),
+      undefined,
+      "doesn't update its value after Promise is rejected"
+    );
+  } finally {
+    clock.restore();
+  }
+});
+
+test("flattenPromise - allows an error handler to be used to catch errors", async assert => {
+  const clock = useFakeTimers();
+  const handler = spy();
+  const a = createStream(delay(100, "Error", true));
+  flattenPromise(a, handler);
+  clock.runAll();
+  try {
+    await a();
+  } catch (error) {
+    assert.equal(
+      handler.calledWith(error),
+      true,
+      "handler function called when Promise is rejected"
+    );
+  } finally {
+    clock.restore();
+  }
 });

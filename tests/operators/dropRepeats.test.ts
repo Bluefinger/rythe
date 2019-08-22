@@ -1,96 +1,56 @@
-import { createStream } from "rythe/stream";
-import { dropRepeats, map } from "rythe/operators";
+import { createStream } from "../../src/stream";
+import { dropRepeats, map } from "../../src/operators";
+import { test } from "../testHarness";
+import { spy } from "sinon";
 
-describe("dropRepeats", () => {
-  it("will not pass down repeat values", () => {
-    const a = createStream<number>();
-    const mapFn = jest.fn((n: number) => n);
-    const m = a.pipe(
-      dropRepeats,
-      map(mapFn)
-    );
-    a(1)(1)(2)(2)(2)(3);
-    expect(m()).toBe(3);
-    expect(mapFn).toBeCalledTimes(3);
-  });
-  it("passes down initial value immediately", () => {
-    const a = createStream<number>(1);
-    const mapFn = jest.fn((n: number) => n);
-    const m = a.pipe(
-      dropRepeats,
-      map(mapFn)
-    );
-    expect(m()).toBe(1);
-    expect(mapFn).toBeCalledTimes(1);
-  });
-  it("handles explicit undefined values", () => {
-    const a = createStream<number | undefined>();
-    const mapFn = jest.fn((n: number | undefined) => n);
-    const m = a.pipe(
-      dropRepeats,
-      map(mapFn)
-    );
-    a(1)(1)(undefined)(undefined)(2)(3);
-    expect(m()).toBe(3);
-    expect(mapFn).toBeCalledTimes(4);
-  });
-  it("handles explicit null values", () => {
-    const a = createStream<number | null>();
-    const mapFn = jest.fn((n: number | null) => n);
-    const m = a.pipe(
-      dropRepeats,
-      map(mapFn)
-    );
-    a(1)(1)(null)(null)(2)(3);
-    expect(m()).toBe(3);
-    expect(mapFn).toBeCalledTimes(4);
-  });
-  it("uses strict equality to check for repeats", () => {
-    const objA = { a: 1 };
-    const objB = { a: 1 };
-    const a = createStream<any>();
-    const mapFn = jest.fn((n: any) => n);
-    const m = a.pipe(
-      dropRepeats,
-      map(mapFn)
-    );
+test("dropRepeats - will not pass down repeat values (strict equality ===)", assert => {
+  const a = createStream<number | string>();
+  const mapFn = spy((n: number | string) => n);
+  const m = a.pipe(
+    dropRepeats,
+    map(mapFn)
+  );
+  a(1)(1)(2)(2)("2")(3);
+  assert.equal(m(), 3, "dependent stream receives the correct value");
+  assert.equal(
+    mapFn.callCount,
+    4,
+    "dependent stream updated on every non-repeating value"
+  );
+});
 
-    // Assert objects are similar in shape, but not the same instance
-    expect(objA).toEqual(objB);
-    expect(objA).not.toBe(objB);
+test("dropRepeats - passes down initial value immediately", assert => {
+  const a = createStream<number>(1);
+  const mapFn = spy((n: number) => n);
+  const m = a.pipe(
+    dropRepeats,
+    map(mapFn)
+  );
+  assert.equal(m(), 1, "dependent stream receives the correct initial value");
+});
 
-    a(objA)(objA)(objB)(objB)(objA);
-    expect(m()).toBe(objA);
-    expect(mapFn).toBeCalledTimes(3);
-
-    // Different types are not strictly equal
-    mapFn.mockClear();
-    a("1")(1)(1);
-    expect(m()).toBe(1);
-    expect(mapFn).toBeCalledTimes(2);
-
-    // undefined and null are not strictly equal
-    mapFn.mockClear();
-    a(undefined)(undefined)(null)(null);
-    expect(m()).toBe(null);
-    expect(mapFn).toBeCalledTimes(2);
-  });
-  it("doesn't push values down after .end is invoked", () => {
-    const a = createStream<number>();
-    const dr = dropRepeats(a);
-    const mapFn = jest.fn((n: number) => n);
-    const m = map(mapFn)(dr);
-
-    a(1)(3);
-    expect(m()).toBe(3);
-    expect(mapFn).toBeCalledTimes(2);
-    expect(dr.parents).toEqual([a]);
-
-    mapFn.mockClear();
-    dr.end(true);
-    a(3)(3)(1);
-    expect(m()).toBe(3);
-    expect(mapFn).toBeCalledTimes(0);
-    expect(dr.parents).toEqual([]);
-  });
+test("dropRepeats - doesn't push values down after .end is invoked", assert => {
+  const a = createStream<number>();
+  const dr = dropRepeats(a);
+  const mapFn = spy((n: number) => n);
+  const m = map(mapFn)(dr);
+  assert.deepEqual(
+    dr.parents,
+    [a],
+    "dropRepeats is subscribed to a parent stream"
+  );
+  a(1)(3);
+  dr.end(true);
+  a(3)(3)(1);
+  assert.equal(m(), 3, "dependent stream does not receive any more values");
+  assert.equal(
+    mapFn.callCount,
+    2,
+    "dependent stream was not called any more times after dropRepeats was ended"
+  );
+  assert.deepEqual(
+    dr.parents,
+    [],
+    "dropRepeats is no longer subscribed to a parent stream"
+  );
 });

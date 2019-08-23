@@ -4,12 +4,12 @@ import { map } from "./map";
 import { noop } from "../utils/noop";
 
 export function flattenPromise<T>(
-  source: Stream<Promise<T>>,
+  source: Stream<Promise<T>> | Stream<PromiseLike<T>>,
   errorHandler: (reason: any) => void = noop
 ): Stream<T> {
   const flattened = createStream<T>();
-  map<Promise<T>, void>(promise => {
+  map<PromiseLike<T>, void>(promise => {
     promise.then(flattened, errorHandler);
-  })(source);
+  })(source as Stream<PromiseLike<T>>);
   return flattened;
 }

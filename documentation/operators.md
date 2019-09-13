@@ -186,7 +186,7 @@ result(); // will return a value once the Promise resolves
 
 # lift
 
-## `lift(liftFn: (...values: any[]) => any, ...sources: Stream<any>[]): Stream<any>`
+## `lift<T extends Stream<any>[], U>(liftFn: (...values: StreamValuesAsTuple<T>) => U, ...sources: T): Stream<U>`
 
 `lift` is a simpler form of `combine`, in which the lift function provided yields the values directly as parameters from the Streams provided as sources. `lift` only emits once all source Streams are active.
 
@@ -240,7 +240,7 @@ const stringB = mapping(b);
 
 # merge
 
-## `merge<T extends Stream<any>[], U extends StreamValuesFromArray<T>>(...sources: T): Stream<U>`
+## `merge<T extends Stream<any>[]>(...sources: T): Stream<StreamValuesAsArray<T>>`
 
 `merge` takes multiple source Streams and returns a single Stream that emits the value of whichever of the source Streams had emitted. The output Stream will be a combined type of all the different types of the source Streams, representing the potential values that the output Stream can emit.
 
@@ -348,7 +348,7 @@ taken(); // returns 2, taken is now closed
 
 # zip
 
-## `zip(...sources: Stream<any>[]): Stream<any[]>`
+## `zip<T extends Stream<any>[]>(...sources: T): Stream<StreamValuesAsTuple<T>>`
 
 `zip` takes a range of input streams and yields a stream containing an array of values from the input streams. The array values are lined up with each other, if a `zip` with two input streams receives `[1,2,3]` in one stream and `["a","b"]` in the other, it will emit `[1, "a"]` and `[2, "b"]` respectively.
 

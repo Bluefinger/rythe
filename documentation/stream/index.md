@@ -77,10 +77,7 @@ const stream = createStream<number>();
 const other = createStream<string>();
 const things = createStream<string>();
 
-stream.end.pipe(
-  map(other.end),
-  map(things.end)
-);
+stream.end.pipe(map(other.end), map(things.end));
 ```
 
 A `Stream<T>` that has been ended/closed can still have its own value updated. However, a closed `Stream<T>` will not emit that value to any other streams. `EndStream` will not update its own value however, as it is representative of its parent `Stream<T>`'s closed state. Once closed, `EndStream` will always yield `true`.

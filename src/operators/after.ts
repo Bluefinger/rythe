@@ -16,15 +16,12 @@ export const after = <T>(duration: number): OperatorFn<T, T[]> => (
     emit(values.slice());
     values.length = 0;
   };
-  const accumulator = scan<T>(
-    (stored, value) => {
-      stored.push(value);
-      clearTimer(clearStore);
-      addTimer(clearStore, duration, stored);
-      return stored;
-    },
-    [] as T[]
-  )(source);
+  const accumulator = scan<T>((stored, value) => {
+    stored.push(value);
+    clearTimer(clearStore);
+    addTimer(clearStore, duration, stored);
+    return stored;
+  }, [] as T[])(source);
   emit.end.pipe(
     map(accumulator.end),
     map(() => {

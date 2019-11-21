@@ -20,7 +20,7 @@ test("Dispatcher - can update streams", assert => {
     "Dispatcher is called twice, once per update"
   );
   assert.equal(b(), 6, "Dependent stream is updated with the correct value");
-  cleanSpy(dispatched);
+  cleanSpy(dispatched as any);
 });
 
 test("Dispatcher - can close streams with an END signal", assert => {
@@ -51,7 +51,7 @@ test("Dispatcher - can close streams with an END signal", assert => {
     6,
     "Dependent Stream keeps original value after parent stream is ended"
   );
-  cleanSpy(dispatched);
+  cleanSpy(dispatched as any);
 });
 
 test("Dispatcher - combines complicated stream dependencies atomically", assert => {
@@ -93,5 +93,5 @@ test("Dispatcher - combines complicated stream dependencies atomically", assert 
     atomic().length,
     "Dispatcher calls should equal combine results length"
   );
-  cleanSpy(dispatched);
+  cleanSpy(dispatched as any);
 });

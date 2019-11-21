@@ -6,10 +6,7 @@ import { spy } from "sinon";
 test("dropRepeats - will not pass down repeat values (strict equality ===)", assert => {
   const a = createStream<number | string>();
   const mapFn = spy((n: number | string) => n);
-  const m = a.pipe(
-    dropRepeats,
-    map(mapFn)
-  );
+  const m = a.pipe(dropRepeats, map(mapFn));
   a(1)(1)(2)(2)("2")(3);
   assert.equal(m(), 3, "dependent stream receives the correct value");
   assert.equal(
@@ -22,10 +19,7 @@ test("dropRepeats - will not pass down repeat values (strict equality ===)", ass
 test("dropRepeats - passes down initial value immediately", assert => {
   const a = createStream<number>(1);
   const mapFn = spy((n: number) => n);
-  const m = a.pipe(
-    dropRepeats,
-    map(mapFn)
-  );
+  const m = a.pipe(dropRepeats, map(mapFn));
   assert.equal(m(), 1, "dependent stream receives the correct initial value");
 });
 

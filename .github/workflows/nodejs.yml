@@ -1,0 +1,41 @@
+name: Node CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [8.x, 10.x, 12.x]
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Node ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: Cache node modules
+      uses: actions/cache@v1
+      with:
+        path: node_modules
+        key: ${{ runner.OS }}-build-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.OS }}-build-${{ env.cache-name }}-
+          ${{ runner.OS }}-build-
+          ${{ runner.OS }}-
+    - name: CI test
+      run: |
+        npm ci --ignore-scripts
+        npm test
+      env:
+        CI: true
+    - name: Codecov
+      uses: codecov/codecov-action@v1.0.4
+      with:
+      # User defined upload name. Visible in Codecov UI
+        name: GA Unit Test coverage
+        # Repository upload token - get it from codecov.io
+        token: ${{ secrets.COV_Token }}

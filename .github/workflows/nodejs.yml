@@ -3,14 +3,11 @@ name: Node CI
 on: [push]
 
 jobs:
-  build:
-
+  test:
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
         node-version: [10.x, 12.x, 13.x]
-
     steps:
     - uses: actions/checkout@v1
     - name: Node ${{ matrix.node-version }}
@@ -23,7 +20,7 @@ jobs:
         path: node_modules
         key: ${{ runner.OS }}-build-${{ hashFiles('**/package-lock.json') }}
         restore-keys: |
-          ${{ runner.OS }}-build-${{ env.cache-name }}-
+          ${{ runner.OS }}-build-${{ env.cache-name }}
           ${{ runner.OS }}-build-
           ${{ runner.OS }}-
     - name: CI test
@@ -36,6 +33,6 @@ jobs:
       uses: codecov/codecov-action@v1.0.4
       with:
       # User defined upload name. Visible in Codecov UI
-        name: GA Unit Test coverage
+        name: Test Coverage - Node ${{ matrix.node-version }}
         # Repository upload token - get it from codecov.io
         token: ${{ secrets.COV_Token }}

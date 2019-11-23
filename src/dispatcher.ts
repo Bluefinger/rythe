@@ -1,6 +1,13 @@
 import { ACTIVE, CHANGING, PENDING } from "./constants";
 import { Stream, Dispatcher, StreamState } from "./types";
 import { END, SKIP } from "./signal";
+import {
+  addQueueItem,
+  nextQueueItem,
+  canExecute,
+  startExecuting,
+  stopExecuting
+} from "./queue";
 
 const incrementWait = <T>(
   stream: Stream<T>,
@@ -65,12 +72,71 @@ const pushUpdate = <T>(stream: Stream<T>, value: T): void => {
   }
 };
 
+const shouldAddToQueue = (dep: Stream<any>) => {
+  if (dep.state !== CHANGING) {
+    if (dep.dependents.length) {
+      addQueueItem(dep);
+      dep.state = CHANGING;
+    } else {
+      markAsActive(dep);
+    }
+  }
+};
+
+const flatUpdate = <T>(stream: Stream<T>) => {
+  const { dependents, val, state } = stream;
+  markAsActive(stream);
+  const updating = val !== SKIP;
+  for (let i = dependents.length; i--; ) {
+    const [dep, fn] = dependents[i];
+    if (!dep.immediate && dep.waiting && state === PENDING) {
+      dep.waiting--;
+    }
+    if (!dep.waiting) {
+      const newValue = updating ? fn(val) : SKIP;
+      switch (newValue) {
+        case SKIP:
+          break;
+        case END:
+          dep.end(true);
+          break;
+        default:
+          dep.val = newValue;
+          shouldAddToQueue(dep);
+      }
+    }
+  }
+};
+
+export const dispatcher: Dispatcher = <T>(
+  stream: Stream<T>,
+  value: T
+): void => {
+  switch (value) {
+    case END:
+      stream.end(true);
+    case SKIP:
+      break;
+    default:
+      stream.val = value;
+      if (stream.state) {
+        startExecuting();
+        addQueueItem(stream);
+        while (canExecute()) {
+          const queued = nextQueueItem();
+          flatUpdate(queued);
+        }
+        stopExecuting();
+      }
+  }
+};
+
 /**
  * Dispatch Function for propagating Stream values across all dependencies.
  * Uses a recursive broadcast approach (newest dependency to oldest
  * dependency traversal).
  */
-export const dispatcher: Dispatcher = <T>(
+export const rdispatcher: Dispatcher = <T>(
   stream: Stream<T>,
   value: T
 ): void => {

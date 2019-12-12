@@ -1,5 +1,5 @@
 import { ACTIVE, CHANGING, PENDING } from "./constants";
-import { Stream, Dispatcher, StreamState } from "./types";
+import { Stream, Dispatcher, StreamState } from "./types/stream";
 import { END, SKIP } from "./signal";
 
 const incrementWait = <T>(
@@ -77,6 +77,7 @@ export const dispatcher: Dispatcher = <T>(
   switch (value) {
     case END:
       stream.end(true);
+    // fallthrough
     case SKIP:
       break;
     default:

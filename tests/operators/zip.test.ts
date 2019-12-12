@@ -1,6 +1,6 @@
 import { createStream, isStream } from "../../src/stream";
 import { zip } from "../../src/operators";
-import { Stream } from "../../src/types";
+import { Stream } from "../../src/types/stream";
 import { ACTIVE, CLOSED, PENDING } from "../../src/constants";
 import { test } from "../testHarness";
 

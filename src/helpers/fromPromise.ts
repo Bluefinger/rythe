@@ -1,5 +1,5 @@
 import { createStream } from "../stream";
-import { Stream } from "../types";
+import { Stream } from "../types/stream";
 import { END } from "../signal";
 
 export const fromPromise = <T>(promise: PromiseLike<T>): Stream<T> => {

@@ -1,6 +1,6 @@
 import { CLOSED, PENDING } from "./constants";
 import { dispatcher as push } from "./dispatcher";
-import { Stream, Closer, OperatorFn, EndStream } from "./types";
+import { Stream, Closer, OperatorFn, EndStream } from "./types/stream";
 import { pipeFromArray } from "./utils/pipe";
 
 function toJSON(this: Stream<any>): any {
@@ -21,9 +21,9 @@ function removeDep(this: Stream<any>, { dependents }: Stream<any>): void {
   dependents.splice(index, 1);
 }
 
-function boundPipe<T>(
+function boundPipe<T, Fns extends OperatorFn<any, any>[]>(
   this: Stream<T>,
-  ...operators: OperatorFn<any, any>[]
+  ...operators: Fns
 ): Stream<any> {
   if (!operators.length) {
     return this;

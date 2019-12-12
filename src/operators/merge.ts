@@ -1,4 +1,4 @@
-import { Stream, StreamValuesAsArray } from "../types";
+import { Stream, StreamValuesAsArray } from "../types/stream";
 import { createStream, isStream } from "../stream";
 import { ACTIVE } from "../constants";
 import { SOURCE_ERROR } from "../errors";

@@ -13,7 +13,7 @@ test("after - emits a list of accumulated values after a specified period of no 
   const clock = useFakeTimers();
   const a = createStream<number>();
   const af = a.pipe(after(100));
-  const count = af.pipe(scan(num => ++num, 0));
+  const count = af.pipe(scan<number[], number>(num => ++num, 0));
   assert.equal(af(), undefined, "should be initialised with no value");
   assert.equal(count(), 0, "should not emit anything after initialisation");
   a(2);
@@ -59,7 +59,7 @@ test("after - stops accumulating after being ended", assert => {
   const clock = useFakeTimers();
   const a = createStream<number>();
   const af = a.pipe(after(100));
-  const count = af.pipe(scan(num => ++num, 0));
+  const count = af.pipe(scan<number[], number>(num => ++num, 0));
   a(2)(4);
   clock.tick(100);
   a(6)(8);

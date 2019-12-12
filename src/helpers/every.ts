@@ -1,5 +1,5 @@
 import { createStream } from "../stream";
-import { Stream } from "../types";
+import { Stream } from "../types/stream";
 import { map } from "../operators";
 import { addInterval, clearTimer } from "../utils/timers";
 

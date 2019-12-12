@@ -94,79 +94,20 @@ export interface Stream<T> {
    */
   parents: Stream<any>[];
 
+  /* eslint-disable prettier/prettier */
   pipe(): Stream<T>;
-  pipe(fn1: OperatorFn<T, T>): Stream<T>;
-  pipe<A>(fn1: OperatorFn<T, A>): Stream<A>;
-  pipe<A, B>(fn1: OperatorFn<T, A>, fn2: OperatorFn<A, B>): Stream<B>;
-  pipe<A, B, C>(
-    fn1: OperatorFn<T, A>,
-    fn2: OperatorFn<A, B>,
-    fn3: OperatorFn<B, C>
-  ): Stream<C>;
-  pipe<A, B, C, D>(
-    fn1: OperatorFn<T, A>,
-    fn2: OperatorFn<A, B>,
-    fn3: OperatorFn<B, C>,
-    fn4: OperatorFn<C, D>
-  ): Stream<D>;
-  pipe<A, B, C, D, E>(
-    fn1: OperatorFn<T, A>,
-    fn2: OperatorFn<A, B>,
-    fn3: OperatorFn<B, C>,
-    fn4: OperatorFn<C, D>,
-    fn5: OperatorFn<D, E>
-  ): Stream<E>;
-  pipe<A, B, C, D, E, F>(
-    fn1: OperatorFn<T, A>,
-    fn2: OperatorFn<A, B>,
-    fn3: OperatorFn<B, C>,
-    fn4: OperatorFn<C, D>,
-    fn5: OperatorFn<D, E>,
-    fn6: OperatorFn<E, F>
-  ): Stream<F>;
-  pipe<A, B, C, D, E, F, G>(
-    fn1: OperatorFn<T, A>,
-    fn2: OperatorFn<A, B>,
-    fn3: OperatorFn<B, C>,
-    fn4: OperatorFn<C, D>,
-    fn5: OperatorFn<D, E>,
-    fn6: OperatorFn<E, F>,
-    fn7: OperatorFn<F, G>
-  ): Stream<G>;
-  pipe<A, B, C, D, E, F, G, H>(
-    fn1: OperatorFn<T, A>,
-    fn2: OperatorFn<A, B>,
-    fn3: OperatorFn<B, C>,
-    fn4: OperatorFn<C, D>,
-    fn5: OperatorFn<D, E>,
-    fn6: OperatorFn<E, F>,
-    fn7: OperatorFn<F, G>,
-    fn8: OperatorFn<G, H>
-  ): Stream<H>;
-  pipe<A, B, C, D, E, F, G, H, I>(
-    fn1: OperatorFn<T, A>,
-    fn2: OperatorFn<A, B>,
-    fn3: OperatorFn<B, C>,
-    fn4: OperatorFn<C, D>,
-    fn5: OperatorFn<D, E>,
-    fn6: OperatorFn<E, F>,
-    fn7: OperatorFn<F, G>,
-    fn8: OperatorFn<G, H>,
-    fn9: OperatorFn<H, I>
-  ): Stream<I>;
-  pipe<A, B, C, D, E, F, G, H, I>(
-    fn1: OperatorFn<T, A>,
-    fn2: OperatorFn<A, B>,
-    fn3: OperatorFn<B, C>,
-    fn4: OperatorFn<C, D>,
-    fn5: OperatorFn<D, E>,
-    fn6: OperatorFn<E, F>,
-    fn7: OperatorFn<F, G>,
-    fn8: OperatorFn<G, H>,
-    fn9: OperatorFn<H, I>,
-    ...fns: OperatorFn<any, any>[]
-  ): Stream<any>;
-  pipe<U>(...operators: OperatorFn<any, any>[]): Stream<U>;
+  pipe<A>(...operators: [OperatorFn<T, A>]): Stream<A>;
+  pipe<A, B>(...operators: [OperatorFn<T, A>, OperatorFn<A, B>]): Stream<B>;
+  pipe<A, B, C>(...operators: [OperatorFn<T, A>, OperatorFn<A, B>, OperatorFn<B, C>]): Stream<C>;
+  pipe<A, B, C, D>(...operators: [OperatorFn<T, A>, OperatorFn<A, B>, OperatorFn<B, C>, OperatorFn<C, D>]): Stream<D>;
+  pipe<A, B, C, D, E>(...operators: [OperatorFn<T, A>, OperatorFn<A, B>, OperatorFn<B, C>, OperatorFn<C, D>, OperatorFn<D, E>]): Stream<E>;
+  pipe<A, B, C, D, E, F>(...operators: [OperatorFn<T, A>, OperatorFn<A, B>, OperatorFn<B, C>, OperatorFn<C, D>, OperatorFn<D, E>, OperatorFn<E, F>]): Stream<F>;
+  pipe<A, B, C, D, E, F, G>(...operators: [OperatorFn<T, A>, OperatorFn<A, B>, OperatorFn<B, C>, OperatorFn<C, D>, OperatorFn<D, E>, OperatorFn<E, F>, OperatorFn<F, G>]): Stream<G>;
+  pipe<A, B, C, D, E, F, G, H>(...operators: [OperatorFn<T, A>, OperatorFn<A, B>, OperatorFn<B, C>, OperatorFn<C, D>, OperatorFn<D, E>, OperatorFn<E, F>, OperatorFn<F, G>, OperatorFn<G, H>]): Stream<H>;
+  pipe<A, B, C, D, E, F, G, H, I>(...operators: [OperatorFn<T, A>, OperatorFn<A, B>, OperatorFn<B, C>, OperatorFn<C, D>, OperatorFn<D, E>, OperatorFn<E, F>, OperatorFn<F, G>, OperatorFn<G, H>, OperatorFn<H, I>]): Stream<I>;
+  pipe<A, B, C, D, E, F, G, H, I>(...operators: [OperatorFn<T, A>, OperatorFn<A, B>, OperatorFn<B, C>, OperatorFn<C, D>, OperatorFn<D, E>, OperatorFn<E, F>, OperatorFn<F, G>, OperatorFn<G, H>, OperatorFn<H, I>, ...OperatorFn<any, any>[]]): Stream<any>;
+  // pipe(...operators: OperatorFn<any, any>[]): Stream<any>;
+  /* eslint-enable prettier/prettier */
   toJSON(): any;
 }
 

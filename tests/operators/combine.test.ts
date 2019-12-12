@@ -1,4 +1,4 @@
-import { Stream } from "../../src/types";
+import { Stream } from "../../src/types/stream";
 import { createStream } from "../../src/stream";
 import { ACTIVE, PENDING } from "../../src/constants";
 import { combine, map, scan } from "../../src/operators";
@@ -79,7 +79,7 @@ test("combine - combines and maps nested streams atomically", assert => {
   const d = c.pipe(map(x => x + 1));
   const e = combine(x => x() + 0, d);
   const atomic = combine((sB, sE) => sB() + sE(), b, e).pipe(
-    scan((acc, value: number) => acc.concat(value), [] as number[])
+    scan<string>((acc, value) => acc.concat(value), [])
   );
   a("3")("4");
   assert.deepEqual(

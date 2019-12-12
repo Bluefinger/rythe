@@ -1,4 +1,4 @@
-import { Stream, StreamValuesAsTuple } from "../types";
+import { Stream, StreamValuesAsTuple } from "../types/stream";
 import { createStream, isStream } from "../stream";
 import { PENDING, CLOSED } from "../constants";
 import { SOURCE_ERROR, INVALID_ARGUMENTS } from "../errors";
@@ -30,7 +30,9 @@ export function zip<T extends Stream<any>[]>(
       throw new Error(SOURCE_ERROR);
     }
     const subFn = zipFn(buffer, i);
-    const endFn = () => ending.push(i);
+    const endFn = () => {
+      ending.push(i);
+    };
     subscriber(zipped, source, subFn);
     if (source.state !== PENDING) {
       immediate = subFn(source.val);
@@ -38,7 +40,7 @@ export function zip<T extends Stream<any>[]>(
     if (source.state === CLOSED) {
       endFn();
     } else {
-      map<boolean, number>(endFn)(source.end);
+      map<boolean, void>(endFn)(source.end);
     }
   }
   map(() => {

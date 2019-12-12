@@ -1,4 +1,4 @@
-import { Stream, OperatorFn } from "../types";
+import { Stream, OperatorFn } from "../types/stream";
 import { END } from "../signal";
 import { subscriber } from "../utils/subscriber";
 

@@ -63,7 +63,7 @@ test("during - won't emit if it receives no values", assert => {
   const clock = useFakeTimers();
   const a = createStream<number>();
   const d = a.pipe(during(100));
-  const count = d.pipe(scan(num => ++num, 0));
+  const count = d.pipe(scan<number[], number>(num => ++num, 0));
   a(1)(2)(3);
   clock.tick(100);
   assert.equal(

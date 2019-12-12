@@ -1,4 +1,4 @@
-import { Stream, StreamFn } from "../types";
+import { Stream, StreamFn } from "../types/stream";
 
 export const subscriber = <T, U>(
   stream: Stream<U>,

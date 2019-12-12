@@ -1,4 +1,4 @@
-import { Stream, OperatorFn } from "../types";
+import { Stream, OperatorFn } from "../types/stream";
 import { scan } from "./scan";
 import { map } from "./map";
 import { createStream } from "../stream";
@@ -30,7 +30,7 @@ export const during = <T>(duration: number): OperatorFn<T, T[]> => (
   addInterval(tick, duration);
   emit.end.pipe(
     map(accumulator.end),
-    map(() => {
+    map<boolean, void>(() => {
       clearTimer(tick);
       accumulator.val.length = 0;
     })

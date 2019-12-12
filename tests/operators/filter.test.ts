@@ -1,7 +1,7 @@
 import { createStream } from "../../src/stream";
 import { PENDING } from "../../src/constants";
 import { filter, map, combine, scan } from "../../src/operators";
-import { Stream } from "../../src/types";
+import { Stream } from "../../src/types/stream";
 import { test } from "../testHarness";
 import { spy } from "sinon";
 

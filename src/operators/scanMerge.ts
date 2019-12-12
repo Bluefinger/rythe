@@ -1,4 +1,4 @@
-import { Stream } from "../types";
+import { Stream } from "../types/stream";
 import { createStream, isStream } from "../stream";
 import { subscriber } from "../utils/subscriber";
 import { SOURCE_ERROR } from "../errors";

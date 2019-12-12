@@ -1,4 +1,4 @@
-import { Stream } from "../types";
+import { Stream } from "../types/stream";
 import { dropWith } from "./dropWith";
 
 const directComparison = <T>(prev: T, next: T): boolean => prev === next;

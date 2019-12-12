@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "baseUrl": "./src",
     "incremental": true,
     "tsBuildInfoFile": "./.cache/tsBuildInfo",
     "sourceMap": true,
@@ -10,10 +9,6 @@
     "module":"esnext",
     "moduleResolution": "node",
     "target": "esnext",
-    "paths": {
-      "rythe": ["./"],
-      "rythe/*": ["./*"]
-    },
     "rootDir": "./src"
   },
   "include": [

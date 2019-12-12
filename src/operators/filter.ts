@@ -1,5 +1,5 @@
 import { SKIP } from "../signal";
-import { Stream, OperatorFn } from "../types";
+import { Stream, OperatorFn } from "../types/stream";
 import { map } from "./map";
 
 export function filter<T, U extends T>(

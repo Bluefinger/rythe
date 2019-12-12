@@ -1,7 +1,7 @@
 import { createStream, isStream } from "../stream";
 import { PENDING } from "../constants";
 import { SOURCE_ERROR } from "../errors";
-import { Stream } from "../types";
+import { Stream } from "../types/stream";
 import { subscriber } from "../utils/subscriber";
 
 /**

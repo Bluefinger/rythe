@@ -1,7 +1,7 @@
 import { createStream, isStream } from "../src/stream";
 import { ACTIVE, CLOSED, PENDING } from "../src/constants";
 import { END } from "../src/signal";
-import { Stream } from "../src/types";
+import { Stream } from "../src/types/stream";
 import { test } from "./testHarness";
 
 test("Stream - can act as a getter and setter", assert => {

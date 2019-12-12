@@ -1,5 +1,5 @@
 import { END } from "../signal";
-import { Stream, OperatorFn } from "../types";
+import { Stream, OperatorFn } from "../types/stream";
 import { map } from "./map";
 import { makeUInt } from "../utils/makeUInt";
 

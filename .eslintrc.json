@@ -2,7 +2,10 @@
   "root": true,
   "parser": "@typescript-eslint/parser",
   "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/recommended-requiring-type-checking",
     "plugin:prettier/recommended",
     "prettier/@typescript-eslint"
   ],
@@ -12,12 +15,15 @@
   },
   "plugins": ["@typescript-eslint", "prettier"],
   "parserOptions": {
-    "project": "./config/tsconfig.eslint.json",
-    "ecmaVersion": 2018,
+    "project": ["./config/tsconfig.eslint.json", "./tests/tsconfig.json"],
+    "tsconfigRootDir": "./",
+    "ecmaVersion": 2019,
     "sourceType": "module"
   },
   "rules": {
     "@typescript-eslint/no-explicit-any": "off",
-    "@typescript-eslint/explicit-function-return-type": "off"
+    "@typescript-eslint/no-empty-function": "off",
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/unbound-method": "off"
   }
 }

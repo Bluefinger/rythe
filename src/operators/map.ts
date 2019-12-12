@@ -2,7 +2,7 @@ import { createStream, isStream } from "../stream";
 import { ACTIVE } from "../constants";
 import { SOURCE_ERROR } from "../errors";
 import { SKIP } from "../signal";
-import { Stream, OperatorFn } from "../types";
+import { Stream, OperatorFn } from "../types/stream";
 import { subscriber } from "../utils/subscriber";
 
 export function map<T>(

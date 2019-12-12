@@ -1,4 +1,4 @@
-import { Stream } from "../types";
+import { Stream } from "../types/stream";
 import { createStream } from "../stream";
 import { map } from "./map";
 import { noop } from "../utils/noop";

@@ -1,4 +1,4 @@
-import { Stream, StreamValuesAsTuple } from "../types";
+import { Stream, StreamValuesAsTuple } from "../types/stream";
 import { combine } from "./combine";
 
 const unwrapValue = <V>({ val }: Stream<V>): V => val;

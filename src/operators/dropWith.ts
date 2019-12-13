@@ -6,10 +6,11 @@ import { map } from "./map";
  * Pushes non-repeating values using a predicate function. Skips any repeated values.
  */
 export const dropWith = <T>(
-  predicate: (prev: T | undefined, next: T) => boolean
+  predicate: (prev: T, next: T) => boolean
 ): OperatorFn<T, T> => (source: Stream<T>): Stream<T> => {
   let prev: T | undefined;
-  return map<T>((value): T => (predicate(prev, value) ? SKIP : (prev = value)))(
-    source
-  );
+  return map<T>(
+    (value): T =>
+      prev !== undefined && predicate(prev, value) ? SKIP : (prev = value)
+  )(source);
 };

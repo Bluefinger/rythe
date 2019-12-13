@@ -2,6 +2,7 @@ import { after } from "./after";
 import { combine } from "./combine";
 import { during } from "./during";
 import { lift } from "./lift";
+import { dropBy } from "./dropBy";
 import { dropWith } from "./dropWith";
 import { dropRepeats } from "./dropRepeats";
 import { filter } from "./filter";
@@ -22,6 +23,7 @@ export {
   lift,
   dropRepeats,
   dropWith,
+  dropBy,
   endsWith,
   filter,
   map,

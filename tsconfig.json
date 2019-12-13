@@ -6,12 +6,10 @@
     "strict": true,
     "noUnusedLocals": true,
     "esModuleInterop": true,
-    "module":"esnext",
+    "module": "esnext",
     "moduleResolution": "node",
-    "target": "esnext",
+    "target": "es2019",
     "rootDir": "./src"
   },
-  "include": [
-    "./src/**/*"
-  ]
+  "include": ["./src/**/*"]
 }

@@ -3,19 +3,19 @@ import { isStream } from "../../src/stream";
 import { ACTIVE } from "../../src/constants";
 import { scan } from "../../src/operators";
 import { test } from "../testHarness";
-import { useFakeTimers } from "sinon";
+import { getMockTimer } from "../testUtils";
 
 test("every - returns a stream", assert => {
-  const clock = useFakeTimers();
+  const clock = getMockTimer();
   const t = every(100);
   assert.equal(isStream(t), true, "produces a valid Stream function");
-  assert.equal(t(), clock.now, "emits the timestamp value");
+  assert.equal(t(), clock.now(), "emits the timestamp value");
   assert.equal(t.state, ACTIVE, "starts as ACTIVE by default");
   clock.restore();
 });
 
 test("every - pushes a timestamp every n milliseconds", assert => {
-  const clock = useFakeTimers();
+  const clock = getMockTimer();
   const t = every(1000);
   const s = t.pipe(scan(acc => ++acc, 0));
   assert.equal(s(), 1, "emits once initially");
@@ -27,7 +27,7 @@ test("every - pushes a timestamp every n milliseconds", assert => {
 });
 
 test("every - defaults to 0 duration", assert => {
-  const clock = useFakeTimers();
+  const clock = getMockTimer();
   const t = every();
   const s = t.pipe(scan(acc => ++acc, 0));
   clock.next();
@@ -36,7 +36,7 @@ test("every - defaults to 0 duration", assert => {
 });
 
 test("every - cleans up the timer on end", assert => {
-  const clock = useFakeTimers();
+  const clock = getMockTimer();
   const t = every(1000);
   const s = t.pipe(scan(acc => ++acc, 0));
   clock.tick(1000);

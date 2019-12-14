@@ -1,10 +1,10 @@
 import { isStream, createStream } from "../../src/stream";
 import { scan, during } from "../../src/operators";
 import { test } from "../testHarness";
-import { useFakeTimers } from "sinon";
+import { getMockTimer } from "../testUtils";
 
 test("during - returns a Stream", assert => {
-  const clock = useFakeTimers();
+  const clock = getMockTimer();
   const a = createStream<number>();
   const d = a.pipe(during(100));
   assert.equal(isStream(d), true, "returns a valid Stream function");
@@ -13,7 +13,7 @@ test("during - returns a Stream", assert => {
 });
 
 test("during - collects values it receives and only emits after set duration has passed", assert => {
-  const clock = useFakeTimers();
+  const clock = getMockTimer();
   const a = createStream<number>();
   const d = a.pipe(during(100));
   a(1)(2)(3);
@@ -42,7 +42,7 @@ test("during - collects values it receives and only emits after set duration has
 });
 
 test("during - doesn't collect values after it has ended", assert => {
-  const clock = useFakeTimers();
+  const clock = getMockTimer();
   const a = createStream<number>();
   const d = a.pipe(during(100));
   a(1)(2)(3);
@@ -60,7 +60,7 @@ test("during - doesn't collect values after it has ended", assert => {
 });
 
 test("during - won't emit if it receives no values", assert => {
-  const clock = useFakeTimers();
+  const clock = getMockTimer();
   const a = createStream<number>();
   const d = a.pipe(during(100));
   const count = d.pipe(scan<number[], number>(num => ++num, 0));

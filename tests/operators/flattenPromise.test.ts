@@ -3,8 +3,8 @@ import { ACTIVE, PENDING } from "../../src/constants";
 import { flattenPromise, map } from "../../src/operators";
 import { test } from "../testHarness";
 import { delay } from "../testUtils";
-import { useFakeTimers, spy } from "sinon";
-import flushPromises from "flush-promises";
+import { spy } from "sinon";
+import { getMockTimer } from "../testUtils";
 
 test("flattenPromise - returns a stream", assert => {
   const a = createStream(Promise.resolve(1));
@@ -13,7 +13,7 @@ test("flattenPromise - returns a stream", assert => {
 });
 
 test("flattenPromise - flattens the stream to return a promise's value", async assert => {
-  const clock = useFakeTimers();
+  const clock = getMockTimer();
   const promise = delay(100, 1);
   const a = createStream(promise);
   const b = flattenPromise(a);
@@ -40,7 +40,7 @@ test("flattenPromise - flattens the stream to return a promise's value", async a
 });
 
 test("flattenPromise - is pipeable", async assert => {
-  const clock = useFakeTimers();
+  const clock = getMockTimer();
   const a = createStream<number>();
   const b = a.pipe(
     map(value => delay(100, value)),
@@ -48,8 +48,7 @@ test("flattenPromise - is pipeable", async assert => {
     map(value => value + 2)
   );
   a(5);
-  clock.runAll();
-  await flushPromises();
+  await clock.flush();
   assert.equal(
     b(),
     7,
@@ -59,7 +58,7 @@ test("flattenPromise - is pipeable", async assert => {
 });
 
 test("flattenPromise - skips rejected promises", async assert => {
-  const clock = useFakeTimers();
+  const clock = getMockTimer();
   const a = createStream(delay(100, "Error", true));
   const b = flattenPromise(a);
   clock.runAll();
@@ -82,7 +81,7 @@ test("flattenPromise - skips rejected promises", async assert => {
 });
 
 test("flattenPromise - allows an error handler to be used to catch errors", async assert => {
-  const clock = useFakeTimers();
+  const clock = getMockTimer();
   const handler = spy();
   const a = createStream(delay(100, "Error", true));
   flattenPromise(a, handler);

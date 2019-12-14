@@ -1,7 +1,7 @@
 import { isStream, createStream } from "../../src/stream";
 import { scan, after } from "../../src/operators";
 import { test } from "../testHarness";
-import { useFakeTimers } from "sinon";
+import { getMockTimer } from "../testUtils";
 
 test("after - returns a stream", assert => {
   const a = createStream<number>();
@@ -10,7 +10,7 @@ test("after - returns a stream", assert => {
 });
 
 test("after - emits a list of accumulated values after a specified period of no updates", assert => {
-  const clock = useFakeTimers();
+  const clock = getMockTimer();
   const a = createStream<number>();
   const af = a.pipe(after(100));
   const count = af.pipe(scan<number[], number>(num => ++num, 0));
@@ -56,7 +56,7 @@ test("after - emits a list of accumulated values after a specified period of no 
 });
 
 test("after - stops accumulating after being ended", assert => {
-  const clock = useFakeTimers();
+  const clock = getMockTimer();
   const a = createStream<number>();
   const af = a.pipe(after(100));
   const count = af.pipe(scan<number[], number>(num => ++num, 0));

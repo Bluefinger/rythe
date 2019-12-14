@@ -9,4 +9,4 @@ export const dropBy = <
   K extends keyof T = string | number | symbol
 >(
   key: K
-) => dropWith<T>((prev, next) => prev[key] === next[key]);
+) => dropWith<T>((prev, next) => (prev && prev[key]) === next[key]);

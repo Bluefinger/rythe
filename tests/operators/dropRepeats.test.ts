@@ -48,3 +48,21 @@ test("dropRepeats - doesn't push values down after .end is invoked", assert => {
     "dropRepeats is no longer subscribed to a parent stream"
   );
 });
+
+test("dropRepeats - prevents undefined/null repeat values", assert => {
+  const a = createStream<number | null | undefined>();
+  const dr = dropRepeats(a);
+  const mapFn = spy((n: number | null | undefined) => n);
+  const m = map(mapFn)(dr);
+  a(3)(null)(null)(undefined)(undefined)(null);
+  assert.equal(
+    m(),
+    null,
+    "dependent stream receives the correct nullable value"
+  );
+  assert.equal(
+    mapFn.callCount,
+    4,
+    "dependent stream updated on every non-repeating nullable value"
+  );
+});

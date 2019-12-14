@@ -14,7 +14,7 @@ test("dropWith - will not pass down repeat values according to its predicate fun
   const a = createStream<TestObj<number>>();
   const mapFn = spy((n: TestObj<number>) => n);
   const m = a.pipe(
-    dropWith((prev, next) => prev.val === next.val),
+    dropWith((prev, next) => prev?.val === next.val),
     map(mapFn)
   );
   a({ val: 1 })({ val: 1 })({ val: 2 })({ val: 2 })({ val: 2 })({ val: 3 });
@@ -34,7 +34,7 @@ test("dropWith - passes down initial value immediately", assert => {
   const a = createStream<TestObj<number>>({ val: 1 });
   const mapFn = spy((n: TestObj<number>) => n);
   const m = a.pipe(
-    dropWith((prev, next) => prev.val === next.val),
+    dropWith((prev, next) => prev?.val === next.val),
     map(mapFn)
   );
   assert.deepEqual(

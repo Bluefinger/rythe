@@ -87,7 +87,7 @@ store(); // returns [1, 2, 3], as the second 1 and 3 were skipped
 
 # dropWith
 
-## `dropWith<T>(predicate: (prev: T, next: T) => boolean): OperatorFn<T, T>`
+## `dropWith<T>(predicate: (prev: T | undefined, next: T) => boolean): OperatorFn<T, T>`
 
 `dropWith` takes a predicate function and applies it to incoming values so to compare them with whatever the previous value was. If the result of the function is `true`, then the previous and next value are considered the same and thus is skipped. It'll only emit when the next value is not the same as the previous one.
 
@@ -95,7 +95,7 @@ store(); // returns [1, 2, 3], as the second 1 and 3 were skipped
 const a = createStream<any>();
 
 const store = a.pipe(
-  dropWith((prev, next) => prev.b !== next.b),
+  dropWith((prev, next) => prev?.b !== next.b),
   scan((acc, value) => acc.concat(value), [])
 );
 

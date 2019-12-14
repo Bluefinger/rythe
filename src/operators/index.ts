@@ -11,6 +11,7 @@ import { merge } from "./merge";
 import { scan } from "./scan";
 import { scanMerge } from "./scanMerge";
 import { skip } from "./skip";
+import { select } from "./select";
 import { take } from "./take";
 import { endsWith } from "./endsWith";
 import { flattenPromise } from "./flattenPromise";
@@ -31,6 +32,7 @@ export {
   scan,
   scanMerge,
   skip,
+  select,
   take,
   flattenPromise,
   zip

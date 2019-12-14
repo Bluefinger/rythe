@@ -14,6 +14,7 @@ import {
   scan,
   scanMerge,
   skip,
+  select,
   take,
   flattenPromise,
   zip
@@ -40,6 +41,7 @@ export {
   merge,
   skip,
   take,
+  select,
   flattenPromise,
   zip,
   END,

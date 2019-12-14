@@ -326,6 +326,20 @@ merged(); // will return 4
 
 `scanMerge` does _not_ scan values immediately if the source streams already have values. It will only accumulate upon receiving new values after it has subscribed to the streams. Ending one input stream will close the `scanMerge` stream immediately.
 
+# select
+
+## `select<T extends any, K extends (string | number | symbol)[]>(...keys: K): OperatorFn<T, any>`
+
+`select` takes a path of properties as parameters, and then resolves the value to be emitted using that path on the object it receives. It will not emit any output if the path cannot complete, or encounters an `undefined` or `null` value. This function can only definitively type-check upto 5 levels deep, afterwards the TS compiler will not be able to resolve the value definitively.
+
+```typescript
+const obj = createStream<DeepObj>();
+const sel = obj.pipe(select("a", "b"));
+
+obj({ a: { b: 4 } })({ a: null });
+sel(); // returns 4
+```
+
 # skip
 
 ## `skip<T>(amount: number): OperatorFn<T, T>`

@@ -1,7 +1,7 @@
 import { createStream, isStream } from "../../src/stream";
 import { select, scan } from "../../src/operators";
 import { test } from "../testHarness";
-import { TestObj } from "../testTypes";
+import { TestObj, DeepTestObj } from "../testTypes";
 
 test("select - returns a valid Stream", assert => {
   const s = createStream<any>();
@@ -28,6 +28,19 @@ test("select - does not emit undefined or null when selected as a value", assert
     "dependency contains last emitted value, does not get updated with an undefined or null value"
   );
   assert.equal(emitted(), 1, "select emitted only once");
+});
+
+test("select - does a deep select on a nested object", assert => {
+  const a = createStream<DeepTestObj<number>>();
+  const s = a.pipe(select("a", "b", 0));
+  const emitted = s.pipe(scan(num => ++num, 0));
+  a({ a: { b: [2] } })({})({ a: { b: null } });
+  assert.equal(
+    s(),
+    2,
+    "dependency contains last emitted value from the deep search, does not get updated with an undefined paths or null values"
+  );
+  assert.equal(emitted(), 1, "deep select emitted only once");
 });
 
 test("select - can select properties of primitive types", assert => {

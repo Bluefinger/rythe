@@ -44,7 +44,7 @@ export function select<
   K5 extends keyof DeepSearch<T, [K1, K2, K3, K4]>,
   K6 extends keyof DeepSearch<T, [K1, K2, K3, K4, K5]>
 >(
-  ...keys: [K1, K2, K3, K4, K5]
+  ...keys: [K1, K2, K3, K4, K5, K6]
 ): OperatorFn<T, DeepSearch<T, [K1, K2, K3, K4, K5, K6]>>;
 export function select<
   T extends any,
@@ -56,7 +56,7 @@ export function select<
   K6 extends keyof DeepSearch<T, [K1, K2, K3, K4, K5]>,
   K7 extends keyof DeepSearch<T, [K1, K2, K3, K4, K5, K6]>
 >(
-  ...keys: [K1, K2, K3, K4, K5]
+  ...keys: [K1, K2, K3, K4, K5, K6, K7]
 ): OperatorFn<T, DeepSearch<T, [K1, K2, K3, K4, K5, K6, K7]>>;
 export function select<
   T extends any,
@@ -69,7 +69,7 @@ export function select<
   K7 extends keyof DeepSearch<T, [K1, K2, K3, K4, K5, K6]>,
   K8 extends keyof DeepSearch<T, [K1, K2, K3, K4, K5, K6, K7]>
 >(
-  ...keys: [K1, K2, K3, K4, K5]
+  ...keys: [K1, K2, K3, K4, K5, K6, K7, K8]
 ): OperatorFn<T, DeepSearch<T, [K1, K2, K3, K4, K5, K6, K7, K8]>>;
 export function select<
   T extends any,
@@ -83,7 +83,7 @@ export function select<
   K8 extends keyof DeepSearch<T, [K1, K2, K3, K4, K5, K6, K7]>,
   K9 extends keyof DeepSearch<T, [K1, K2, K3, K4, K5, K6, K7, K8]>
 >(
-  ...keys: [K1, K2, K3, K4, K5]
+  ...keys: [K1, K2, K3, K4, K5, K6, K7, K8, K9]
 ): OperatorFn<T, DeepSearch<T, [K1, K2, K3, K4, K5, K6, K7, K8, K9]>>;
 export function select<
   T extends any = any,

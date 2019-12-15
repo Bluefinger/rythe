@@ -99,3 +99,11 @@ export type PipeFn<Fns extends SingleFn[], K extends keyof Fns> = K extends 0
   : (
       arg: ReturnType<Fns[Pos<Prev<IteratorOf<K>>>]>
     ) => ReturnType<Fns[Pos<IteratorOf<K>>]>;
+
+export type DeepSearch<
+  T extends any,
+  K extends (string | number | symbol)[]
+> = {
+  next: DeepSearch<NonNullable<T[First<K>]>, Tail<K>>;
+  result: T;
+}[Length<K> extends 0 ? "result" : "next"];

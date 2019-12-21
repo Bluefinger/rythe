@@ -328,9 +328,9 @@ merged(); // will return 4
 
 # select
 
-## `select<T extends any, K extends (string | number | symbol)[]>(...keys: K): OperatorFn<T, any>`
+## `select<T extends any, K extends (string | number | symbol)[]>(...keys: K): OperatorFn<T, DeepSearch<T, K>>`
 
-`select` takes a path of properties as parameters, and then resolves the value to be emitted using that path on the object it receives. It will not emit any output if the path cannot complete, or encounters an `undefined` or `null` value.
+`select` takes a path of properties as parameters, and then resolves the value to be emitted using that path on the object it receives. It will not emit any output if the path cannot complete, such as when the path encounters an `undefined` or `null` value. Incorrect/invalid paths will yield a result of `Stream<never>`, as the path will never be able to resolve a valid value and thus will create a `Stream` that will never emit.
 
 ```typescript
 const obj = createStream<DeepObj>();

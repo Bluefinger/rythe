@@ -25,6 +25,8 @@ const mapped = stream.pipe(
 stream(5)(6); // mapped emits only 125, 6 is filtered out
 ```
 
+Note: Tested to work with the latest version of Typescript (3.7). Only supports the latest typescript officially.
+
 ## Goals
 
 - Provide a tree-shakeable FRP library for use with bundlers like Rollup

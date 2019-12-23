@@ -6,7 +6,6 @@
     "declaration": true,
     "declarationMap": true,
     "declarationDir": "../dist/cjs",
-    "preserveConstEnums": true,
-    "sourceRoot": "../../src"
+    "preserveConstEnums": true
   }
 }

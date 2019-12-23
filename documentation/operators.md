@@ -6,6 +6,7 @@ An Operator takes an input stream or streams and outputs a new stream, often app
 
 - [after](#after)
 - [combine](#combine)
+- [dropBy](#dropBy)
 - [dropRepeats](#droprepeats)
 - [dropWith](#dropwith)
 - [during](#during)
@@ -17,6 +18,7 @@ An Operator takes an input stream or streams and outputs a new stream, often app
 - [merge](#merge)
 - [scan](#scan)
 - [scanMerge](#scanmerge)
+- [select](#select)
 - [skip](#skip)
 - [take](#take)
 - [zip](#zip)
@@ -67,6 +69,24 @@ combined(); // returns "12"
 
 `combine()` however is not _pipeable_, as it assumes a many-to-one relationship, whereas piping in Rythe is one-to-one.
 
+# dropBy
+
+## `dropBy<T extends any = any, K extends keyof T = string | number | symbol>(key: K): OperatorFn<T, T>`
+
+`dropBy` takes a valid key string and checks the property of the received object with the value of the previous one. If the result of the comparison is `true`, then the emit is skipped. It'll only emit when the next value is not the same as the previous one.
+
+```typescript
+const a = createStream<any>();
+
+const store = a.pipe(
+  dropBy("b"),
+  scan((acc, value) => acc.concat(value), [])
+);
+
+a({ b: 1 })({ b: 1 })({ b: 2 })({ b: 3 })({ b: 3 });
+store(); // returns [{ b: 1 }, { b: 2 }, { b: 3 }], as the second { b: 1 } and { b: 3 } were skipped
+```
+
 # dropRepeats
 
 ## `dropRepeats<T>(source: Stream<T>): Stream<T>`
@@ -96,24 +116,6 @@ const a = createStream<any>();
 
 const store = a.pipe(
   dropWith((prev, next) => prev?.b !== next.b),
-  scan((acc, value) => acc.concat(value), [])
-);
-
-a({ b: 1 })({ b: 1 })({ b: 2 })({ b: 3 })({ b: 3 });
-store(); // returns [{ b: 1 }, { b: 2 }, { b: 3 }], as the second { b: 1 } and { b: 3 } were skipped
-```
-
-# dropBy
-
-## `dropBy<T extends any = any, K extends keyof T = string | number | symbol>(key: K): OperatorFn<T, T>`
-
-`dropBy` takes a valid key string and checks the property of the received object with the value of the previous one. If the result of the comparison is `true`, then the emit is skipped. It'll only emit when the next value is not the same as the previous one.
-
-```typescript
-const a = createStream<any>();
-
-const store = a.pipe(
-  dropBy("b"),
   scan((acc, value) => acc.concat(value), [])
 );
 

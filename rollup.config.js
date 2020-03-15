@@ -1,11 +1,15 @@
-import typescript from "rollup-plugin-typescript";
+import sucrase from "@rollup/plugin-sucrase";
+import resolve from "@rollup/plugin-node-resolve";
 import { terser } from "rollup-plugin-terser";
 
 export default {
   input: ["./src/index.ts"],
   plugins: [
-    typescript({
-      tsconfig: "./config/tsconfig.umd.json"
+    resolve({
+      extensions: [".js", ".ts"]
+    }),
+    sucrase({
+      transforms: ["typescript"]
     }),
     terser({
       output: {

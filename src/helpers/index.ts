@@ -1,6 +1,4 @@
-import { fromPromise } from "./fromPromise";
-import { fromDOMEvent } from "./fromDOMEvent";
-import { fromNodeEvent } from "./fromNodeEvent";
-import { every } from "./every";
-
-export { every, fromDOMEvent, fromNodeEvent, fromPromise };
+export { fromPromise } from "./fromPromise";
+export { fromDOMEvent } from "./fromDOMEvent";
+export { fromNodeEvent } from "./fromNodeEvent";
+export { every } from "./every";

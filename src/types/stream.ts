@@ -106,7 +106,6 @@ export interface Stream<T> {
   pipe<A, B, C, D, E, F, G, H>(...operators: [OperatorFn<T, A>, OperatorFn<A, B>, OperatorFn<B, C>, OperatorFn<C, D>, OperatorFn<D, E>, OperatorFn<E, F>, OperatorFn<F, G>, OperatorFn<G, H>]): Stream<H>;
   pipe<A, B, C, D, E, F, G, H, I>(...operators: [OperatorFn<T, A>, OperatorFn<A, B>, OperatorFn<B, C>, OperatorFn<C, D>, OperatorFn<D, E>, OperatorFn<E, F>, OperatorFn<F, G>, OperatorFn<G, H>, OperatorFn<H, I>]): Stream<I>;
   pipe<A, B, C, D, E, F, G, H, I>(...operators: [OperatorFn<T, A>, OperatorFn<A, B>, OperatorFn<B, C>, OperatorFn<C, D>, OperatorFn<D, E>, OperatorFn<E, F>, OperatorFn<F, G>, OperatorFn<G, H>, OperatorFn<H, I>, ...OperatorFn<any, any>[]]): Stream<any>;
-  // pipe(...operators: OperatorFn<any, any>[]): Stream<any>;
   /* eslint-enable prettier/prettier */
   toJSON(): any;
 }

@@ -1,7 +1,8 @@
 {
   "extends": "../config/tsconfig.cjs.json",
   "compilerOptions": {
-    "noEmit": true,
+    "emitDeclarationOnly": true,
+    "declarationDir": "../.cache/build",
     "rootDir": "../"
   },
   "include": ["../src/**/*.ts", "./**/*.ts"],

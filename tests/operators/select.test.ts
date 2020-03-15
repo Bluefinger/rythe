@@ -5,7 +5,8 @@ import { TestObj, DeepTestObj } from "../testTypes";
 
 test("select - returns a valid Stream", assert => {
   const s = createStream<any>();
-  assert.equal(isStream(s), true, "select returns a valid stream function");
+  const sel = s.pipe(select());
+  assert.equal(isStream(sel), true, "select returns a valid stream function");
 });
 
 test("select - selects a property from an object and emits it", assert => {

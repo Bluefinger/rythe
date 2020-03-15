@@ -86,8 +86,6 @@ type IteratorOfMap = {
   "49": Next<IteratorOfMap["48"]>; // [any x 49]
 };
 
-export type Key = string | number | symbol;
-
 export type IteratorOf<
   Index extends Key
 > = IteratorOfMap[Index extends keyof IteratorOfMap ? Index : "_"];
@@ -101,6 +99,8 @@ export type PipeFn<Fns extends SingleFn[], K extends keyof Fns> = K extends 0
   : (
       arg: ReturnType<Fns[Pos<Prev<IteratorOf<K>>>]>
     ) => ReturnType<Fns[Pos<IteratorOf<K>>]>;
+
+export type Key = string | number | symbol;
 
 export type DeepSearch<T extends any, K extends Key[]> = {
   next: First<K> extends keyof T

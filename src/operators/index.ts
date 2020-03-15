@@ -1,39 +1,18 @@
-import { after } from "./after";
-import { combine } from "./combine";
-import { during } from "./during";
-import { lift } from "./lift";
-import { dropBy } from "./dropBy";
-import { dropWith } from "./dropWith";
-import { dropRepeats } from "./dropRepeats";
-import { filter } from "./filter";
-import { map } from "./map";
-import { merge } from "./merge";
-import { scan } from "./scan";
-import { scanMerge } from "./scanMerge";
-import { skip } from "./skip";
-import { select } from "./select";
-import { take } from "./take";
-import { endsWith } from "./endsWith";
-import { flattenPromise } from "./flattenPromise";
-import { zip } from "./zip";
-
-export {
-  after,
-  combine,
-  during,
-  lift,
-  dropRepeats,
-  dropWith,
-  dropBy,
-  endsWith,
-  filter,
-  map,
-  merge,
-  scan,
-  scanMerge,
-  skip,
-  select,
-  take,
-  flattenPromise,
-  zip
-};
+export { after } from "./after";
+export { combine } from "./combine";
+export { during } from "./during";
+export { lift } from "./lift";
+export { dropBy } from "./dropBy";
+export { dropWith } from "./dropWith";
+export { dropRepeats } from "./dropRepeats";
+export { filter } from "./filter";
+export { map } from "./map";
+export { merge } from "./merge";
+export { scan } from "./scan";
+export { scanMerge } from "./scanMerge";
+export { skip } from "./skip";
+export { select } from "./select";
+export { take } from "./take";
+export { endsWith } from "./endsWith";
+export { flattenPromise } from "./flattenPromise";
+export { zip } from "./zip";

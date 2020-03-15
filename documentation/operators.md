@@ -17,6 +17,7 @@ An Operator takes an input stream or streams and outputs a new stream, often app
 - [merge](#merge)
 - [scan](#scan)
 - [scanMerge](#scanmerge)
+- [select](#select)
 - [skip](#skip)
 - [take](#take)
 - [zip](#zip)
@@ -330,7 +331,7 @@ merged(); // will return 4
 
 ## `select<T extends any, K extends (string | number | symbol)[]>(...keys: K): OperatorFn<T, any>`
 
-`select` takes a path of properties as parameters, and then resolves the value to be emitted using that path on the object it receives. It will not emit any output if the path cannot complete, or encounters an `undefined` or `null` value.
+`select` takes a path of properties as parameters, and then resolves the value to be emitted using that path on the object it receives. It will not emit any output if the path cannot complete, or encounters an `undefined` or `null` value. Invalid paths will return as `Stream<never>`.
 
 ```typescript
 const obj = createStream<DeepObj>();

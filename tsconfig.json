@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "incremental": true,
+    "composite": true,
     "tsBuildInfoFile": "./.cache/tsBuildInfo",
     "sourceMap": true,
     "strict": true,

@@ -20,7 +20,7 @@ export function zip<T extends Stream<any>[]>(
     throw new Error(INVALID_ARGUMENTS);
   }
   const zipped = createStream<any>();
-  zipped.immediate = true;
+  zipped.waiting = -1;
   const buffer = sources.map<any[]>(() => []);
   const ending: number[] = [];
   let immediate = SKIP;

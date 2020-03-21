@@ -23,7 +23,7 @@ export function scanMerge<T, U>(
 ): Stream<U> {
   let acc = initialValue;
   const merged = createStream<U>();
-  merged.immediate = true;
+  merged.waiting = -1;
   for (let i = pairs.length; i--; ) {
     const [source, sourceFn] = pairs[i];
     if (!isStream(source)) {

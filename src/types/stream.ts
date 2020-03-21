@@ -1,11 +1,4 @@
-/**
- * Stream State. Comes with 4 possible states:
- * 0. CLOSED
- * 1. PENDING
- * 2. ACTIVE
- * 3. CHANGING
- */
-export type StreamState = 0 | 1 | 2 | 3;
+import { StreamState } from "../constants";
 
 export type StreamValue<T> = T extends Stream<infer V> ? V : never;
 
@@ -46,28 +39,19 @@ export interface Stream<T> {
    */
   (value: T): this;
   /**
-   * Semphore for tracking when all the parent streams have resolved or changed so that
-   * the current Stream can update.
+   * Semaphore for tracking when all the parent streams have resolved or changed so that
+   * the current Stream can update. Streams with waiting set to `-1` update immediately,
+   * regardless of the state of the parent streams.
    * @internal
    */
   waiting: number;
-  /**
-   * Semphore for tracking whether any parents need to update while the current stream is
-   * waiting for all parents to resolve.
-   * @internal
-   */
-  updating: boolean;
-  /**
-   * Flag for dispatcher to not wait for all parents to resolve in order to execute stream.
-   * @internal
-   */
-  immediate: true | undefined;
   /**
    * Current State of the Stream. Possible state values:
    * 0. CLOSED: The Stream is closed. It won't notify any dependents nor be updated by any parents.
    * 1. PENDING: The Stream is pending an update. It has not received any values yet.
    * 2. ACTIVE: The Stream has a value. No actions required to be taken.
    * 3. CHANGING: The Stream is about to change. It is about to receive a value and will update its dependencies.
+   * 4. WAITING: The Stream is marked to receive an update, but is waiting for all parent streams to resolve first.
    */
   state: StreamState;
   /**
@@ -91,6 +75,7 @@ export interface Stream<T> {
   /**
    * The Parent Streams that the current Stream is subscribed to. If it not subscribed
    * to any other Streams, it is empty.
+   * @internal
    */
   parents: Stream<any>[];
 
@@ -119,18 +104,4 @@ export interface EndStream extends Stream<boolean> {
    * Assigns a new value to the Stream and broadcasts it to all its dependencies.
    */
   (value: boolean): boolean;
-}
-
-/**
- * Signature definition for a Dispatcher function. Must receive a Stream and a value.
- * @internal
- */
-export type Dispatcher = <T>(stream: Stream<T>, value: T) => void;
-
-/**
- * Close Function interface. Returns itself to allow terse multilple invocations.
- * @internal
- */
-export interface Closer {
-  <T>(stream: Stream<T>): this;
 }

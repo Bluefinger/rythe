@@ -21,7 +21,7 @@ export const after = <T>(duration: number): OperatorFn<T, T[]> => (
     clearTimer(clearStore);
     addTimer(clearStore, duration, stored);
     return stored;
-  }, [] as T[])(source);
+  }, [])(source);
   emit.end.pipe(
     map(accumulator.end),
     map<boolean, void>(() => {

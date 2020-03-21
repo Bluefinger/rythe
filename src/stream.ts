@@ -1,6 +1,7 @@
 import { CLOSED, PENDING } from "./constants";
 import { dispatcher as push } from "./dispatcher";
-import { Stream, Closer, OperatorFn, EndStream } from "./types/stream";
+import { Stream, OperatorFn, EndStream } from "./types/stream";
+import { Closer } from "./types/internal";
 import { pipeFromArray } from "./utils/pipe";
 
 function toJSON(this: Stream<any>): any {
@@ -43,7 +44,6 @@ const initStream = <T>(stream: Partial<Stream<T>>): Stream<T> => {
   stream.parents = [];
   stream.state = PENDING;
   stream.waiting = 0;
-  stream.updating = false;
 
   stream.pipe = boundPipe;
   stream.toJSON = toJSON;

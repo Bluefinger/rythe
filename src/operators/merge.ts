@@ -13,7 +13,7 @@ export function merge<T extends Stream<any>[]>(
   const merged = createStream<StreamValuesAsArray<T>>();
 
   let immediate;
-  merged.immediate = true;
+  merged.waiting = -1;
 
   for (let i = sources.length; i--; ) {
     const source = sources[i];

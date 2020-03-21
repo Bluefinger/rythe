@@ -2,7 +2,7 @@
   "extends": "../config/tsconfig.cjs.json",
   "compilerOptions": {
     "emitDeclarationOnly": true,
-    "declarationDir": "../.cache/build",
+    "declarationDir": "../node_modules/.cache/build",
     "rootDir": "../"
   },
   "include": ["../src/**/*.ts", "./**/*.ts"],

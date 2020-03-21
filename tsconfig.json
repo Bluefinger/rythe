@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "composite": true,
-    "tsBuildInfoFile": "./.cache/tsBuildInfo",
+    "tsBuildInfoFile": "./node_modules/.cache/tsBuildInfo",
     "sourceMap": true,
     "strict": true,
     "noUnusedLocals": true,

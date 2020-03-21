@@ -21,7 +21,7 @@
     "test:coverage": "nyc npm run test:tape",
     "test:deps": "madge -c --ts-config ./tsconfig.json ./src/index.ts",
     "test:docs": "prettier --check \"./documentation/**/*.md\"",
-    "test:lint": "eslint \"./+(src|tests|perf)/**/*.{ts,js}\" --cache --cache-location=\"./.cache/\"",
+    "test:lint": "eslint \"./+(src|tests|perf)/**/*.{ts,js}\" --cache --cache-location=\"./node_modules/.cache/\"",
     "test:tape": "ts-node -T --files --project tests/tsconfig.json node_modules/tape/bin/tape \"tests/**/*.ts\" | tap-dot",
     "test:typings": "tsc --build ./tests/tsconfig.json --pretty",
     "tsc:help": "tsc -h --all"

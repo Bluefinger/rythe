@@ -6,6 +6,8 @@ import { END, SKIP } from "./signal";
 const isReady = <T>(stream: Stream<T>): boolean =>
   !(stream.waiting > 0 && --stream.waiting);
 
+const isImmediateStream = (waiting: number): boolean => waiting < 0;
+
 const isStreamUpdating = <T>(value: T) => value !== SKIP;
 
 const markAsActive = <T>(stream: Stream<T>): void => {
@@ -32,7 +34,7 @@ const markAsChanging = <T>(stream: Stream<T>): void => {
     const [dep] = dependents[i];
     if (
       dep.parents.length > 1 &&
-      !(stream.waiting < 0 || previousState === PENDING)
+      !(isImmediateStream(stream.waiting) || previousState === PENDING)
     ) {
       dep.waiting += 1;
     }

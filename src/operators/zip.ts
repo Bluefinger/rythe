@@ -1,4 +1,4 @@
-import { Stream, StreamValuesAsTuple } from "../types/stream";
+import { Stream, StreamTuple } from "../types/stream";
 import { createStream, isStream } from "../stream";
 import { PENDING, CLOSED } from "../constants";
 import { SOURCE_ERROR, INVALID_ARGUMENTS } from "../errors";
@@ -12,7 +12,7 @@ const initBuffers = (): any[] => [];
 
 export function zip<T extends Stream<any>[]>(
   ...sources: T
-): Stream<StreamValuesAsTuple<T>> {
+): Stream<StreamTuple<T>> {
   if (!sources.length) {
     throw new Error(INVALID_ARGUMENTS);
   }

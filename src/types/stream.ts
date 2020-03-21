@@ -2,11 +2,9 @@ import { StreamState } from "../constants";
 
 export type StreamValue<T> = T extends Stream<infer V> ? V : never;
 
-export type StreamValuesAsArray<T> = T extends (infer U)[]
-  ? StreamValue<U>
-  : never;
+export type StreamArray<T> = T extends (infer U)[] ? StreamValue<U> : never;
 
-export type StreamValuesAsTuple<F extends Stream<any>[]> = {
+export type StreamTuple<F extends Stream<any>[]> = {
   [K in keyof F]: StreamValue<F[K]>;
 };
 

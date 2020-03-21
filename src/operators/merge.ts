@@ -1,4 +1,4 @@
-import { Stream, StreamValuesAsArray } from "../types/stream";
+import { Stream, StreamArray } from "../types/stream";
 import { createStream, isStream } from "../stream";
 import { ACTIVE } from "../constants";
 import { SOURCE_ERROR } from "../errors";
@@ -9,8 +9,8 @@ const passthrough = <T>(n: T): T => n;
 
 export function merge<T extends Stream<any>[]>(
   ...sources: T
-): Stream<StreamValuesAsArray<T>> {
-  const merged = createStream<StreamValuesAsArray<T>>();
+): Stream<StreamArray<T>> {
+  const merged = createStream<StreamArray<T>>();
 
   let immediate;
   merged.waiting = -1;

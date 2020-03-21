@@ -1,10 +1,10 @@
-import { Stream, StreamValuesAsTuple } from "../types/stream";
+import { Stream, StreamTuple } from "../types/stream";
 import { combine } from "./combine";
 
 const unwrapValue = <V>({ val }: Stream<V>): V => val;
 
 export function lift<T extends Stream<any>[], U>(
-  liftFn: (...values: StreamValuesAsTuple<T>) => U,
+  liftFn: (...values: StreamTuple<T>) => U,
   ...sources: T
 ) {
   return combine<T, U>(

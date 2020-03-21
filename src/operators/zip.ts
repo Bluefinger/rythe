@@ -6,12 +6,9 @@ import { subscriber } from "../utils/subscriber";
 import { map } from "./map";
 import { END, SKIP } from "../signal";
 
-const zipFn = (buffer: any[][], index: number) => (value: any): any[] => {
-  buffer[index].push(value);
-  return buffer.every(values => values.length)
-    ? buffer.map(values => values.shift())
-    : SKIP;
-};
+const bufferReady = (values: any[]) => values.length;
+const popValue = (values: any[]) => values.pop();
+const initBuffers = (): any[] => [];
 
 export function zip<T extends Stream<any>[]>(
   ...sources: T
@@ -21,15 +18,22 @@ export function zip<T extends Stream<any>[]>(
   }
   const zipped = createStream<any>();
   zipped.waiting = -1;
-  const buffer = sources.map<any[]>(() => []);
+
+  const buffers = sources.map(initBuffers);
   const ending: number[] = [];
   let immediate = SKIP;
+
+  const bufferIsExhausted = (endIndex: number) => !buffers[endIndex].length;
+
   for (let i = sources.length; i--; ) {
     const source = sources[i];
     if (!isStream(source)) {
       throw new Error(SOURCE_ERROR);
     }
-    const subFn = zipFn(buffer, i);
+    const subFn = (value: any): any[] => {
+      buffers[i].unshift(value);
+      return buffers.every(bufferReady) ? buffers.map(popValue) : SKIP;
+    };
     const endFn = () => {
       ending.push(i);
     };
@@ -44,7 +48,7 @@ export function zip<T extends Stream<any>[]>(
     }
   }
   map(() => {
-    if (ending.length && ending.some(endIndex => !buffer[endIndex].length)) {
+    if (ending.length && ending.some(bufferIsExhausted)) {
       zipped(END);
     }
   })(zipped);

@@ -4,18 +4,18 @@
   "description": "Rythe, a tiny, heavily tree-shakeable Reactive Stream library",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
-  "types": "dist/esm/index.d.ts",
+  "types": "types/index.d.ts",
   "files": [
-    "dist/**/*"
+    "dist/**/*.{js,js.map}",
+    "types/**/*.d.ts"
   ],
   "scripts": {
-    "build": "run-p build:all build:umd",
-    "build:all": "tsc --build ./config/tsconfig.esm.json ./config/tsconfig.cjs.json --pretty",
-    "build:umd": "rollup -c",
-    "clean": "rimraf ./dist/*",
+    "build": "run-p build:all build:typings",
+    "build:typings": "tsc --build ./config/tsconfig.typings.json --pretty",
+    "build:all": "rollup -c",
+    "clean": "rimraf ./{dist,types}/*",
     "fix:docs": "prettier --write \"./documentation/**/*.md\"",
-    "prepublish": "npm run clean",
-    "prepare": "npm run build",
+    "prepare": "run-s clean build",
     "test": "npm-run-all test:deps test:code",
     "test:code": "run-p test:docs test:lint test:typings test:coverage",
     "test:coverage": "nyc npm run test:tape",

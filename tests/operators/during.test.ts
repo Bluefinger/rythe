@@ -3,7 +3,7 @@ import { scan, during } from "../../src/operators";
 import { test } from "../testHarness";
 import { getMockTimer } from "../testUtils";
 
-test("during - returns a Stream", assert => {
+test("during - returns a Stream", (assert) => {
   const clock = getMockTimer();
   const a = createStream<number>();
   const d = a.pipe(during(100));
@@ -12,7 +12,7 @@ test("during - returns a Stream", assert => {
   clock.restore();
 });
 
-test("during - collects values it receives and only emits after set duration has passed", assert => {
+test("during - collects values it receives and only emits after set duration has passed", (assert) => {
   const clock = getMockTimer();
   const a = createStream<number>();
   const d = a.pipe(during(100));
@@ -41,7 +41,7 @@ test("during - collects values it receives and only emits after set duration has
   clock.restore();
 });
 
-test("during - doesn't collect values after it has ended", assert => {
+test("during - doesn't collect values after it has ended", (assert) => {
   const clock = getMockTimer();
   const a = createStream<number>();
   const d = a.pipe(during(100));
@@ -59,11 +59,11 @@ test("during - doesn't collect values after it has ended", assert => {
   clock.restore();
 });
 
-test("during - won't emit if it receives no values", assert => {
+test("during - won't emit if it receives no values", (assert) => {
   const clock = getMockTimer();
   const a = createStream<number>();
   const d = a.pipe(during(100));
-  const count = d.pipe(scan<number[], number>(num => ++num, 0));
+  const count = d.pipe(scan<number[], number>((num) => ++num, 0));
   a(1)(2)(3);
   clock.tick(100);
   assert.equal(

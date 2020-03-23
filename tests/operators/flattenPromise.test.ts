@@ -6,13 +6,13 @@ import { delay } from "../testUtils";
 import { spy } from "sinon";
 import { getMockTimer } from "../testUtils";
 
-test("flattenPromise - returns a stream", assert => {
+test("flattenPromise - returns a stream", (assert) => {
   const a = createStream(Promise.resolve(1));
   const b = flattenPromise(a);
   assert.equal(isStream(b), true, "produces a valid Stream function");
 });
 
-test("flattenPromise - flattens the stream to return a promise's value", async assert => {
+test("flattenPromise - flattens the stream to return a promise's value", async (assert) => {
   const clock = getMockTimer();
   const promise = delay(100, 1);
   const a = createStream(promise);
@@ -39,13 +39,13 @@ test("flattenPromise - flattens the stream to return a promise's value", async a
   clock.restore();
 });
 
-test("flattenPromise - is pipeable", async assert => {
+test("flattenPromise - is pipeable", async (assert) => {
   const clock = getMockTimer();
   const a = createStream<number>();
   const b = a.pipe(
-    map(value => delay(100, value)),
+    map((value) => delay(100, value)),
     flattenPromise,
-    map(value => value + 2)
+    map((value) => value + 2)
   );
   a(5);
   await clock.flush();
@@ -57,7 +57,7 @@ test("flattenPromise - is pipeable", async assert => {
   clock.restore();
 });
 
-test("flattenPromise - skips rejected promises", async assert => {
+test("flattenPromise - skips rejected promises", async (assert) => {
   const clock = getMockTimer();
   const a = createStream(delay(100, "Error", true));
   const b = flattenPromise(a);
@@ -80,7 +80,7 @@ test("flattenPromise - skips rejected promises", async assert => {
   }
 });
 
-test("flattenPromise - allows an error handler to be used to catch errors", async assert => {
+test("flattenPromise - allows an error handler to be used to catch errors", async (assert) => {
   const clock = getMockTimer();
   const handler = spy();
   const a = createStream(delay(100, "Error", true));

@@ -4,7 +4,7 @@ import { Stream } from "../../src/types/stream";
 import { ACTIVE, CLOSED } from "../../src/constants";
 import { test } from "../testHarness";
 
-test("scanMerge - accumulates many streams into a single stream", assert => {
+test("scanMerge - accumulates many streams into a single stream", (assert) => {
   const add = createStream<number>();
   const sub = createStream<number>();
   const m = scanMerge(
@@ -12,7 +12,7 @@ test("scanMerge - accumulates many streams into a single stream", assert => {
     [add, (acc, val) => acc + val],
     [sub, (acc, val) => acc - val]
   );
-  const v = m.pipe(map(val => val + ""));
+  const v = m.pipe(map((val) => val + ""));
   assert.equal(isStream(v), true, "returns a valid Stream function");
   assert.equal(m(), 1, "scanMerge has an initial value");
   add(5);
@@ -29,7 +29,7 @@ test("scanMerge - accumulates many streams into a single stream", assert => {
   );
 });
 
-test("scanMerge - doesn't immediately accumulate all active parent streams, only returns initial value", assert => {
+test("scanMerge - doesn't immediately accumulate all active parent streams, only returns initial value", (assert) => {
   const add = createStream<number>(4);
   const sub = createStream<number>(1);
   const m = scanMerge(
@@ -44,7 +44,7 @@ test("scanMerge - doesn't immediately accumulate all active parent streams, only
   );
 });
 
-test("scanMerge - errors if a non-stream source is provided", assert => {
+test("scanMerge - errors if a non-stream source is provided", (assert) => {
   const add = createStream<number>();
   const sub = (() => 10) as Stream<number>;
   assert.throws(
@@ -58,7 +58,7 @@ test("scanMerge - errors if a non-stream source is provided", assert => {
   );
 });
 
-test("scanMerge - closes when any of its parent streams end", assert => {
+test("scanMerge - closes when any of its parent streams end", (assert) => {
   const add = createStream<number>(4);
   const sub = createStream<number>(1);
   const m = scanMerge(

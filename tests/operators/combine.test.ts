@@ -4,20 +4,20 @@ import { ACTIVE, PENDING } from "../../src/constants";
 import { combine, map, scan } from "../../src/operators";
 import { test } from "../testHarness";
 
-test("combine - transforms value", assert => {
+test("combine - transforms value", (assert) => {
   const a = createStream<number>();
-  const b = combine(sA => sA() + 1, a);
+  const b = combine((sA) => sA() + 1, a);
   a(2);
   assert.equal(b(), 3, "updates from a single sources");
 });
 
-test("combine - transforms default value", assert => {
+test("combine - transforms default value", (assert) => {
   const a = createStream<number>(4);
-  const b = combine(sA => sA() - 1, a);
+  const b = combine((sA) => sA() - 1, a);
   assert.equal(b(), 3, "updates from an initial value from source");
 });
 
-test("combine - transforms multiple values", assert => {
+test("combine - transforms multiple values", (assert) => {
   const a = createStream<number>();
   const b = createStream<string>();
   const c = combine((sA, sB) => sA() + sB(), a, b);
@@ -26,14 +26,14 @@ test("combine - transforms multiple values", assert => {
   assert.equal(c(), "15", "combines updates from multiple sources");
 });
 
-test("combine - transforms multiple default values", assert => {
+test("combine - transforms multiple default values", (assert) => {
   const a = createStream<number>(2);
   const b = createStream<number>(4);
   const c = combine((sA, sB) => sA() + sB(), a, b);
   assert.equal(c(), 6, "combines multiple initial values");
 });
 
-test("combine - transforms mixed default and emitted values", assert => {
+test("combine - transforms mixed default and emitted values", (assert) => {
   const a = createStream<number>(5);
   const b = createStream<number>();
   const c = combine((sA, sB) => sA() + sB(), a, b);
@@ -41,10 +41,10 @@ test("combine - transforms mixed default and emitted values", assert => {
   assert.equal(c(), 6, "combines initial values and updated values");
 });
 
-test("combine - combines values atomically", assert => {
+test("combine - combines values atomically", (assert) => {
   const a = createStream<number>();
-  const b = a.pipe(map(num => num + 2));
-  const c = a.pipe(map(num => num * 10));
+  const b = a.pipe(map((num) => num + 2));
+  const c = a.pipe(map((num) => num * 10));
   const testInference = (sA: Stream<number>, sB: Stream<number>): number =>
     sA() + sB();
   const atomic = combine(testInference, b, c).pipe(
@@ -58,10 +58,10 @@ test("combine - combines values atomically", assert => {
   );
 });
 
-test("combine - combines default values atomically", assert => {
+test("combine - combines default values atomically", (assert) => {
   const a = createStream<number>(4);
-  const b = a.pipe(map(num => num + 2));
-  const c = a.pipe(map(num => num * 10));
+  const b = a.pipe(map((num) => num + 2));
+  const c = a.pipe(map((num) => num * 10));
   const atomic = combine((sA, sB) => sA() + sB(), b, c).pipe(
     scan((acc, value: number) => acc.concat(value), [] as number[])
   );
@@ -72,12 +72,12 @@ test("combine - combines default values atomically", assert => {
   );
 });
 
-test("combine - combines and maps nested streams atomically", assert => {
+test("combine - combines and maps nested streams atomically", (assert) => {
   const a = createStream<string>();
-  const b = combine(sA => sA() + 2, a);
-  const c = combine(sA => sA() + sA(), a);
-  const d = c.pipe(map(x => x + 1));
-  const e = combine(x => x() + 0, d);
+  const b = combine((sA) => sA() + 2, a);
+  const c = combine((sA) => sA() + sA(), a);
+  const d = c.pipe(map((x) => x + 1));
+  const e = combine((x) => x() + 0, d);
   const atomic = combine((sB, sE) => sB() + sE(), b, e).pipe(
     scan<string>((acc, value) => acc.concat(value), [])
   );
@@ -89,7 +89,7 @@ test("combine - combines and maps nested streams atomically", assert => {
   );
 });
 
-test("combine - continues combining with ended streams", assert => {
+test("combine - continues combining with ended streams", (assert) => {
   const a = createStream<number>();
   const b = createStream<number>();
   const combined = combine((sA, sB) => sA() + sB(), a, b);
@@ -101,7 +101,7 @@ test("combine - continues combining with ended streams", assert => {
   assert.equal(combined(), 8, "combines values from closed streams");
 });
 
-test("combine - removes all listeners with .end", assert => {
+test("combine - removes all listeners with .end", (assert) => {
   const a = createStream<number>();
   const b = createStream<number>();
   const c = combine((sA, sB) => sA() + sB(), b, a);
@@ -133,7 +133,7 @@ test("combine - removes all listeners with .end", assert => {
   );
 });
 
-test("combines - creates a pending stream when provided no source streams", assert => {
+test("combines - creates a pending stream when provided no source streams", (assert) => {
   const c = combine(() => true);
   assert.equal(c(), undefined, "initialises with no value");
   assert.equal(c.state, PENDING, "is set to PENDING state");
@@ -142,10 +142,10 @@ test("combines - creates a pending stream when provided no source streams", asse
   assert.equal(c.state, ACTIVE, "updates to ACTIVE state correctly");
 });
 
-test("combines - throws an error if the sources are not Stream functions", assert => {
+test("combines - throws an error if the sources are not Stream functions", (assert) => {
   const fakeCell = (() => true) as Stream<boolean>;
   assert.throws(
-    () => combine(fake => fake(), fakeCell),
+    () => combine((fake) => fake(), fakeCell),
     "throws error on receiving invalid function"
   );
 });

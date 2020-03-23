@@ -3,7 +3,7 @@ import { ACTIVE, CLOSED, PENDING } from "../../src/constants";
 import { endsWith } from "../../src/operators";
 import { test } from "../testHarness";
 
-test("endsWith - subscribes an existing Stream to another", assert => {
+test("endsWith - subscribes an existing Stream to another", (assert) => {
   const a = createStream<number>();
   const b = createStream<string>();
   endsWith<string>(a)(b);
@@ -15,7 +15,7 @@ test("endsWith - subscribes an existing Stream to another", assert => {
   );
 });
 
-test("endsWith - subscribed Streams get ended by updates from the parent Stream", assert => {
+test("endsWith - subscribed Streams get ended by updates from the parent Stream", (assert) => {
   const a = createStream<number>();
   const killer = createStream<string>();
   endsWith<string>(killer)(a);

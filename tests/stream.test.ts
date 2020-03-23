@@ -4,14 +4,14 @@ import { END } from "../src/signal";
 import { Stream } from "../src/types/stream";
 import { test } from "./testHarness";
 
-test("Stream - can act as a getter and setter", assert => {
+test("Stream - can act as a getter and setter", (assert) => {
   const a = createStream<number>(5);
   assert.equal(a(), 5, "Stream returns initial value");
   assert.equal(a(6), a, "Stream returns itself when updating with new value");
   assert.equal(a(), 6, "Stream is updated with new value");
 });
 
-test("Stream - returns undefined by default", assert => {
+test("Stream - returns undefined by default", (assert) => {
   const a = createStream<number>();
   assert.equal(
     a(),
@@ -20,7 +20,7 @@ test("Stream - returns undefined by default", assert => {
   );
 });
 
-test("Stream - it can be updated with an explicit undefined", assert => {
+test("Stream - it can be updated with an explicit undefined", (assert) => {
   const a = createStream<number | undefined>(5);
   a(undefined);
   assert.equal(
@@ -30,13 +30,13 @@ test("Stream - it can be updated with an explicit undefined", assert => {
   );
 });
 
-test("Stream - it can be updated with an explicit null", assert => {
+test("Stream - it can be updated with an explicit null", (assert) => {
   const a = createStream<number | null>(5);
   a(null);
   assert.equal(a(), null, "Stream can be updated with an explicit null value");
 });
 
-test("Stream - starts with pending state value and updates to active value", assert => {
+test("Stream - starts with pending state value and updates to active value", (assert) => {
   const a = createStream<number>();
   assert.equal(
     a.state,
@@ -51,7 +51,7 @@ test("Stream - starts with pending state value and updates to active value", ass
   );
 });
 
-test("Stream - can be ended by passing true to .end", assert => {
+test("Stream - can be ended by passing true to .end", (assert) => {
   const a = createStream<number>(5);
   assert.equal(a.end(), false, "Stream .end() returns false by default");
   a.end(true);
@@ -70,7 +70,7 @@ test("Stream - can be ended by passing true to .end", assert => {
   );
 });
 
-test("Stream - can be ended with END signal", assert => {
+test("Stream - can be ended with END signal", (assert) => {
   const a = createStream<number>(5);
   a(END);
   assert.equal(
@@ -80,7 +80,7 @@ test("Stream - can be ended with END signal", assert => {
   );
 });
 
-test("Stream - won't end if passed anything that isn't a boolean true value into .end", assert => {
+test("Stream - won't end if passed anything that isn't a boolean true value into .end", (assert) => {
   const a = createStream<number>(5);
   a.end(false);
   assert.equal(
@@ -108,7 +108,7 @@ test("Stream - won't end if passed anything that isn't a boolean true value into
   );
 });
 
-test("Stream - is pipeable", assert => {
+test("Stream - is pipeable", (assert) => {
   const a = createStream<number>();
   assert.equal(
     isStream(a.pipe()),
@@ -122,7 +122,7 @@ test("Stream - is pipeable", assert => {
   );
 });
 
-test("Stream - toJSON - can serialise into a JSON string", assert => {
+test("Stream - toJSON - can serialise into a JSON string", (assert) => {
   const a = createStream<number>(2);
   const b = createStream<string>("foo");
   const c = createStream<Stream<number>>(a);
@@ -137,7 +137,7 @@ test("Stream - toJSON - can serialise into a JSON string", assert => {
   );
 });
 
-test("Stream - toString - can serialise into a plain string", assert => {
+test("Stream - toString - can serialise into a plain string", (assert) => {
   const a = createStream<number>(2);
   const b = createStream<Stream<number>>(a);
   assert.equal(

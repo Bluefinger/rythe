@@ -6,7 +6,7 @@ function getHz(bench) {
   return isFinite(result) ? result : 0;
 }
 
-exports.printFastest = function(suite) {
+exports.printFastest = function (suite) {
   const formatNumber = Benchmark.formatNumber,
     fastest = suite.filter("fastest"),
     fastestHz = getHz(fastest[0]),

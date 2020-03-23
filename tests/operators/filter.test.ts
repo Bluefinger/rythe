@@ -5,11 +5,11 @@ import { Stream } from "../../src/types/stream";
 import { test } from "../testHarness";
 import { spy } from "sinon";
 
-test("filter - is pipeable", assert => {
+test("filter - is pipeable", (assert) => {
   const a = createStream<number>();
   const b = a.pipe(
-    filter(value => value % 2 !== 1),
-    map(value => value ** 2)
+    filter((value) => value % 2 !== 1),
+    map((value) => value ** 2)
   );
   a(4);
   assert.equal(
@@ -19,11 +19,11 @@ test("filter - is pipeable", assert => {
   );
 });
 
-test("filter - will filter values from being emitted if they don't pass its predicate function", assert => {
+test("filter - will filter values from being emitted if they don't pass its predicate function", (assert) => {
   const a = createStream<number>();
   const mockFn = spy((value: number) => value ** 2);
   const b = a.pipe(
-    filter(value => value % 2 !== 1),
+    filter((value) => value % 2 !== 1),
     map(mockFn)
   );
   a(4);
@@ -51,11 +51,11 @@ test("filter - will filter values from being emitted if they don't pass its pred
   );
 });
 
-test("filter - will filter initial values", assert => {
+test("filter - will filter initial values", (assert) => {
   const a = createStream<number>(5);
   const mockFn = spy((value: number) => value ** 2);
   const b = a.pipe(
-    filter(value => value % 2 !== 1),
+    filter((value) => value % 2 !== 1),
     map(mockFn)
   );
   assert.equal(
@@ -66,14 +66,14 @@ test("filter - will filter initial values", assert => {
   assert.equal(b.state, PENDING, "dependent stream should remain as PENDING");
 });
 
-test("filter - will filter atomically", assert => {
+test("filter - will filter atomically", (assert) => {
   const combineFn = spy((...args: Stream<number>[]): string =>
     JSON.stringify(args)
   );
   const a = createStream<number>();
-  const b = a.pipe(filter(value => value % 2 === 0));
-  const c = a.pipe(filter(value => value < 3 || value > 4));
-  const d = a.pipe(filter(value => value !== 3));
+  const b = a.pipe(filter((value) => value % 2 === 0));
+  const c = a.pipe(filter((value) => value < 3 || value > 4));
+  const d = a.pipe(filter((value) => value !== 3));
   const atomic = combine(combineFn, b, c, d).pipe(
     scan<string>((acc, value) => acc.concat(value), [] as string[])
   );

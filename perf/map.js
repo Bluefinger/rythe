@@ -12,9 +12,9 @@ let output;
 const defineRytheMap = () => {
   const stream = Rythe.createStream();
   stream.pipe(
-    Rythe.map(value => value + 1),
-    Rythe.map(value => value ** 2),
-    Rythe.map(value => value * 3)
+    Rythe.map((value) => value + 1),
+    Rythe.map((value) => value ** 2),
+    Rythe.map((value) => value * 3)
   );
   return stream;
 };
@@ -22,11 +22,11 @@ const defineRytheMap = () => {
 const defineSubjectMap = () => {
   const subject = new rxjs.Subject();
   const out = subject.pipe(
-    rxOps.map(value => value + 1),
-    rxOps.map(value => value ** 2),
-    rxOps.map(value => value * 3)
+    rxOps.map((value) => value + 1),
+    rxOps.map((value) => value ** 2),
+    rxOps.map((value) => value * 3)
   );
-  out.subscribe(val => {
+  out.subscribe((val) => {
     output = val;
   });
   return subject;
@@ -35,9 +35,9 @@ const defineSubjectMap = () => {
 const defineStreamMap = () => {
   const stream = flyd.stream();
   stream
-    .map(value => value + 1)
-    .map(value => value ** 2)
-    .map(value => value * 3);
+    .map((value) => value + 1)
+    .map((value) => value ** 2)
+    .map((value) => value * 3);
   return stream;
 };
 
@@ -56,8 +56,8 @@ suite1
   .add("Map Flyd Stream", () => {
     defineStreamMap();
   })
-  .on("cycle", ev => console.log(ev.target.toString()))
-  .on("complete", function() {
+  .on("cycle", (ev) => console.log(ev.target.toString()))
+  .on("complete", function () {
     utils.printFastest(this);
   })
   .run();
@@ -76,8 +76,8 @@ suite2
   .add("Update Mapped Flyd Stream", () => {
     mappedStream(5)(6);
   })
-  .on("cycle", ev => console.log(ev.target.toString()))
-  .on("complete", function() {
+  .on("cycle", (ev) => console.log(ev.target.toString()))
+  .on("complete", function () {
     utils.printFastest(this);
   })
   .run();

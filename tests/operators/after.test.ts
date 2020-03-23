@@ -3,17 +3,17 @@ import { scan, after } from "../../src/operators";
 import { test } from "../testHarness";
 import { getMockTimer } from "../testUtils";
 
-test("after - returns a stream", assert => {
+test("after - returns a stream", (assert) => {
   const a = createStream<number>();
   const af = a.pipe(after(100));
   assert.equal(isStream(af), true, "produces a valid Stream function");
 });
 
-test("after - emits a list of accumulated values after a specified period of no updates", assert => {
+test("after - emits a list of accumulated values after a specified period of no updates", (assert) => {
   const clock = getMockTimer();
   const a = createStream<number>();
   const af = a.pipe(after(100));
-  const count = af.pipe(scan<number[], number>(num => ++num, 0));
+  const count = af.pipe(scan<number[], number>((num) => ++num, 0));
   assert.equal(af(), undefined, "should be initialised with no value");
   assert.equal(count(), 0, "should not emit anything after initialisation");
   a(2);
@@ -55,11 +55,11 @@ test("after - emits a list of accumulated values after a specified period of no 
   clock.restore();
 });
 
-test("after - stops accumulating after being ended", assert => {
+test("after - stops accumulating after being ended", (assert) => {
   const clock = getMockTimer();
   const a = createStream<number>();
   const af = a.pipe(after(100));
-  const count = af.pipe(scan<number[], number>(num => ++num, 0));
+  const count = af.pipe(scan<number[], number>((num) => ++num, 0));
   a(2)(4);
   clock.tick(100);
   a(6)(8);

@@ -8,7 +8,7 @@ const utils = require("./utils");
 
 let output;
 
-const predicate = value => value % 2 !== 1;
+const predicate = (value) => value % 2 !== 1;
 
 const defineRytheFilter = () => {
   const stream = Rythe.createStream();
@@ -19,7 +19,7 @@ const defineRytheFilter = () => {
 const defineSubjectFilter = () => {
   const subject = new rxjs.Subject();
   const out = subject.pipe(rxOps.filter(predicate));
-  out.subscribe(val => {
+  out.subscribe((val) => {
     output = val;
   });
   return subject;
@@ -48,8 +48,8 @@ suite1
   .add("Filter Flyd Stream", () => {
     defineStreamFilter();
   })
-  .on("cycle", ev => console.log(ev.target.toString()))
-  .on("complete", function() {
+  .on("cycle", (ev) => console.log(ev.target.toString()))
+  .on("complete", function () {
     utils.printFastest(this);
   })
   .run();
@@ -68,8 +68,8 @@ suite2
   .add("Update Filtered Flyd Stream", () => {
     filteredStream(5)(4);
   })
-  .on("cycle", ev => console.log(ev.target.toString()))
-  .on("complete", function() {
+  .on("cycle", (ev) => console.log(ev.target.toString()))
+  .on("complete", function () {
     utils.printFastest(this);
   })
   .run();

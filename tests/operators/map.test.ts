@@ -6,9 +6,9 @@ import { Stream } from "../../src/types/stream";
 import { test } from "../testHarness";
 import { spy } from "sinon";
 
-test("map - transforms values it receives", assert => {
+test("map - transforms values it receives", (assert) => {
   const a = createStream<number | null>();
-  const b = a.pipe(map<number | null, number>(value => value || 0));
+  const b = a.pipe(map<number | null, number>((value) => value || 0));
   a(5);
   assert.equal(a(), 5, "first stream updates with a value and emits it");
   assert.equal(b(), 5, "dependent stream updates with emitted value");
@@ -17,7 +17,7 @@ test("map - transforms values it receives", assert => {
   assert.equal(b(), 0, "dependent stream maps emitted value to a new value");
 });
 
-test("map - transforms initial values", assert => {
+test("map - transforms initial values", (assert) => {
   const a = createStream<number | null>(5);
   const mapFn = spy((value: number | null) => value || 0);
   const b = a.pipe(map<number | null, number>(mapFn));
@@ -29,7 +29,7 @@ test("map - transforms initial values", assert => {
   assert.equal(mapFn.callCount, 1);
 });
 
-test("map - can ignore the initial value", assert => {
+test("map - can ignore the initial value", (assert) => {
   const a = createStream<number | null>(5);
   const mapFn = spy((value: number | null) => value || 0);
   const b = a.pipe(map<number | null, number>(mapFn, SKIP));
@@ -45,7 +45,7 @@ test("map - can ignore the initial value", assert => {
   );
 });
 
-test("map - can be interrupted with SKIP signal", assert => {
+test("map - can be interrupted with SKIP signal", (assert) => {
   const a = createStream<number>();
   const mapFn = spy((n: number): number => (n === 5 ? SKIP : n));
   const b = a.pipe(map(mapFn));
@@ -63,7 +63,7 @@ test("map - can be interrupted with SKIP signal", assert => {
   );
 });
 
-test("map - can be ended with .end", assert => {
+test("map - can be ended with .end", (assert) => {
   const a = createStream<number>(2);
   const mapFn = spy((n: number): number => (n === 5 ? SKIP : n));
   const b = a.pipe(map(mapFn));
@@ -100,7 +100,7 @@ test("map - can be ended with .end", assert => {
   assert.equal(b.state, CLOSED, "dependent stream is closed");
 });
 
-test("map - can be ended with END signal", assert => {
+test("map - can be ended with END signal", (assert) => {
   const a = createStream<number>(2);
   const mapFn = spy((n: number): number => (n === 5 ? SKIP : n));
   const b = a.pipe(map(mapFn));
@@ -108,12 +108,12 @@ test("map - can be ended with END signal", assert => {
   assert.equal(b.state, CLOSED, "END signal correctly closes stream");
 });
 
-test("map - will only push to Streams that aren't closed", assert => {
+test("map - will only push to Streams that aren't closed", (assert) => {
   const a = createStream<number>();
-  const b = map<number>(n => n + 1)(a);
-  const c = map<number>(n => n + 2)(b);
-  const d = map<number, string>(n => n.toString(16))(b);
-  const e = map<number, boolean>(n => n < 5)(b);
+  const b = map<number>((n) => n + 1)(a);
+  const c = map<number>((n) => n + 2)(b);
+  const d = map<number, string>((n) => n.toString(16))(b);
+  const e = map<number, boolean>((n) => n < 5)(b);
   assert.equal(b.dependents.length, 3, "parent stream has three dependents");
   a(9);
   assert.equal(c(), 12, "first dependent receives correct value");
@@ -131,7 +131,7 @@ test("map - will only push to Streams that aren't closed", assert => {
   );
 });
 
-test("map - will throw an error if trying to map a non Stream function", assert => {
+test("map - will throw an error if trying to map a non Stream function", (assert) => {
   assert.throws(
     () => map((n: number) => n)(((n: number) => n) as Stream<number>),
     "throws an error upon receiving an invalid function"

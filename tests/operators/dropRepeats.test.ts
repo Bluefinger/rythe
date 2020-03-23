@@ -3,7 +3,7 @@ import { dropRepeats, map } from "../../src/operators";
 import { test } from "../testHarness";
 import { spy } from "sinon";
 
-test("dropRepeats - will not pass down repeat values (strict equality ===)", assert => {
+test("dropRepeats - will not pass down repeat values (strict equality ===)", (assert) => {
   const a = createStream<number | string>();
   const mapFn = spy((n: number | string) => n);
   const m = a.pipe(dropRepeats, map(mapFn));
@@ -16,14 +16,14 @@ test("dropRepeats - will not pass down repeat values (strict equality ===)", ass
   );
 });
 
-test("dropRepeats - passes down initial value immediately", assert => {
+test("dropRepeats - passes down initial value immediately", (assert) => {
   const a = createStream<number>(1);
   const mapFn = spy((n: number) => n);
   const m = a.pipe(dropRepeats, map(mapFn));
   assert.equal(m(), 1, "dependent stream receives the correct initial value");
 });
 
-test("dropRepeats - doesn't push values down after .end is invoked", assert => {
+test("dropRepeats - doesn't push values down after .end is invoked", (assert) => {
   const a = createStream<number>();
   const dr = dropRepeats(a);
   const mapFn = spy((n: number) => n);
@@ -49,7 +49,7 @@ test("dropRepeats - doesn't push values down after .end is invoked", assert => {
   );
 });
 
-test("dropRepeats - prevents undefined/null repeat values", assert => {
+test("dropRepeats - prevents undefined/null repeat values", (assert) => {
   const a = createStream<number | null | undefined>();
   const dr = dropRepeats(a);
   const mapFn = spy((n: number | null | undefined) => n);

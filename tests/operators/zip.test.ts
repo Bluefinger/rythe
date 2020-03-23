@@ -4,7 +4,7 @@ import { Stream } from "../../src/types/stream";
 import { ACTIVE, CLOSED, PENDING } from "../../src/constants";
 import { test } from "../testHarness";
 
-test("zip - zips multiple streams into a single array value", assert => {
+test("zip - zips multiple streams into a single array value", (assert) => {
   const a = createStream<number>();
   const b = createStream<string>();
   const z = zip(a, b);
@@ -24,7 +24,7 @@ test("zip - zips multiple streams into a single array value", assert => {
   );
 });
 
-test("zip - zips all active streams immediately into an array value", assert => {
+test("zip - zips all active streams immediately into an array value", (assert) => {
   const a = createStream<number>(2);
   const b = createStream<string>("b");
   const z = zip(a, b);
@@ -35,7 +35,7 @@ test("zip - zips all active streams immediately into an array value", assert => 
   );
 });
 
-test("zip - errors if a non-stream input is provided", assert => {
+test("zip - errors if a non-stream input is provided", (assert) => {
   const a = createStream<number>();
   const b = (() => true) as Stream<boolean>;
   assert.throws(
@@ -44,11 +44,11 @@ test("zip - errors if a non-stream input is provided", assert => {
   );
 });
 
-test("zip - errors if no inputs are provided", assert => {
+test("zip - errors if no inputs are provided", (assert) => {
   assert.throws(() => zip(), "throws error on receiving no source streams");
 });
 
-test("zip - closes when any of its parent streams ends and exhausts available values from closed stream", assert => {
+test("zip - closes when any of its parent streams ends and exhausts available values from closed stream", (assert) => {
   const a = createStream<number>();
   const b = createStream<string>();
   const c = createStream<boolean>();
@@ -72,7 +72,7 @@ test("zip - closes when any of its parent streams ends and exhausts available va
   );
 });
 
-test("zip - closes after the initial value of a closed stream has been zipped", assert => {
+test("zip - closes after the initial value of a closed stream has been zipped", (assert) => {
   const a = createStream<number>();
   const b = createStream<string>("a");
   b.end(true);

@@ -1,11 +1,11 @@
 import { makeUInt } from "../../src/utils/makeUInt";
 import { test } from "../testHarness";
 
-test("makeUInt - takes a float and returns an integer", assert => {
+test("makeUInt - takes a float and returns an integer", (assert) => {
   assert.equal(makeUInt(3.5), 3, "returns an integer");
 });
 
-test("makeUInt - takes a negative number/float and returns a positive integer", assert => {
+test("makeUInt - takes a negative number/float and returns a positive integer", (assert) => {
   assert.equal(
     makeUInt(-3),
     3,
@@ -18,7 +18,7 @@ test("makeUInt - takes a negative number/float and returns a positive integer", 
   );
 });
 
-test("makeUInt - guards against non-number types", assert => {
+test("makeUInt - guards against non-number types", (assert) => {
   assert.throws(() => makeUInt("3" as any), "throws when passed a string");
   assert.throws(() => makeUInt(true as any), "throws when passed a boolean");
   assert.throws(() => makeUInt({} as any), "throws when passed a plain object");
@@ -34,6 +34,6 @@ test("makeUInt - guards against non-number types", assert => {
   );
 });
 
-test("makeUInt - guards again NaN", assert => {
+test("makeUInt - guards again NaN", (assert) => {
   assert.throws(() => makeUInt(NaN), "throws when passed NaN");
 });

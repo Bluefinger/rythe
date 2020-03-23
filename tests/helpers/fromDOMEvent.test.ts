@@ -6,14 +6,14 @@ import { JSDOM } from "jsdom";
 
 const { document, Event } = new JSDOM().window;
 
-test("fromDOMEvent - should return a stream", assert => {
+test("fromDOMEvent - should return a stream", (assert) => {
   const element = document.createElement("div");
   const s = fromDOMEvent(element, "click");
   assert.equal(isStream(s), true, "returns a valid Stream function");
   assert.equal(s.state, PENDING, "defaults to PENDING state");
 });
 
-test("fromDOMEvent - should resolve events from a single DOM Element", assert => {
+test("fromDOMEvent - should resolve events from a single DOM Element", (assert) => {
   const element = document.createElement("div");
   const s = fromDOMEvent(element, "click");
   const clickEvent = new Event("click");
@@ -28,7 +28,7 @@ test("fromDOMEvent - should resolve events from a single DOM Element", assert =>
   assert.equal(s.state, ACTIVE, "updates to ACTIVE state after emitting");
 });
 
-test("fromDOMEvent - should resolve events from many DOM elements", assert => {
+test("fromDOMEvent - should resolve events from many DOM elements", (assert) => {
   const element = document.createElement("div");
   element.innerHTML = "<div></div><div></div>";
   const elements = element.children;
@@ -43,7 +43,7 @@ test("fromDOMEvent - should resolve events from many DOM elements", assert => {
   );
 });
 
-test("fromDOMEvent - should remove its event listener from a single DOM element on END", assert => {
+test("fromDOMEvent - should remove its event listener from a single DOM element on END", (assert) => {
   const element = document.createElement("div");
   const s = fromDOMEvent(element, "click");
 
@@ -60,7 +60,7 @@ test("fromDOMEvent - should remove its event listener from a single DOM element 
   assert.equal(s.state, CLOSED, "has state set to CLOSED correctly");
 });
 
-test("fromDOMEvent - should remove its event listener from many DOM elements on END", assert => {
+test("fromDOMEvent - should remove its event listener from many DOM elements on END", (assert) => {
   const element = document.createElement("div");
   element.innerHTML = "<div></div><div></div>";
   const elements = element.children;

@@ -18,7 +18,7 @@ const defineRytheScan = () => {
 const defineSubjectScan = () => {
   const subject = new rxjs.Subject();
   const out = subject.pipe(rxOps.scan(accumulator, 0));
-  out.subscribe(val => {
+  out.subscribe((val) => {
     output = val;
   });
   return subject;
@@ -47,8 +47,8 @@ suite1
   .add("Scan Flyd Stream", () => {
     defineStreamScan();
   })
-  .on("cycle", ev => console.log(ev.target.toString()))
-  .on("complete", function() {
+  .on("cycle", (ev) => console.log(ev.target.toString()))
+  .on("complete", function () {
     utils.printFastest(this);
   })
   .run();
@@ -67,8 +67,8 @@ suite2
   .add("Update Scanned Flyd Stream", () => {
     scannedStream(5)(6);
   })
-  .on("cycle", ev => console.log(ev.target.toString()))
-  .on("complete", function() {
+  .on("cycle", (ev) => console.log(ev.target.toString()))
+  .on("complete", function () {
     utils.printFastest(this);
   })
   .run();

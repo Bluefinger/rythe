@@ -64,7 +64,7 @@ export const isStream = (obj: any): boolean =>
  * the initial value, or by the type definition.
  */
 export const createStream = <T>(initialValue?: T): Stream<T> => {
-  const next = function(value: T): T | Stream<T> {
+  const next = function (value: T): T | Stream<T> {
     if (!arguments.length) {
       return next.val;
     }
@@ -72,7 +72,7 @@ export const createStream = <T>(initialValue?: T): Stream<T> => {
     return next;
   } as Stream<T>;
 
-  const complete = function(value: boolean): boolean {
+  const complete = function (value: boolean): boolean {
     if (complete.state && value && typeof value === "boolean") {
       push(complete, value);
       close(next)(complete);

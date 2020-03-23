@@ -8,7 +8,7 @@ export function flattenPromise<T>(
   errorHandler: (reason: any) => void = noop
 ): Stream<T> {
   const flattened = createStream<T>();
-  map<Promise<T>, void>(promise => {
+  map<Promise<T>, void>((promise) => {
     promise.then(flattened, errorHandler);
   })(source as Stream<Promise<T>>);
   return flattened;

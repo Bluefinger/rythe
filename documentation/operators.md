@@ -178,7 +178,7 @@ output(); // returns 2 as output is now closed
 const a = createStream<number>();
 
 // Check for even numbers
-const filtered = a.pipe(filter(value => value % 2 === 0));
+const filtered = a.pipe(filter((value) => value % 2 === 0));
 
 // Push three different values to any dependents
 a(5)(4)(7);
@@ -195,9 +195,9 @@ filtered(); // emits 4, as 5 and 7 were filtered out
 const url = createStream<string>();
 
 const result = url.pipe(
-  map(s => fetch(s)),
+  map((s) => fetch(s)),
   flattenPromise,
-  map(response => response.json())
+  map((response) => response.json())
 );
 
 url("/endpoint/data.json");
@@ -232,7 +232,7 @@ c(); // returns 9
 const stream = createStream<number>();
 
 // Input stream is Stream<number>, output is Stream<string>
-const output = map(value => value + "")(stream);
+const output = map((value) => value + "")(stream);
 
 stream(5);
 output(); // returns "5"
@@ -243,7 +243,7 @@ output(); // returns "5"
 ```typescript
 const stream = createStream<number>();
 
-const output = stream.pipe(map(value => value + ""));
+const output = stream.pipe(map((value) => value + ""));
 ```
 
 `map()` can be used without being piped immediately, so one defined map operation can be used for multiple different streams.
@@ -252,7 +252,7 @@ const output = stream.pipe(map(value => value + ""));
 const a = createStream<number>();
 const b = createStream<number>();
 
-const mapping = map<number, string>(value => value + "");
+const mapping = map<number, string>((value) => value + "");
 
 const stringA = mapping(a);
 const stringB = mapping(b);

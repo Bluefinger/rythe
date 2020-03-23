@@ -13,6 +13,6 @@ export const getMockTimer = () => {
     now: () => mocked.now,
     runAll: () => mocked.runAll(),
     flush: () => Promise.resolve(mocked.runAll()),
-    restore: () => mocked.restore()
+    restore: () => mocked.restore(),
   };
 };

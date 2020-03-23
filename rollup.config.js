@@ -4,13 +4,22 @@ import { terser } from "rollup-plugin-terser";
 
 const beautified = [
   terser({
+    ecma: 2017,
     compress: false,
     mangle: false,
     output: {
-      ecma: 2017,
       indent_level: 2,
       quote_style: 3,
       beautify: true
+    }
+  })
+];
+
+const compressed = [
+  terser({
+    ecma: 2017,
+    compress: {
+      passes: 3
     }
   })
 ];
@@ -43,7 +52,7 @@ export default {
       format: "umd",
       name: "rythe",
       sourcemap: true,
-      plugins: [terser()]
+      plugins: compressed
     }
   ]
 };

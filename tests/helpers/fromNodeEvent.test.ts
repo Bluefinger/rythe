@@ -4,7 +4,7 @@ import { ACTIVE, PENDING } from "../../src/constants";
 import { test } from "../testHarness";
 import { EventEmitter } from "events";
 
-test("fromNodeEvent - returns a Stream", assert => {
+test("fromNodeEvent - returns a Stream", (assert) => {
   const events = new EventEmitter();
   const s = fromNodeEvent(events, "test");
   assert.equal(isStream(s), true, "returns a valid Stream function");
@@ -12,7 +12,7 @@ test("fromNodeEvent - returns a Stream", assert => {
   assert.equal(events.listenerCount("test"), 1, "creates an event listener");
 });
 
-test("fromNodeEvent - resolves data from the emitter", assert => {
+test("fromNodeEvent - resolves data from the emitter", (assert) => {
   const events = new EventEmitter();
   const s = fromNodeEvent(events, "test");
   events.emit("test", "foo");
@@ -20,7 +20,7 @@ test("fromNodeEvent - resolves data from the emitter", assert => {
   assert.equal(s.state, ACTIVE, "updates to ACTIVE state");
 });
 
-test("fromNodeEvent - removes its listeners when the stream is closed", assert => {
+test("fromNodeEvent - removes its listeners when the stream is closed", (assert) => {
   const events = new EventEmitter();
   const s = fromNodeEvent(events, "test");
   s.end(true);

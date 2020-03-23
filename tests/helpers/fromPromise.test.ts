@@ -5,14 +5,14 @@ import { test } from "../testHarness";
 import { delay } from "../testUtils";
 import { getMockTimer } from "../testUtils";
 
-test("fromPromise - should return a Stream that is waiting for the Promise to resolve", assert => {
+test("fromPromise - should return a Stream that is waiting for the Promise to resolve", (assert) => {
   const p = delay(100);
   const s = fromPromise(p);
   assert.equal(isStream(s), true, "returns a valid Stream function");
   assert.equal(s.state, PENDING, "is set to PENDING state");
 });
 
-test("fromPromise - should return the resolved value and close once done", async assert => {
+test("fromPromise - should return the resolved value and close once done", async (assert) => {
   const clock = getMockTimer();
   const s = fromPromise(delay(100, "foo"));
   assert.equal(s(), undefined, "has no initial value");
@@ -26,7 +26,7 @@ test("fromPromise - should return the resolved value and close once done", async
   clock.restore();
 });
 
-test("fromPromise - should close if the Promise rejects", async assert => {
+test("fromPromise - should close if the Promise rejects", async (assert) => {
   const clock = getMockTimer();
   const s = fromPromise(delay(100, "Error", true));
   await clock.flush();

@@ -17,7 +17,7 @@ const defineRytheDrop = () => {
 const defineSubjectDrop = () => {
   const subject = new rxjs.Subject();
   const out = subject.pipe(rxOps.distinctUntilChanged());
-  out.subscribe(val => {
+  out.subscribe((val) => {
     output = val;
   });
   return subject;
@@ -46,8 +46,8 @@ suite1
   .add("Drop Flyd Stream", () => {
     defineStreamDrop();
   })
-  .on("cycle", ev => console.log(ev.target.toString()))
-  .on("complete", function() {
+  .on("cycle", (ev) => console.log(ev.target.toString()))
+  .on("complete", function () {
     utils.printFastest(this);
   })
   .run();
@@ -69,8 +69,8 @@ suite2
   .add("Update Dropped Flyd Stream", () => {
     droppedStream(5)(5)(6)(7)(7);
   })
-  .on("cycle", ev => console.log(ev.target.toString()))
-  .on("complete", function() {
+  .on("cycle", (ev) => console.log(ev.target.toString()))
+  .on("complete", function () {
     utils.printFastest(this);
   })
   .run();

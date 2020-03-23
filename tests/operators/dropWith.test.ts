@@ -4,13 +4,13 @@ import { test } from "../testHarness";
 import { TestObj } from "../testTypes";
 import { spy } from "sinon";
 
-test("dropWith - returns a valid Stream", assert => {
+test("dropWith - returns a valid Stream", (assert) => {
   const a = createStream<any>();
   const drop = a.pipe(dropWith((prev, next) => prev === next));
   assert.equal(isStream(drop), true, "returns a valid Stream function");
 });
 
-test("dropWith - will not pass down repeat values according to its predicate function", assert => {
+test("dropWith - will not pass down repeat values according to its predicate function", (assert) => {
   const a = createStream<TestObj<number>>();
   const mapFn = spy((n: TestObj<number>) => n);
   const m = a.pipe(
@@ -30,7 +30,7 @@ test("dropWith - will not pass down repeat values according to its predicate fun
   );
 });
 
-test("dropWith - passes down initial value immediately", assert => {
+test("dropWith - passes down initial value immediately", (assert) => {
   const a = createStream<TestObj<number>>({ val: 1 });
   const mapFn = spy((n: TestObj<number>) => n);
   const m = a.pipe(
@@ -49,7 +49,7 @@ test("dropWith - passes down initial value immediately", assert => {
   );
 });
 
-test("dropWith - handles nullable emits", assert => {
+test("dropWith - handles nullable emits", (assert) => {
   const a = createStream<TestObj<number> | null>();
   const mapFn = spy((n: TestObj<number> | null) => n);
   const m = a.pipe(

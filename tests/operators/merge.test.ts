@@ -4,7 +4,7 @@ import { Stream } from "../../src/types/stream";
 import { ACTIVE, CLOSED } from "../../src/constants";
 import { test } from "../testHarness";
 
-test("merge - combines many streams into a single stream", assert => {
+test("merge - combines many streams into a single stream", (assert) => {
   const a = createStream<number>();
   const b = createStream<string>();
   const c = createStream<boolean>();
@@ -18,7 +18,7 @@ test("merge - combines many streams into a single stream", assert => {
   assert.equal(m(), c(), "merged Stream returns same value from third source");
 });
 
-test("merge - immediately returns the newest active parent stream", assert => {
+test("merge - immediately returns the newest active parent stream", (assert) => {
   const a = createStream<number>();
   const b = createStream<string>("4");
   const c = createStream<boolean>();
@@ -30,7 +30,7 @@ test("merge - immediately returns the newest active parent stream", assert => {
   );
 });
 
-test("merge - errors if a non-stream source is provided", assert => {
+test("merge - errors if a non-stream source is provided", (assert) => {
   const a = createStream<number>();
   const b = (() => true) as Stream<boolean>;
   assert.throws(
@@ -39,7 +39,7 @@ test("merge - errors if a non-stream source is provided", assert => {
   );
 });
 
-test("merge - closes when any of its parent streams ends", assert => {
+test("merge - closes when any of its parent streams ends", (assert) => {
   const a = createStream<number>();
   const b = createStream<string>("5");
   const m = merge(a, b);

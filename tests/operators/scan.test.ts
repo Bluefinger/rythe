@@ -3,14 +3,14 @@ import { map, scan } from "../../src/operators";
 import { test } from "../testHarness";
 import { spy } from "sinon";
 
-test("scan - should default to an initial value", assert => {
+test("scan - should default to an initial value", (assert) => {
   const a = createStream<number>();
   const s = scan((acc, value) => acc + value, 0)(a);
   assert.equal(isStream(s), true, "returns a valid Stream function");
   assert.equal(s(), 0, "always emits the initial value");
 });
 
-test("scan - should accumulate values", assert => {
+test("scan - should accumulate values", (assert) => {
   const a = createStream<number>(0);
   const s = scan<number, string>((acc, value) => acc + value, "")(a);
   a(1)(2)(3);
@@ -21,11 +21,11 @@ test("scan - should accumulate values", assert => {
   );
 });
 
-test("scan - is pipeable", assert => {
+test("scan - is pipeable", (assert) => {
   const a = createStream<number>();
   const m = a.pipe(
     scan((acc, value) => acc + value, 0),
-    map(value => value + 1)
+    map((value) => value + 1)
   );
   a(1)(2)(3);
   assert.equal(
@@ -35,13 +35,13 @@ test("scan - is pipeable", assert => {
   );
 });
 
-test("scan - emits initial value to dependent streams", assert => {
+test("scan - emits initial value to dependent streams", (assert) => {
   const atomic: number[] = [];
   const scanFn = spy((acc: number, value: number) => acc + value);
   const a = createStream<number>();
   a.pipe(
     scan(scanFn, 0),
-    map(value => atomic.push(value))
+    map((value) => atomic.push(value))
   );
   assert.deepEqual(
     atomic,
@@ -55,7 +55,7 @@ test("scan - emits initial value to dependent streams", assert => {
   );
 });
 
-test("scan - stops accumulating after .end is invoked", assert => {
+test("scan - stops accumulating after .end is invoked", (assert) => {
   const a = createStream<number>();
   const scanFn = spy((acc: number, value: number) => acc + value);
   const s = scan(scanFn, 0)(a);

@@ -18,8 +18,8 @@ import { createStream, filter, map } from "rythe";
 const stream = createStream();
 
 const mapped = stream.pipe(
-  filter(value => value % 2 !== 0),
-  map(value => value ** 3)
+  filter((value) => value % 2 !== 0),
+  map((value) => value ** 3)
 );
 
 stream(5)(6); // mapped emits only 125, 6 is filtered out

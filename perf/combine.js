@@ -11,7 +11,7 @@ const suite1 = new Benchmark.Suite();
 const combineAB = (sA, sB) => sA() + sB() + "c";
 const combineBC = (sB, sC) => sB() + sC() + "e";
 const combineDE = (sA, sD, sE) => sA() + sD() + sE() + "f";
-const mapD = val => val + "d";
+const mapD = (val) => val + "d";
 
 const liftAB = (a, b) => a + b + "c";
 const liftBC = (b, c) => b + c + "e";
@@ -41,7 +41,7 @@ const defineCombinedSubject = () => {
   const rD = rC.pipe(rxOps.map(mapD));
   const rE = rxjs.combineLatest([rB, rC], liftBC);
   const rF = rxjs.combineLatest([rA, rD, rE], liftDE);
-  rF.subscribe(val => {
+  rF.subscribe((val) => {
     output = val;
   });
   return { inputs: sources, output: rF };
@@ -60,20 +60,20 @@ const defineCombinedStream = () => {
 
 const defineConditionalRythe = () => {
   const s = Rythe.createStream();
-  const a = s.pipe(Rythe.filter(value => value % 2 === 0));
-  const b = s.pipe(Rythe.filter(value => value < 3 || value > 4));
-  const c = s.pipe(Rythe.filter(value => value !== 3));
+  const a = s.pipe(Rythe.filter((value) => value % 2 === 0));
+  const b = s.pipe(Rythe.filter((value) => value < 3 || value > 4));
+  const c = s.pipe(Rythe.filter((value) => value !== 3));
   const o = Rythe.combine(conditionalABC, a, b, c);
   return { input: s, o };
 };
 
 const defineConditionalSubject = () => {
   const s = new rxjs.Subject();
-  const d = s.pipe(rxOps.filter(value => value % 2 === 0));
-  const e = s.pipe(rxOps.filter(value => value < 3 || value > 4));
-  const f = s.pipe(rxOps.filter(value => value !== 3));
+  const d = s.pipe(rxOps.filter((value) => value % 2 === 0));
+  const e = s.pipe(rxOps.filter((value) => value < 3 || value > 4));
+  const f = s.pipe(rxOps.filter((value) => value !== 3));
   const o = s.pipe(rxOps.combineLatest([d, e, f], conditionalDEF));
-  o.subscribe(value => {
+  o.subscribe((value) => {
     output = value;
   });
   return { input: s, o };
@@ -81,9 +81,9 @@ const defineConditionalSubject = () => {
 
 const defineConditionalStream = () => {
   const s = flyd.stream();
-  const a = flydFilter(value => value % 2 === 0, s);
-  const b = flydFilter(value => value < 3 || value > 4, s);
-  const c = flydFilter(value => value !== 3, s);
+  const a = flydFilter((value) => value % 2 === 0, s);
+  const b = flydFilter((value) => value < 3 || value > 4, s);
+  const c = flydFilter((value) => value !== 3, s);
   const o = flyd.combine(conditionalABC, [a, b, c]);
   return { input: s, o };
 };
@@ -101,8 +101,8 @@ suite1
   .add("Combine Rythe Streams", defineCombinedRythe)
   .add("Combine Subjects", defineCombinedSubject)
   .add("Combine Flyd Streams", defineCombinedStream)
-  .on("cycle", ev => console.log(ev.target.toString()))
-  .on("complete", function() {
+  .on("cycle", (ev) => console.log(ev.target.toString()))
+  .on("complete", function () {
     utils.printFastest(this);
   })
   .run();
@@ -128,8 +128,8 @@ suite2
     b("b");
     a("A");
   })
-  .on("cycle", ev => console.log(ev.target.toString()))
-  .on("complete", function() {
+  .on("cycle", (ev) => console.log(ev.target.toString()))
+  .on("complete", function () {
     utils.printFastest(this);
   })
   .run({ defer: true });
@@ -152,8 +152,8 @@ suite3
     const { input } = streamConditional;
     input(2)(3)(4)(5);
   })
-  .on("cycle", ev => console.log(ev.target.toString()))
-  .on("complete", function() {
+  .on("cycle", (ev) => console.log(ev.target.toString()))
+  .on("complete", function () {
     utils.printFastest(this);
   })
   .run({ defer: true });

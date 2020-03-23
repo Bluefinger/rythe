@@ -24,7 +24,7 @@ const stream = every(100); // will emit every 100 milliseconds
 
 const output = stream.pipe(
   map(console.log), // will log the timestamp of the interval to the console
-  scan(acc => ++acc, 0)
+  scan((acc) => ++acc, 0)
 );
 
 output(); // will emit 1
@@ -97,7 +97,7 @@ const stream = fromPromise(req);
 // when the fetch completes, the stream will emit a Fetch Response object.
 // Then this gets piped through various maps to extract data from the response.
 stream.pipe(
-  map(response => response.json()),
+  map((response) => response.json()),
   map(({ things }) => things)
 );
 ```

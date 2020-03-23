@@ -18,8 +18,8 @@ suite
   .add("Create Flyd Stream", () => {
     flyd.stream();
   })
-  .on("cycle", ev => console.log(ev.target.toString()))
-  .on("complete", function() {
+  .on("cycle", (ev) => console.log(ev.target.toString()))
+  .on("complete", function () {
     utils.printFastest(this);
   })
   .run();

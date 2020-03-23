@@ -4,7 +4,7 @@ import { END } from "../../src/signal";
 import { subscriber } from "../../src/utils/subscriber";
 import { test } from "../testHarness";
 
-test("subscriber - subscribes a stream with no parents", assert => {
+test("subscriber - subscribes a stream with no parents", (assert) => {
   const a = createStream<number>();
   const b = createStream<string>();
   assert.equal(
@@ -26,9 +26,9 @@ test("subscriber - subscribes a stream with no parents", assert => {
   );
 });
 
-test("subscriber - subscribes a stream with one parent already", assert => {
+test("subscriber - subscribes a stream with one parent already", (assert) => {
   const a = createStream<number>();
-  const b = a.pipe(map(value => value + ""));
+  const b = a.pipe(map((value) => value + ""));
   assert.deepEqual(
     b.parents,
     [a],
@@ -42,7 +42,7 @@ test("subscriber - subscribes a stream with one parent already", assert => {
   );
 });
 
-test("subscriber = subscribers a stream with many parents already", assert => {
+test("subscriber = subscribers a stream with many parents already", (assert) => {
   const a = createStream<number>();
   const b = createStream<number>();
   const c = combine((sA, sB) => sA() + sB(), a, b);

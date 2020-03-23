@@ -9,10 +9,10 @@ const spyDispatcher = () => spy(dispatch, "dispatcher");
 
 const cleanSpy = (spied: SinonSpy) => spied.restore();
 
-test("Dispatcher - can update streams", assert => {
+test("Dispatcher - can update streams", (assert) => {
   const dispatched = spyDispatcher();
   const a = createStream<number>();
-  const b = a.pipe(map(val => (val === 8 ? SKIP : val + 1)));
+  const b = a.pipe(map((val) => (val === 8 ? SKIP : val + 1)));
   a(5)(8);
   assert.equal(
     dispatched.callCount,
@@ -23,10 +23,10 @@ test("Dispatcher - can update streams", assert => {
   cleanSpy(dispatched as any);
 });
 
-test("Dispatcher - can close streams with an END signal", assert => {
+test("Dispatcher - can close streams with an END signal", (assert) => {
   const dispatched = spyDispatcher();
   const a = createStream<number>(5);
-  const b = a.pipe(map(val => val + 1));
+  const b = a.pipe(map((val) => val + 1));
   assert.equal(
     dispatched.callCount,
     2,
@@ -54,12 +54,12 @@ test("Dispatcher - can close streams with an END signal", assert => {
   cleanSpy(dispatched as any);
 });
 
-test("Dispatcher - combines complicated stream dependencies atomically", assert => {
+test("Dispatcher - combines complicated stream dependencies atomically", (assert) => {
   const dispatched = spyDispatcher();
   const a = createStream<string>();
   const b = createStream<string>();
   const c = combine((sA, sB) => sA() + sB() + "c", a, b);
-  const d = map<string>(val => val + "d")(c);
+  const d = map<string>((val) => val + "d")(c);
   const e = combine((sB, sC) => sB() + sC() + "e", b, c);
   const atomic = combine((sD, sE) => sD() + sE() + "f", d, e).pipe(
     scan((acc, value: string) => acc.concat(value), [] as string[])

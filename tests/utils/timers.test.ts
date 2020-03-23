@@ -2,7 +2,7 @@ import { addTimer, addInterval, clearTimer } from "../../src/utils/timers";
 import { test } from "../testHarness";
 import { useFakeTimers, fake } from "sinon";
 
-test("Timers - adds timers", assert => {
+test("Timers - adds timers", (assert) => {
   const clock = useFakeTimers();
   const mockFn = fake();
   addTimer(mockFn, 10, "foo");
@@ -25,7 +25,7 @@ test("Timers - adds timers", assert => {
   clock.restore();
 });
 
-test("Timers - clears timers", assert => {
+test("Timers - clears timers", (assert) => {
   const clock = useFakeTimers();
   const mockFn = fake();
   addTimer(mockFn, 10, "foo");
@@ -40,7 +40,7 @@ test("Timers - clears timers", assert => {
   clock.restore();
 });
 
-test("Timers - creates self-adjusting interval timers", assert => {
+test("Timers - creates self-adjusting interval timers", (assert) => {
   const clock = useFakeTimers();
   const mockFn = fake();
   addInterval(mockFn, 20);

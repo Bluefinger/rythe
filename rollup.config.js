@@ -10,49 +10,49 @@ const beautified = [
     output: {
       indent_level: 2,
       quote_style: 3,
-      beautify: true
-    }
-  })
+      beautify: true,
+    },
+  }),
 ];
 
 const compressed = [
   terser({
     ecma: 2017,
     compress: {
-      passes: 3
-    }
-  })
+      passes: 3,
+    },
+  }),
 ];
 
 export default {
   input: ["./src/index.ts"],
   plugins: [
     resolve({
-      extensions: [".js", ".ts"]
+      extensions: [".js", ".ts"],
     }),
     sucrase({
-      transforms: ["typescript"]
-    })
+      transforms: ["typescript"],
+    }),
   ],
   output: [
     {
       file: "./dist/esm/index.js",
       format: "esm",
       sourcemap: true,
-      plugins: beautified
+      plugins: beautified,
     },
     {
       file: "./dist/cjs/index.js",
       format: "cjs",
       sourcemap: true,
-      plugins: beautified
+      plugins: beautified,
     },
     {
       file: "./dist/umd/rythe.min.js",
       format: "umd",
       name: "rythe",
       sourcemap: true,
-      plugins: compressed
-    }
-  ]
+      plugins: compressed,
+    },
+  ],
 };

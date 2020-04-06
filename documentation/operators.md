@@ -21,6 +21,7 @@ An Operator takes an input stream or streams and outputs a new stream, often app
 - [select](#select)
 - [skip](#skip)
 - [take](#take)
+- [throttle](#throttle)
 - [zip](#zip)
 
 # after
@@ -378,6 +379,26 @@ taken(); // returns 2, having emitted twice
 
 a(3);
 taken(); // returns 2, taken is now closed
+```
+
+# throttle
+
+## `throttle<T>(source: Stream<T>): Stream<T>`
+
+`throttle` prevents the emission of updates until the next `requestAnimationFrame` execution, after which it will emit the most recent update it has received. All other updates are ignored, as the only value that matters is the one is ready when `requestAnimationFrame` fires. Updates trigger a queued timer to `requestAnimationFrame`, whereas periods of no updates do not queue additional timers.
+
+```typescript
+const a = createStream<number>();
+
+const throttled = a.pipe(throttle);
+
+a(1)(2)(3);
+
+throttled(); // returns undefined
+
+requestAnimationFrame(() => {
+  throttled(); // returns 3
+});
 ```
 
 # zip

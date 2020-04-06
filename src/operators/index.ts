@@ -16,3 +16,4 @@ export { take } from "./take";
 export { endsWith } from "./endsWith";
 export { flattenPromise } from "./flattenPromise";
 export { zip } from "./zip";
+export { throttle } from "./throttle";

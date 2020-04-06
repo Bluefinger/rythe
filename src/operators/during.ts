@@ -3,17 +3,13 @@ import { scan } from "./scan";
 import { map } from "./map";
 import { createStream } from "../stream";
 import { addInterval, clearTimer } from "../utils/timers";
+import { bufferValues } from "../utils/bufferValues";
 
 const emitValues = <T>(emit: Stream<T[]>, values: T[]) => {
   if (values.length) {
     emit(values.slice());
     values.length = 0;
   }
-};
-
-const bufferValues = <T>(stored: T[], value: T): T[] => {
-  stored.push(value);
-  return stored;
 };
 
 /**

@@ -27,3 +27,23 @@ export const addInterval = (
   const delta = target - now;
   store.set(fn, setTimeout(addInterval, delta, fn, duration, target));
 };
+
+export const clearFrame = (fn: (time: number) => void): void => {
+  const frame = store.get(fn);
+  if (frame) {
+    cancelAnimationFrame(frame);
+    store.delete(fn);
+  }
+};
+
+export const addFrame = (fn: (time: number) => void): void => {
+  if (!store.has(fn)) {
+    store.set(
+      fn,
+      requestAnimationFrame((time) => {
+        fn(time);
+        store.delete(fn);
+      })
+    );
+  }
+};

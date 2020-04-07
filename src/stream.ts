@@ -1,6 +1,6 @@
 import { CLOSED, PENDING } from "./constants";
 import { dispatcher as push } from "./dispatcher";
-import { Stream, OperatorFn, EndStream } from "./types/stream";
+import { Stream, OperatorFn, EndStream, SinkStream } from "./types/stream";
 import { Closer } from "./types/internal";
 import { pipeFromArray } from "./utils/pipe";
 
@@ -91,3 +91,25 @@ export const createStream = <T>(initialValue?: T): Stream<T> => {
 
   return stream;
 };
+
+const createSink = (): SinkStream => {
+  const noop = () => {};
+  const stream = initStream<any>(noop as Stream<any>);
+  stream.end = stream;
+  Object.defineProperties(stream, {
+    val: {
+      set: noop,
+    },
+    state: {
+      set: noop,
+      get: () => CLOSED,
+    },
+  });
+  return stream as SinkStream;
+};
+
+/**
+ * Sink for events/emits to be terminated without requiring unnecessary
+ * stream functions to be created
+ */
+export const sink = createSink();

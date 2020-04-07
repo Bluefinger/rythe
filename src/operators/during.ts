@@ -1,9 +1,9 @@
 import { Stream, OperatorFn } from "../types/stream";
 import { scan } from "./scan";
-import { map } from "./map";
 import { createStream } from "../stream";
 import { addInterval, clearTimer } from "../utils/timers";
 import { bufferValues } from "../utils/bufferValues";
+import { subscribeEnd } from "../utils/subscriber";
 
 const emitValues = <T>(emit: Stream<T[]>, values: T[]) => {
   if (values.length) {
@@ -24,12 +24,9 @@ export const during = <T>(duration: number): OperatorFn<T, T[]> => (
   const accumulator = scan<T>(bufferValues, [])(source);
   const tick = () => emitValues(emit, accumulator());
   addInterval(tick, duration);
-  emit.end.pipe(
-    map(accumulator.end),
-    map<boolean, void>(() => {
-      clearTimer(tick);
-      accumulator.val.length = 0;
-    })
-  );
+  subscribeEnd(accumulator.end, emit.end, () => {
+    clearTimer(tick);
+    accumulator.val.length = 0;
+  });
   return emit;
 };

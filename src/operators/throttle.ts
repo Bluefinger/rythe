@@ -2,6 +2,7 @@ import { Stream } from "../types/stream";
 import { map } from "./map";
 import { createStream } from "../stream";
 import { clearFrame, addFrame } from "../utils/timers";
+import { subscribeEnd } from "../utils/subscriber";
 
 /**
  * Throttling Stream. Stores the latest received value during an animation
@@ -10,8 +11,8 @@ import { clearFrame, addFrame } from "../utils/timers";
  * Uses requestFrameAnimation for throttling.
  */
 export const throttle = <T>(source: Stream<T>): Stream<T> => {
-  const emit = createStream<T>();
   let latest: T;
+  const emit = createStream<T>();
   const frame = () => {
     emit(latest);
   };
@@ -21,11 +22,6 @@ export const throttle = <T>(source: Stream<T>): Stream<T> => {
       addFrame(frame);
     })
   );
-  emit.end.pipe(
-    map(collector.end),
-    map<boolean, void>(() => {
-      clearFrame(frame);
-    })
-  );
+  subscribeEnd(collector.end, emit.end, () => clearFrame(frame));
   return emit;
 };

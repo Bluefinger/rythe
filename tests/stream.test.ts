@@ -1,4 +1,4 @@
-import { createStream, isStream } from "../src/stream";
+import { createStream, isStream, sink } from "../src/stream";
 import { ACTIVE, CLOSED, PENDING } from "../src/constants";
 import { END } from "../src/signal";
 import { Stream } from "../src/types/stream";
@@ -150,4 +150,19 @@ test("Stream - toString - can serialise into a plain string", (assert) => {
     "streamFn{streamFn{2}}",
     "Nested Streams can be serialised into plain strings"
   );
+});
+
+test("Sink - Always returns void, with or without value passed in", (assert) => {
+  assert.equal(sink(), undefined, "sink returns nothing");
+  assert.equal(
+    sink(5 as any),
+    undefined,
+    "sink does not return itself when passed a value"
+  );
+  assert.equal(
+    sink.val,
+    undefined,
+    "sink is not updated after being given a value"
+  );
+  assert.equal(sink.state, CLOSED, "sink state is always closed");
 });

@@ -1,4 +1,4 @@
-import { StreamState } from "../constants";
+import { StreamState, CLOSED } from "../constants";
 
 export type StreamValue<T> = T extends Stream<infer V> ? V : never;
 
@@ -45,11 +45,11 @@ export interface Stream<T> {
   waiting: number;
   /**
    * Current State of the Stream. Possible state values:
-   * 0. CLOSED: The Stream is closed. It won't notify any dependents nor be updated by any parents.
-   * 1. PENDING: The Stream is pending an update. It has not received any values yet.
-   * 2. ACTIVE: The Stream has a value. No actions required to be taken.
-   * 3. CHANGING: The Stream is about to change. It is about to receive a value and will update its dependencies.
-   * 4. WAITING: The Stream is marked to receive an update, but is waiting for all parent streams to resolve first.
+   * * CLOSED   -> 0: The Stream is closed. It may still receive values but won't notify any dependents.
+   * * PENDING  -> 1: The Stream is pending an update. It has not received any values yet.
+   * * ACTIVE   -> 2: The Stream has a value. No actions required to be taken.
+   * * CHANGING -> 3: The Stream is about to change. It is about to receive a value and will update its dependencies.
+   * * WAITING  -> 4: The Stream is marked to receive an update, but is waiting for all parent streams to resolve first.
    */
   state: StreamState;
   /**
@@ -102,4 +102,12 @@ export interface EndStream extends Stream<boolean> {
    * Assigns a new value to the Stream and broadcasts it to all its dependencies.
    */
   (value: boolean): boolean;
+}
+
+export interface SinkStream extends Stream<void> {
+  (): void;
+  (value: any): void;
+  state: CLOSED;
+  val: void;
+  end: Stream<any>;
 }

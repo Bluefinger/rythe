@@ -1,8 +1,7 @@
 import { Stream } from "../types/stream";
 import { createStream, isStream } from "../stream";
-import { subscriber } from "../utils/subscriber";
+import { subscriber, subscribeEnd } from "../utils/subscriber";
 import { SOURCE_ERROR } from "../errors";
-import { map } from "./map";
 
 export function scanMerge<T>(
   initialValue: T,
@@ -31,7 +30,7 @@ export function scanMerge<T, U>(
     }
     const subscribeFn = (val: T): U => (acc = sourceFn(acc, val));
     subscriber(merged, source, subscribeFn);
-    map(merged.end)(source.end);
+    subscribeEnd(merged.end, source.end);
   }
   return merged(acc);
 }

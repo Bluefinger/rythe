@@ -17,11 +17,11 @@ const WAITING = 4;
 
 /**
  * Stream State. Comes with 5 possible states:
- * 0. CLOSED
- * 1. PENDING
- * 2. ACTIVE
- * 3. CHANGING
- * 4. UPDATING
+ * * CLOSED - 0
+ * * PENDING - 1
+ * * ACTIVE - 2
+ * * CHANGING - 3
+ * * UPDATING - 4
  */
 export type StreamState = CLOSED | PENDING | ACTIVE | CHANGING | WAITING;
 export { CLOSED, PENDING, ACTIVE, CHANGING, WAITING };

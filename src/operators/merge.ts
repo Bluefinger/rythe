@@ -2,8 +2,7 @@ import { Stream, StreamArray } from "../types/stream";
 import { createStream, isStream } from "../stream";
 import { ACTIVE } from "../constants";
 import { SOURCE_ERROR } from "../errors";
-import { subscriber } from "../utils/subscriber";
-import { map } from "./map";
+import { subscriber, subscribeEnd } from "../utils/subscriber";
 
 const passthrough = <T>(n: T): T => n;
 
@@ -21,7 +20,7 @@ export function merge<T extends Stream<any>[]>(
       throw new Error(SOURCE_ERROR);
     }
     subscriber(merged, source, passthrough);
-    map(merged.end)(source.end);
+    subscribeEnd(merged.end, source.end);
     if (!immediate && source.state === ACTIVE) {
       immediate = source;
     }

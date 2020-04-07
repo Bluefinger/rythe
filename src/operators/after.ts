@@ -1,9 +1,9 @@
 import { Stream, OperatorFn } from "../types/stream";
 import { scan } from "./scan";
-import { map } from "./map";
 import { createStream } from "../stream";
 import { addTimer, clearTimer } from "../utils/timers";
 import { bufferValues } from "../utils/bufferValues";
+import { subscribeEnd } from "../utils/subscriber";
 
 /**
  * Buffering Stream. Accumulates a series of stream events into an array, and
@@ -22,12 +22,9 @@ export const after = <T>(duration: number): OperatorFn<T, T[]> => (
     addTimer(clearStore, duration, emit, stored);
     return bufferValues(stored, value);
   }, [])(source);
-  emit.end.pipe(
-    map(accumulator.end),
-    map<boolean, void>(() => {
-      clearTimer(clearStore);
-      accumulator.val.length = 0;
-    })
-  );
+  subscribeEnd(accumulator.end, emit.end, () => {
+    clearTimer(clearStore);
+    accumulator.val.length = 0;
+  });
   return emit;
 };

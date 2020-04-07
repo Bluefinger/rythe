@@ -55,7 +55,7 @@
     "@rollup/plugin-sucrase": "^3.0.0",
     "@sinonjs/fake-timers": "^6.0.1",
     "@types/jsdom": "^16.2.0",
-    "@types/sinon": "^7.5.2",
+    "@types/sinon": "^9.0.0",
     "@types/sinonjs__fake-timers": "^6.0.1",
     "@types/tape": "^4.2.34",
     "@typescript-eslint/eslint-plugin": "^2.27.0",

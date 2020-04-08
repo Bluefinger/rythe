@@ -10,6 +10,7 @@ There are two types of streams, `Stream<T>` and `EndStream`.
 
 - [Stream](#streamt)
 - [EndStream](#endstream)
+- [SinkStream](#sinkstream)
 
 ### Functions
 
@@ -81,6 +82,18 @@ stream.end.pipe(map(other.end), map(things.end));
 ```
 
 A `Stream<T>` that has been ended/closed can still have its own value updated. However, a closed `Stream<T>` will not emit that value to any other streams. `EndStream` will not update its own value however, as it is representative of its parent `Stream<T>`'s closed state. Once closed, `EndStream` will always yield `true`.
+
+# `SinkStream`
+
+The `sink` stream serves as a drain for certain emit cases, such as subscribing a chain of `EndStream`s. To prevent the need to create extra streams, it is used to receive emits that trigger actions, but should not have further side-effects or dependencies. A `SinkStream` is effectively a type `Stream<void>`, but it will always return `undefined` when called with or without passing a value into it. It is always `CLOSED`, and its state cannot be modified. The `.end` property of a `SinkStream` will always return `undefined` and doesn't do anything.
+
+It is not intended for external use, and remains as an implmentation detail.
+
+```typescript
+sink(); // => returns undefined
+sink(5); // => returns undefined
+sink.val === 5; // returns false. val is undefined
+```
 
 # createStream
 

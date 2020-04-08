@@ -3,6 +3,7 @@ import { dispatcher as push } from "./dispatcher";
 import { Stream, OperatorFn, EndStream, SinkStream } from "./types/stream";
 import { Closer } from "./types/internal";
 import { pipeFromArray } from "./utils/pipe";
+import { noop } from "./utils/noop";
 
 function toJSON(this: Stream<any>): any {
   return this.val != null && this.val.toJSON ? this.val.toJSON() : this.val;
@@ -93,8 +94,8 @@ export const createStream = <T>(initialValue?: T): Stream<T> => {
 };
 
 const createSink = (): SinkStream => {
-  const noop = () => {};
-  const stream = initStream<any>(noop as Stream<any>);
+  const sink = () => {};
+  const stream = initStream<any>(sink as Stream<any>);
   stream.end = stream;
   Object.defineProperties(stream, {
     val: {

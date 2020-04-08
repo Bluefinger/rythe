@@ -9,7 +9,8 @@
     "module": "esnext",
     "moduleResolution": "node",
     "target": "es2019",
-    "rootDir": "./src"
+    "rootDir": "./src",
+    "stripInternal": true
   },
   "include": ["./src/**/*"]
 }

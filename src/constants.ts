@@ -1,3 +1,12 @@
+/**
+ * Const enums get "consumed" at compile time. So to still expose the types/values
+ * without creating enum objects, this file represents the workaround to get the
+ * benefits of inlined values with the strict typing of enums, while still exposing
+ * the interfaces externally. As object lookups are relatively "expensive" compared
+ * to inlined values, this is also a small optimisation for efficient updates to
+ * stream state.
+ */
+
 /** Stream is closed. Will no longer emit values. */
 type CLOSED = 0;
 /** Stream is pending. Waiting to receive its first value. */

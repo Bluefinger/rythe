@@ -34,7 +34,7 @@ setTimeout(output, 200); // will emit 3
 
 # fromDOMEvent
 
-## `fromDOMEvent(target: Node | NodeList | HTMLCollection, event: string, eventOptions?: boolean | AddEventListenerOptions): Stream<Event>`
+## `fromDOMEvent<E extends Event>(target: Node | NodeList | HTMLCollection, event: string, eventOptions?: boolean | AddEventListenerOptions): Stream<E>`
 
 `fromDOMEvent()` takes a target element or list of elements (either as a `NodeList` or `HTMLCollection`) and then subscribes to a specified event on the given elements. It then outputs a stream that emits the event that is emitted by those elements.
 
@@ -48,7 +48,7 @@ element.innerHTML =
   '<p class="words">things</p><p class="words">more things</p>';
 
 // All three examples below will work
-const single = fromDOMEvent(element, "click");
+const single = fromDOMEvent<MouseEvent>(element, "click");
 const children = fromDOMEvent(element.children, "click");
 const queried = fromDOMEvent(element.queryAllSelector(".words"), "click");
 
@@ -59,9 +59,9 @@ single.end(true); // will also remove the click event handler from the element
 
 # fromNodeEvent
 
-## `fromNodeEvent(target: EventEmitter, event: string): Stream<any>`
+## `fromNodeEvent<T extends any>(target: EventEmitter, event: string): Stream<T>`
 
-`fromNodeEvent` accepts an EventEmitter type, or any object implementing the EventEmitter interface, and subscribes to a given event name. This is mostly for Node environments that use EventEmitter classes. It yields a `Stream<any>` type, due to the fact the EventEmitters can emit any data, and the stream will then emit on the event name only.
+`fromNodeEvent` accepts an EventEmitter type, or any object implementing the EventEmitter interface, and subscribes to a given event name. This is mostly for Node environments that use EventEmitter classes. It yields a `Stream<T>` type, due to the fact the EventEmitters can emit any data, and the stream will then emit on the event name only.
 
 Closing the Stream will also remove the event handler from the EventEmitter.
 

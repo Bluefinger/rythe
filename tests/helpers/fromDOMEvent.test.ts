@@ -45,7 +45,7 @@ test("fromDOMEvent - should resolve events from many DOM elements", (assert) => 
 
 test("fromDOMEvent - should remove its event listener from a single DOM element on END", (assert) => {
   const element = document.createElement("div");
-  const s = fromDOMEvent(element, "click");
+  const s = fromDOMEvent<MouseEvent>(element, "click");
 
   s.end(true);
 

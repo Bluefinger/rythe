@@ -2,8 +2,8 @@ import { createStream } from "../stream";
 import { Stream } from "../types/stream";
 import { map } from "../operators/map";
 
-const applyEventStream = (
-  stream: Stream<Event>,
+const applyEventStream = <E extends Event>(
+  stream: Stream<E>,
   targets: NodeList | HTMLCollection,
   event: string,
   eventOptions?: boolean | AddEventListenerOptions
@@ -14,8 +14,8 @@ const applyEventStream = (
   }
 };
 
-const removeEventStream = (
-  stream: Stream<Event>,
+const removeEventStream = <E extends Event>(
+  stream: Stream<E>,
   targets: NodeList | HTMLCollection,
   event: string
 ): void => {
@@ -28,20 +28,20 @@ const removeEventStream = (
 const isNode = (node: Node | NodeList | HTMLCollection): node is Node =>
   (node as any).length === undefined;
 
-export const fromDOMEvent = (
+export const fromDOMEvent = <E extends Event>(
   target: Node | NodeList | HTMLCollection,
   event: string,
   eventOptions?: boolean | AddEventListenerOptions
-): Stream<Event> => {
-  const eventStream = createStream<Event>();
+): Stream<E> => {
+  const eventStream = createStream<E>();
   let operator: () => void;
 
-  if (!isNode(target)) {
-    applyEventStream(eventStream, target, event, eventOptions);
-    operator = (): void => removeEventStream(eventStream, target, event);
-  } else {
+  if (isNode(target)) {
     target.addEventListener(event, eventStream, eventOptions);
     operator = (): void => target.removeEventListener(event, eventStream);
+  } else {
+    applyEventStream(eventStream, target, event, eventOptions);
+    operator = (): void => removeEventStream(eventStream, target, event);
   }
 
   map<boolean, void>(operator)(eventStream.end);

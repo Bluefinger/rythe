@@ -1,6 +1,6 @@
 {
   "name": "rythe",
-  "version": "0.8.1",
+  "version": "0.8.2",
   "description": "Rythe, a tiny, heavily tree-shakeable Reactive Stream library",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",

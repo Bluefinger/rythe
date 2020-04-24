@@ -1,6 +1,6 @@
 import { createStream } from "../stream";
 import { Stream } from "../types/stream";
-import { map } from "../operators/map";
+import { subscribeSink } from "../utils/subscriber";
 
 const applyEventStream = <E extends Event>(
   stream: Stream<E>,
@@ -43,7 +43,6 @@ export const fromDOMEvent = <E extends Event>(
     applyEventStream(eventStream, target, event, eventOptions);
     operator = (): void => removeEventStream(eventStream, target, event);
   }
-
-  map<boolean, void>(operator)(eventStream.end);
+  subscribeSink(eventStream.end, operator);
   return eventStream;
 };

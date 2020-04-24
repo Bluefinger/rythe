@@ -11,12 +11,17 @@ export const subscriber = <T, U>(
   return stream;
 };
 
+export const subscribeSink = <T>(
+  stream: Stream<T>,
+  subscribeFn: StreamFn<T, any>
+) => subscriber(sink, stream, subscribeFn);
+
 export const subscribeEnd = (
   stream: EndStream,
   parent: EndStream,
   cleanupFn?: StreamFn<boolean, any>
 ): EndStream => {
-  subscriber(sink, parent, stream);
-  if (cleanupFn) subscriber(sink, stream, cleanupFn);
+  subscribeSink(parent, stream);
+  if (cleanupFn) subscribeSink(stream, cleanupFn);
   return stream;
 };

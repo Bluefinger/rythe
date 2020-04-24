@@ -1,7 +1,7 @@
 import { createStream } from "../stream";
 import { Stream } from "../types/stream";
-import { map } from "../operators/map";
 import { EventEmitter } from "events";
+import { subscribeSink } from "../utils/subscriber";
 
 export const fromNodeEvent = <T extends any>(
   target: EventEmitter,
@@ -10,7 +10,7 @@ export const fromNodeEvent = <T extends any>(
   const eventStream = createStream<T>();
 
   target.on(event, eventStream);
-  map<boolean, any>(() => target.off(event, eventStream))(eventStream.end);
+  subscribeSink(eventStream.end, () => target.off(event, eventStream));
 
   return eventStream;
 };

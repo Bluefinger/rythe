@@ -2,8 +2,7 @@ import { Stream, StreamTuple } from "../types/stream";
 import { createStream, isStream } from "../stream";
 import { PENDING, CLOSED } from "../constants";
 import { SOURCE_ERROR, INVALID_ARGUMENTS } from "../errors";
-import { subscriber } from "../utils/subscriber";
-import { map } from "./map";
+import { subscriber, subscribeSink } from "../utils/subscriber";
 import { END, SKIP } from "../signal";
 
 const bufferReady = (values: any[]) => values.length;
@@ -44,13 +43,13 @@ export function zip<T extends Stream<any>[]>(
     if (source.state === CLOSED) {
       endFn();
     } else {
-      map<boolean, void>(endFn)(source.end);
+      subscribeSink(source.end, endFn);
     }
   }
-  map(() => {
+  subscribeSink(zipped, () => {
     if (ending.length && ending.some(bufferIsExhausted)) {
       zipped(END);
     }
-  })(zipped);
+  });
   return zipped(immediate);
 }

@@ -20,7 +20,7 @@ test("combine - transforms default value", (assert) => {
 test("combine - transforms multiple values", (assert) => {
   const a = createStream<number>();
   const b = createStream<string>();
-  const c = combine((sA, sB) => sA() + sB(), a, b);
+  const c = combine((sA, sB) => `${sA()}${sB()}`, a, b);
   a(1);
   b("5");
   assert.equal(c(), "15", "combines updates from multiple sources");
@@ -74,10 +74,10 @@ test("combine - combines default values atomically", (assert) => {
 
 test("combine - combines and maps nested streams atomically", (assert) => {
   const a = createStream<string>();
-  const b = combine((sA) => sA() + 2, a);
+  const b = combine((sA) => sA() + "2", a);
   const c = combine((sA) => sA() + sA(), a);
-  const d = c.pipe(map((x) => x + 1));
-  const e = combine((x) => x() + 0, d);
+  const d = c.pipe(map((x) => x + "1"));
+  const e = combine((x) => x() + "0", d);
   const atomic = combine((sB, sE) => sB() + sE(), b, e).pipe(
     scan<string>((acc, value) => acc.concat(value), [])
   );

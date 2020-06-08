@@ -7,7 +7,7 @@ import { createStream } from "../../src";
 test("throttle - emits the latest value collected during animation frame", (assert) => {
   const clock = getFrameTimers();
   const a = createStream<number>();
-  const mockFn = fake((n: any) => n);
+  const mockFn = fake((n: number) => n);
   const throttled = a.pipe(throttle, map(mockFn));
   // Execute three updates
   a(1)(2)(3);

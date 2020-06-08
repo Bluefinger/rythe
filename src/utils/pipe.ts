@@ -7,7 +7,9 @@ const pipeFn = <T, U>(
   operatorFn: OperatorFn<T, U>
 ): Stream<U> => operatorFn(stream);
 
-export const pipeFromArray = <Fns extends SingleFn[]>(operators: Fns) => {
+export const pipeFromArray = <Fns extends SingleFn[]>(
+  operators: Fns
+): SingleFn<any, any> => {
   if (!operators.length) {
     throw new Error(PIPE_ERROR);
   }
@@ -15,6 +17,7 @@ export const pipeFromArray = <Fns extends SingleFn[]>(operators: Fns) => {
     return operators[0];
   }
   return (source: First<Parameters<First<Fns>>>): ReturnType<Last<Fns>> =>
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     operators.reduce(pipeFn, source);
 };
 

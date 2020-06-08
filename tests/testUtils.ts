@@ -1,10 +1,11 @@
 import { useFakeTimers } from "sinon";
 import Timers from "@sinonjs/fake-timers";
 
-export const delay = <T>(ms: number, value?: T, error?: true) =>
-  new Promise<T>((resolve, reject) =>
-    setTimeout(error ? reject : resolve, ms, value)
-  );
+export const delay = <T>(ms: number, value?: T, error?: true): Promise<T> =>
+  new Promise<T>((resolve, reject) => {
+    const fn = error ? reject : resolve;
+    setTimeout(fn, ms, value);
+  });
 
 export const getMockTimer = () => {
   const mocked = useFakeTimers();
@@ -20,6 +21,7 @@ export const getMockTimer = () => {
 
 export const getFrameTimers = () => {
   const clock = Timers.install();
+  /* eslint-disable */
   (global as any).requestAnimationFrame = clock.requestAnimationFrame;
   (global as any).cancelAnimationFrame = clock.cancelAnimationFrame;
   return {
@@ -31,4 +33,5 @@ export const getFrameTimers = () => {
       (global as any).cancelAnimationFrame = undefined;
     },
   };
+  /* eslint-enable */
 };

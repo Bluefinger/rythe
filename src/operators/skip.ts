@@ -1,4 +1,4 @@
-import { SKIP } from "../signal";
+import { emitSKIP } from "../signal";
 import { Stream, OperatorFn } from "../types/stream";
 import { map } from "./map";
 import { makeUInt } from "../utils/makeUInt";
@@ -10,7 +10,7 @@ export function skip<T>(amount: number): OperatorFn<T, T> {
       (value): T => {
         if (remaining) {
           --remaining;
-          return SKIP;
+          return emitSKIP();
         }
         return value;
       }

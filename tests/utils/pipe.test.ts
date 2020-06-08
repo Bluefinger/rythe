@@ -1,6 +1,4 @@
-import { createStream, isStream } from "../../src/stream";
-import { map } from "../../src/operators";
-import { pipe } from "../../src/utils/pipe";
+import { createStream, isStream, map, pipe } from "../../src";
 import { test } from "../testHarness";
 
 test("pipe - should throw an error if no functions are piped", (assert) => {

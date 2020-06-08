@@ -1,4 +1,4 @@
-import { SKIP } from "../signal";
+import { emitSKIP } from "../signal";
 import { Stream, OperatorFn } from "../types/stream";
 import { map } from "./map";
 
@@ -9,7 +9,7 @@ export const dropWith = <T>(
   predicate: (prev: T | undefined, next: T) => boolean
 ): OperatorFn<T, T> => (source: Stream<T>): Stream<T> => {
   let prev: T | undefined;
-  return map<T>((value): T => (predicate(prev, value) ? SKIP : (prev = value)))(
-    source
-  );
+  return map<T>(
+    (value): T => (predicate(prev, value) ? emitSKIP() : (prev = value))
+  )(source);
 };

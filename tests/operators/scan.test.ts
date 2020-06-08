@@ -12,7 +12,7 @@ test("scan - should default to an initial value", (assert) => {
 
 test("scan - should accumulate values", (assert) => {
   const a = createStream<number>(0);
-  const s = scan<number, string>((acc, value) => acc + value, "")(a);
+  const s = scan<number, string>((acc, value) => `${acc}${value}`, "")(a);
   a(1)(2)(3);
   assert.equal(
     s(),

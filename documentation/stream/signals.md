@@ -6,6 +6,8 @@ Signals are special values that can be passed into `Stream<T>` functions to acti
 
 `SKIP` is used to stop further emitting of values. As a chain of subscribed Streams update with their product values, if one product yields a `SKIP` value, that `Stream<T>` will not update and all dependent Streams will reset back to not be expecting further updates.
 
+A convenience method `emitSKIP` has been provided that instead of needing to write `SKIP as T` any time one passes it into a Stream or uses it in a dependency function, one can simply call `emitSKIP()` instead. It will emit `SKIP` and ensure its type is properly coerced.
+
 ```typescript
 const stream = createStream<number>();
 
@@ -17,7 +19,7 @@ const piped = stream.pipe(
 );
 
 // The value SKIP will not do anything if passed in, the Stream will not update nor emit to its dependents
-stream(SKIP)(5)(6);
+stream(emitSKIP())(5)(6);
 piped(); // returns the value 10, as 6 was skipped and thus the piped() stream didn't update
 ```
 
@@ -25,12 +27,14 @@ piped(); // returns the value 10, as 6 was skipped and thus the piped() stream d
 
 `END` is used to close a `Stream<T>` directly, instead of using the `.end` property. This allows for terse chaining and then ending of a stream, or to create operators that close its output stream based on a value or condition.
 
+A convenience method `emitEND` has been provided that instead of needing to write `END as T` any time one passes it into a Stream or uses it in a dependency function, one can simply call `emitEND()` instead. It will emit `END` and ensure its type is properly coerced.
+
 ```typescript
 const stream = createStream<number>();
 
 const piped = stream.pipe(map((value) => value * 2));
 
 // The value END will close the Stream, preventing further updates from being emitted to dependents
-stream(5)(END)(6);
+stream(5)(emitEND())(6);
 piped(); // returns the value 10, the parent stream closed and thus piped didn't update
 ```

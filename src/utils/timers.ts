@@ -1,17 +1,17 @@
-const store = new WeakMap<Function, any>();
+const store = new WeakMap<(...args: any[]) => any, unknown>();
 
-export const addTimer = (
-  fn: Function,
+export const addTimer = <T extends (...args: any[]) => any>(
+  fn: T,
   duration: number,
-  ...args: any[]
+  ...args: Parameters<T>
 ): void => {
   store.set(fn, setTimeout(fn, duration, ...args));
 };
 
-export const clearTimer = (fn: Function): void => {
+export const clearTimer = (fn: (...args: any[]) => any): void => {
   const timer = store.get(fn);
   if (timer) {
-    clearTimeout(timer);
+    clearTimeout(timer as number);
     store.delete(fn);
   }
 };
@@ -31,7 +31,7 @@ export const addInterval = (
 export const clearFrame = (fn: (time: number) => void): void => {
   const frame = store.get(fn);
   if (frame) {
-    cancelAnimationFrame(frame);
+    cancelAnimationFrame(frame as number);
     store.delete(fn);
   }
 };

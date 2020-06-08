@@ -1,6 +1,6 @@
 import { createStream, isStream, sink } from "../src/stream";
 import { ACTIVE, CLOSED, PENDING } from "../src/constants";
-import { END } from "../src/signal";
+import { emitEND } from "../src/signal";
 import { Stream } from "../src/types/stream";
 import { test } from "./testHarness";
 
@@ -72,7 +72,7 @@ test("Stream - can be ended by passing true to .end", (assert) => {
 
 test("Stream - can be ended with END signal", (assert) => {
   const a = createStream<number>(5);
-  a(END);
+  a(emitEND());
   assert.equal(
     a.state,
     CLOSED,
@@ -88,7 +88,7 @@ test("Stream - won't end if passed anything that isn't a boolean true value into
     ACTIVE,
     "Stream won't close by passing false into .end()"
   );
-  a.end(END);
+  a.end(emitEND());
   assert.equal(
     a.state,
     ACTIVE,

@@ -1,4 +1,4 @@
-import { Stream, StreamFn, EndStream } from "../types/stream";
+import { Stream, StreamFn, EndStream, SinkStream } from "../types/stream";
 import { sink } from "../stream";
 
 export const subscriber = <T, U>(
@@ -14,7 +14,7 @@ export const subscriber = <T, U>(
 export const subscribeSink = <T>(
   stream: Stream<T>,
   subscribeFn: StreamFn<T, any>
-) => subscriber(sink, stream, subscribeFn);
+): SinkStream => subscriber(sink, stream, subscribeFn) as SinkStream;
 
 export const subscribeEnd = (
   stream: EndStream,

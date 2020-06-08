@@ -5,7 +5,6 @@
     "eslint:recommended",
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended",
-    "plugin:@typescript-eslint/recommended-requiring-type-checking",
     "plugin:prettier/recommended",
     "prettier/@typescript-eslint"
   ],
@@ -28,10 +27,25 @@
   },
   "overrides": [
     {
+      "files": ["./src/**/*.ts"],
+      "extends": [
+        "plugin:@typescript-eslint/recommended-requiring-type-checking"
+      ]
+    },
+    {
       "files": ["./*.config.js"],
       "rules": {
         "@typescript-eslint/no-var-requires": "off",
         "@typescript-eslint/camelcase": "off"
+      }
+    },
+    {
+      "files": ["./tests/**/*.ts"],
+      "extends": [
+        "plugin:@typescript-eslint/recommended-requiring-type-checking"
+      ],
+      "rules": {
+        "@typescript-eslint/explicit-module-boundary-types": "off"
       }
     }
   ]

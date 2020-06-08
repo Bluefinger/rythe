@@ -1,7 +1,7 @@
 import { createStream } from "../../src/stream";
 import { ACTIVE, CLOSED } from "../../src/constants";
 import { map } from "../../src/operators";
-import { END, SKIP } from "../../src/signal";
+import { emitSKIP, emitEND } from "../../src/signal";
 import { Stream } from "../../src/types/stream";
 import { test } from "../testHarness";
 import { spy } from "sinon";
@@ -32,7 +32,7 @@ test("map - transforms initial values", (assert) => {
 test("map - can ignore the initial value", (assert) => {
   const a = createStream<number | null>(5);
   const mapFn = spy((value: number | null) => value || 0);
-  const b = a.pipe(map<number | null, number>(mapFn, SKIP));
+  const b = a.pipe(map<number | null, number>(mapFn, true));
   assert.equal(
     b(),
     undefined,
@@ -47,9 +47,9 @@ test("map - can ignore the initial value", (assert) => {
 
 test("map - can be interrupted with SKIP signal", (assert) => {
   const a = createStream<number>();
-  const mapFn = spy((n: number): number => (n === 5 ? SKIP : n));
+  const mapFn = spy((n: number): number => (n === 5 ? emitSKIP() : n));
   const b = a.pipe(map(mapFn));
-  a(2)(3)(SKIP)(5);
+  a(2)(3)(emitSKIP())(5);
   assert.equal(a(), 5, "final update on parent stream is correct");
   assert.equal(
     b(),
@@ -65,7 +65,7 @@ test("map - can be interrupted with SKIP signal", (assert) => {
 
 test("map - can be ended with .end", (assert) => {
   const a = createStream<number>(2);
-  const mapFn = spy((n: number): number => (n === 5 ? SKIP : n));
+  const mapFn = spy((n: number): number => (n === 5 ? emitSKIP() : n));
   const b = a.pipe(map(mapFn));
   assert.deepEqual(b.parents, [a], "dependent stream lists the correct parent");
   assert.deepEqual(
@@ -102,9 +102,9 @@ test("map - can be ended with .end", (assert) => {
 
 test("map - can be ended with END signal", (assert) => {
   const a = createStream<number>(2);
-  const mapFn = spy((n: number): number => (n === 5 ? SKIP : n));
+  const mapFn = spy((n: number): number => (n === 5 ? emitSKIP() : n));
   const b = a.pipe(map(mapFn));
-  b(END);
+  b(emitEND());
   assert.equal(b.state, CLOSED, "END signal correctly closes stream");
 });
 

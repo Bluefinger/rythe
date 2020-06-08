@@ -1,7 +1,7 @@
 import { fake } from "sinon";
 import { createStream, sink } from "../../src/stream";
 import { combine, map } from "../../src/operators";
-import { END } from "../../src/signal";
+import { emitEND } from "../../src/signal";
 import { subscriber, subscribeEnd } from "../../src/utils/subscriber";
 import { test } from "../testHarness";
 import { CLOSED } from "../../src/constants";
@@ -15,7 +15,7 @@ test("subscriber - subscribes a stream with no parents", (assert) => {
     "Parent stream initially has no dependents"
   );
   assert.deepEqual(b.parents, [], "Dependent stream initially has no parents");
-  subscriber<number, string>(b, a, (value: number) => value + "");
+  subscriber<number, string>(b, a, (value: number) => String(value));
   assert.equal(
     a.dependents.length,
     1,
@@ -30,13 +30,13 @@ test("subscriber - subscribes a stream with no parents", (assert) => {
 
 test("subscriber - subscribes a stream with one parent already", (assert) => {
   const a = createStream<number>();
-  const b = a.pipe(map((value) => value + ""));
+  const b = a.pipe(map((value) => String(value)));
   assert.deepEqual(
     b.parents,
     [a],
     "Dependent stream has the parent stream already linked"
   );
-  subscriber(b, a.end, () => END);
+  subscriber(b, a.end, () => emitEND());
   assert.deepEqual(
     b.parents,
     [a, a.end],
@@ -53,7 +53,7 @@ test("subscriber - subscribers a stream with many parents already", (assert) => 
     [b, a],
     "Dependent stream has parent streams already linked"
   );
-  subscriber(c, a.end, () => END);
+  subscriber(c, a.end, () => emitEND());
   assert.deepEqual(
     c.parents,
     [b, a, a.end],

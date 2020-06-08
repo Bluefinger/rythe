@@ -26,7 +26,7 @@ const removeEventStream = <E extends Event>(
 };
 
 const isNode = (node: Node | NodeList | HTMLCollection): node is Node =>
-  (node as any).length === undefined;
+  (node as NodeList | HTMLCollection).length === undefined;
 
 export const fromDOMEvent = <E extends Event>(
   target: Node | NodeList | HTMLCollection,

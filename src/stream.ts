@@ -5,11 +5,14 @@ import { Closer } from "./types/internal";
 import { pipeFromArray } from "./utils/pipe";
 import { noop } from "./utils/noop";
 
-function toJSON(this: Stream<any>): any {
-  return this.val != null && this.val.toJSON ? this.val.toJSON() : this.val;
+function toJSON(this: Stream<unknown>): unknown {
+  return this.val != null && (this.val as Stream<unknown>).toJSON
+    ? ((this.val as Stream<unknown>).toJSON() as unknown)
+    : this.val;
 }
 
 function toString(this: Stream<any>): string {
+  // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
   return `streamFn{${this.val}}`;
 }
 
@@ -30,6 +33,7 @@ function boundPipe<T, Fns extends OperatorFn<any, any>[]>(
   if (!operators.length) {
     return this;
   }
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return pipeFromArray(operators)(this);
 }
 
@@ -57,8 +61,8 @@ const initStream = <T>(stream: Partial<Stream<T>>): Stream<T> => {
 /**
  * Checks for whether the input is a Stream object.
  */
-export const isStream = (obj: any): boolean =>
-  obj && obj.constructor === initStream;
+export const isStream = (obj: unknown): boolean =>
+  obj && (obj as Stream<unknown>).constructor === initStream;
 
 /**
  * Stream Factory function. Creates a Stream function based on the type of

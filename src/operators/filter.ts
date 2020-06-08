@@ -1,4 +1,4 @@
-import { SKIP } from "../signal";
+import { emitSKIP } from "../signal";
 import { Stream, OperatorFn } from "../types/stream";
 import { map } from "./map";
 
@@ -13,5 +13,5 @@ export function filter<T>(predicate: (value: T) => boolean): OperatorFn<T, T>;
  */
 export function filter<T>(predicate: (value: T) => boolean): OperatorFn<T, T> {
   return (source: Stream<T>): Stream<T> =>
-    map<T>((value): T => (predicate(value) ? value : SKIP))(source);
+    map<T>((value): T => (predicate(value) ? value : emitSKIP()))(source);
 }

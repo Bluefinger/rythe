@@ -1,7 +1,7 @@
 import { ACTIVE, CHANGING, PENDING, WAITING, StreamState } from "./constants";
-import { Stream } from "./types/stream";
+import { Stream, DependentTuple } from "./types/stream";
 import { Dispatcher } from "./types/internal";
-import { END, SKIP } from "./signal";
+import { END, SKIP, emitSKIP } from "./signal";
 
 const isReady = <T>(stream: Stream<T>): boolean =>
   !(stream.waiting > 0 && --stream.waiting);
@@ -49,24 +49,33 @@ const pushUpdate = <T>(stream: Stream<T>, value: T): void => {
   const { dependents } = stream;
   const updating = isStreamUpdating(value);
   for (let i = dependents.length; i--; ) {
-    const [dep, fn] = dependents[i];
-    if (isReady(dep)) {
-      const newValue = canDepUpdate(updating, dep.state) ? fn(value) : SKIP;
-      switch (newValue) {
-        case SKIP:
-          pushUpdate(dep, SKIP);
-          break;
-        case END:
-          pushUpdate(dep, SKIP);
-          dep.end(true);
-          break;
-        default:
-          dep.val = newValue;
-          pushUpdate(dep, newValue);
-      }
-    } else if (updating) {
-      markAsWaiting(dep);
+    updateDep(dependents[i], value, updating);
+  }
+};
+
+const updateDep = <T, U>(
+  [dep, fn]: DependentTuple<T, U>,
+  value: T,
+  updating: boolean
+) => {
+  if (isReady(dep)) {
+    const newValue: U = canDepUpdate(updating, dep.state)
+      ? fn(value)
+      : emitSKIP();
+    switch (newValue) {
+      case SKIP:
+        pushUpdate(dep, emitSKIP());
+        break;
+      case END:
+        pushUpdate(dep, emitSKIP());
+        dep.end(true);
+        break;
+      default:
+        dep.val = newValue;
+        pushUpdate(dep, newValue);
     }
+  } else if (updating) {
+    markAsWaiting(dep);
   }
 };
 

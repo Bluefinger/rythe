@@ -1,7 +1,7 @@
 import { createStream } from "../src/stream";
 import * as dispatch from "../src/dispatcher";
 import { combine, map, scan } from "../src/operators";
-import { END, SKIP } from "../src/signal";
+import { emitEND, emitSKIP } from "../src/signal";
 import { test } from "./testHarness";
 import { spy, SinonSpy } from "sinon";
 
@@ -12,7 +12,7 @@ const cleanSpy = (spied: SinonSpy) => spied.restore();
 test("Dispatcher - can update streams", (assert) => {
   const dispatched = spyDispatcher();
   const a = createStream<number>();
-  const b = a.pipe(map((val) => (val === 8 ? SKIP : val + 1)));
+  const b = a.pipe(map((val) => (val === 8 ? emitSKIP() : val + 1)));
   a(5)(8);
   assert.equal(
     dispatched.callCount,
@@ -33,7 +33,7 @@ test("Dispatcher - can close streams with an END signal", (assert) => {
     "Dispatcher called twice as each initial value propagates down the defined dependencies"
   );
   dispatched.resetHistory();
-  a(END);
+  a(emitEND());
   assert.equal(
     dispatched.callCount,
     2,

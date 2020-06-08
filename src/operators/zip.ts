@@ -3,11 +3,11 @@ import { createStream, isStream } from "../stream";
 import { PENDING, CLOSED } from "../constants";
 import { SOURCE_ERROR, INVALID_ARGUMENTS } from "../errors";
 import { subscriber, subscribeSink } from "../utils/subscriber";
-import { END, SKIP } from "../signal";
+import { emitSKIP, emitEND } from "../signal";
 
-const bufferReady = (values: any[]) => values.length;
-const popValue = (values: any[]) => values.pop();
-const initBuffers = (): any[] => [];
+const bufferReady = <T>(values: T[]) => values.length;
+const popValue = <T>(values: T[]) => values.pop();
+const initBuffers = <T>(): T[] => [];
 
 export function zip<T extends Stream<any>[]>(
   ...sources: T
@@ -15,12 +15,12 @@ export function zip<T extends Stream<any>[]>(
   if (!sources.length) {
     throw new Error(INVALID_ARGUMENTS);
   }
-  const zipped = createStream<any>();
+  const zipped = createStream<StreamTuple<T>>();
   zipped.waiting = -1;
 
-  const buffers = sources.map(initBuffers);
+  const buffers = sources.map(initBuffers) as StreamTuple<T>[];
   const ending: number[] = [];
-  let immediate = SKIP;
+  let immediate = emitSKIP<StreamTuple<T>>();
 
   const bufferIsExhausted = (endIndex: number) => !buffers[endIndex].length;
 
@@ -29,14 +29,16 @@ export function zip<T extends Stream<any>[]>(
     if (!isStream(source)) {
       throw new Error(SOURCE_ERROR);
     }
-    const subFn = (value: any): any[] => {
+    const subFn = (value: unknown): StreamTuple<T> => {
       buffers[i].unshift(value);
-      return buffers.every(bufferReady) ? buffers.map(popValue) : SKIP;
+      return buffers.every(bufferReady)
+        ? (buffers.map(popValue) as StreamTuple<T>)
+        : emitSKIP();
     };
     const endFn = () => {
       ending.push(i);
     };
-    subscriber(zipped, source, subFn);
+    subscriber<StreamTuple<T>, any>(zipped, source, subFn);
     if (source.state !== PENDING) {
       immediate = subFn(source.val);
     }
@@ -48,7 +50,7 @@ export function zip<T extends Stream<any>[]>(
   }
   subscribeSink(zipped, () => {
     if (ending.length && ending.some(bufferIsExhausted)) {
-      zipped(END);
+      zipped(emitEND());
     }
   });
   return zipped(immediate);

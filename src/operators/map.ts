@@ -1,21 +1,20 @@
 import { createStream, isStream } from "../stream";
 import { ACTIVE } from "../constants";
 import { SOURCE_ERROR } from "../errors";
-import { SKIP } from "../signal";
 import { Stream, OperatorFn } from "../types/stream";
 import { subscriber } from "../utils/subscriber";
 
 export function map<T>(
   mapFn: (value: T) => T,
-  ignoreInitial?: SKIP
+  ignoreInitial?: true
 ): OperatorFn<T, T>;
 export function map<T>(
   mapFn: (value: T) => T[],
-  ignoreInitial?: SKIP
+  ignoreInitial?: true
 ): OperatorFn<T, T[]>;
 export function map<T, U>(
   mapFn: (value: T) => U,
-  ignoreInitial?: SKIP
+  ignoreInitial?: true
 ): OperatorFn<T, U>;
 
 /**
@@ -25,7 +24,7 @@ export function map<T, U>(
  */
 export function map<T, U>(
   mapFn: (value: T) => U,
-  ignoreInitial?: SKIP
+  ignoreInitial?: true
 ): OperatorFn<any, any> {
   return (source: Stream<T>): Stream<U> => {
     const { state, val } = source;
@@ -33,7 +32,7 @@ export function map<T, U>(
       throw new Error(SOURCE_ERROR);
     }
     const mapStream = createStream<U>();
-    if (state === ACTIVE && ignoreInitial !== SKIP) {
+    if (state === ACTIVE && !ignoreInitial) {
       mapStream(mapFn(val));
     }
     return subscriber(mapStream, source, mapFn);

@@ -19,13 +19,13 @@ export function scan<T, U>(
  * Always emits the initial value. Scan function should not be used to return
  * signals, such as END or SKIP. Always return a value.
  */
-export function scan(
-  scanFn: (acc: any, newValue: any) => any,
-  initial: any
-): OperatorFn<any, any> {
-  return (source: Stream<any>): Stream<any> => {
+export function scan<T, U>(
+  scanFn: (acc: U, newValue: T) => U,
+  initial: U
+): OperatorFn<T, U> {
+  return (source: Stream<T>): Stream<U> => {
     let acc = initial;
-    const scanned = map<any, any>((value): any => {
+    const scanned = map<T, U>((value) => {
       acc = scanFn(acc, value);
       return acc;
     })(source);

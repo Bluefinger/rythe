@@ -1,4 +1,4 @@
-import { END } from "../signal";
+import { emitEND } from "../signal";
 import { Stream, OperatorFn } from "../types/stream";
 import { map } from "./map";
 import { makeUInt } from "../utils/makeUInt";
@@ -12,7 +12,7 @@ export function take<T>(amount: number): OperatorFn<T, T> {
           --remaining;
           return value;
         }
-        return END;
+        return emitEND();
       }
     )(source);
 }

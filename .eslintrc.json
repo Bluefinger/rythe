@@ -33,7 +33,12 @@
       ]
     },
     {
-      "files": ["./*.config.js", "./gulpfile.js", "./compiler.js"],
+      "files": [
+        "./*.config.js",
+        "./gulpfile.js",
+        "./compiler.js",
+        "./scripts/**/*.js"
+      ],
       "env": {
         "node": true
       },

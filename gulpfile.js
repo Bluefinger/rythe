@@ -1,21 +1,26 @@
 const { series, parallel } = require("gulp");
 const { rollup, watch: rollupWatch } = require("rollup");
-const { existsSync, promises } = require("fs");
-const { readFile, writeFile, mkdir } = promises;
 const del = require("del");
-const { parse, stringify } = require("buffer-json");
 const { terser } = require("rollup-plugin-terser");
 const sucrase = require("@rollup/plugin-sucrase");
 const madge = require("madge");
-const { exec } = require("child_process");
 const log = require("fancy-log");
+const {
+  createChildTask,
+  readCache,
+  saveCache,
+} = require("./scripts/gulputils");
 
-const tasks = {
-  watch: "tsc --build tests/tsconfig.json --pretty --watch",
-  typingWithConfig: (config) => `tsc --build ${config} --pretty`,
-  linting: 'eslint "./+(src|tests|perf)/**/*.{ts,js}"',
-  documentation: 'prettier --check "./documentation/**/*.md"',
-  unitTests: "nyc npm run test:tape",
+const childTasks = {
+  watch: () =>
+    createChildTask("tsc --build tests/tsconfig.json --pretty --watch"),
+  generateTypes: () =>
+    createChildTask("tsc --build config/tsconfig.typings.json --pretty"),
+  checkTypes: () => createChildTask("tsc --build tests/tsconfig.json --pretty"),
+  linting: () => createChildTask('eslint "./+(src|tests|perf)/**/*.{ts,js}"'),
+  documentation: () =>
+    createChildTask('prettier --check "./documentation/**/*.md"'),
+  unitTests: () => createChildTask("nyc npm run test:tape"),
 };
 
 const beautified = [
@@ -81,28 +86,11 @@ const watchOptions = {
   },
 };
 
-const CACHE_LOCATION = "./node_modules/.cache";
-const CACHE_FILE = `${CACHE_LOCATION}/.rollup.cache.json`;
 let cache;
 
-const linkChildOutput = (childProcess) => {
-  childProcess.stdout.pipe(process.stdout);
-  childProcess.stderr.pipe(process.stderr);
-  return childProcess;
-};
-
-const createChildTask = (cmd) => linkChildOutput(exec(cmd));
-
 const loadCache = async () => {
-  try {
-    const file = await readFile(CACHE_FILE, "utf-8");
-    cache = parse(file);
-  } catch (e) {
-    if (!existsSync(CACHE_LOCATION)) return mkdir(CACHE_LOCATION);
-  }
+  cache = await readCache();
 };
-
-const saveCache = (result) => writeFile(CACHE_FILE, stringify(result));
 
 const clean = () => del(["./{dist,types}/*"]);
 
@@ -119,11 +107,10 @@ const watchSources = () => {
   bundle.on("event", (event) => {
     if (event.code === "BUNDLE_END") {
       log(`Bundle generated in ${event.duration} ms. Updating build cache...`);
-      cache = event.result.cache;
-      saveCache(cache).catch(log.error);
+      saveCache(event.result.cache).catch(log.error);
     }
   });
-  createChildTask(tasks.watch);
+  childTasks.watch();
 };
 
 const dependencies = async () => {
@@ -139,16 +126,8 @@ const dependencies = async () => {
   }
 };
 
-const generateTypes = () =>
-  createChildTask(tasks.typingWithConfig("config/tsconfig.typings.json"));
-const checkTypes = () =>
-  createChildTask(tasks.typingWithConfig("tests/tsconfig.json"));
-const documentation = () => createChildTask(tasks.documentation);
-const linting = () => createChildTask(tasks.linting);
-const unitTests = () => createChildTask(tasks.unitTests);
-
 const setup = parallel(clean, loadCache);
-const build = parallel(generateBundle, generateTypes);
+const build = parallel(generateBundle, childTasks.generateTypes);
 
 exports.clean = clean;
 exports.build = series(loadCache, build);
@@ -156,8 +135,8 @@ exports.prepare = series(setup, build);
 exports.watch = series(loadCache, watchSources);
 exports.test = parallel(
   dependencies,
-  documentation,
-  linting,
-  unitTests,
-  checkTypes
+  childTasks.documentation,
+  childTasks.linting,
+  childTasks.unitTests,
+  childTasks.checkTypes
 );

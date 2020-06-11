@@ -1,7 +1,8 @@
 import { map } from "./map";
-import { SKIP, emitSKIP } from "../signal";
+import { SKIP } from "../signal";
 import { OperatorFn } from "../types/stream";
 import { DeepSearch, Key } from "../types/utils";
+import { skipNullish } from "../utils/skipNullish";
 
 export const select = <T extends any, K extends Key[]>(
   ...keys: K
@@ -15,7 +16,7 @@ export const select = <T extends any, K extends Key[]>(
       // enforce type linting until the value is meant to
       // be emitted
       // eslint-disable-next-line
-      val = val[keys[i]] ?? emitSKIP();
+      val = skipNullish(val[keys[i]]);
       if (val === SKIP) break;
     }
     return val as DeepSearch<T, K>;

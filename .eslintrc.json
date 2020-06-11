@@ -33,7 +33,10 @@
       ]
     },
     {
-      "files": ["./*.config.js"],
+      "files": ["./*.config.js", "./gulpfile.js", "./compiler.js"],
+      "env": {
+        "node": true
+      },
       "rules": {
         "@typescript-eslint/no-var-requires": "off",
         "@typescript-eslint/camelcase": "off"

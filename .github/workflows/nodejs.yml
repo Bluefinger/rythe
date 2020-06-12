@@ -22,20 +22,12 @@ jobs:
         restore-keys: |
           ${{ runner.OS }}-build-${{ env.cache-name }}
           ${{ runner.OS }}-build-
-    - uses: actions/download-artifact@v2
-      with:
-        name: .cache
-        path: .cache
     - name: CI test
       run: |
         npm ci
         npm test
       env:
         CI: true
-    - uses: actions/upload-artifact@v2
-      with:
-        name: .cache
-        path: .cache
     - name: Codecov
       uses: codecov/codecov-action@v1.0.4
       with:

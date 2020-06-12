@@ -92,7 +92,7 @@ const loadCache = async () => {
   cache = await readCache();
 };
 
-const clean = () => del(["./{dist,types}/*"]);
+const clean = () => del(["./{dist,types}/*", "./.cache/*", "./.cache/.*"]);
 
 const generateBundle = async () => {
   inputOptions.cache = cache;
@@ -126,12 +126,11 @@ const dependencies = async () => {
   }
 };
 
-const setup = parallel(clean, loadCache);
-const build = parallel(generateBundle, childTasks.generateTypes);
-
 exports.clean = clean;
-exports.build = series(loadCache, build);
-exports.prepare = series(setup, build);
+exports.build = series(
+  loadCache,
+  parallel(generateBundle, childTasks.generateTypes)
+);
 exports.watch = series(loadCache, watchSources);
 exports.test = parallel(
   dependencies,

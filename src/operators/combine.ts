@@ -25,7 +25,7 @@ export function combine<T extends Stream<any>[], U>(
   }
 
   if (sources.length && !combinedStream.waiting) {
-    combinedStream(combineFn(...sources));
+    combinedStream(subscribeFn());
   }
 
   return combinedStream;

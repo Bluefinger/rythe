@@ -6,7 +6,7 @@
     "declarationMap": true,
     "preserveConstEnums": true,
     "emitDeclarationOnly": true,
-    "declarationDir": "../node_modules/.cache/build",
+    "declarationDir": "../.cache/build",
     "rootDir": "../"
   },
   "include": ["../src/**/*.ts", "./**/*.ts"],

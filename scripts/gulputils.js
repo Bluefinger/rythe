@@ -3,7 +3,7 @@ const { readFile, writeFile, mkdir } = promises;
 const { parse, stringify } = require("buffer-json");
 const { exec } = require("child_process");
 
-const CACHE_LOCATION = "./node_modules/.cache";
+const CACHE_LOCATION = "./.cache";
 const CACHE_FILE = `${CACHE_LOCATION}/.rollup.cache.json`;
 
 const linkChildOutput = (childProcess) => {

@@ -9,26 +9,33 @@ jobs:
       matrix:
         node-version: [10.x, 12.x, 14.x]
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
     - name: Node ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
     - name: Cache node modules
-      uses: actions/cache@v1
+      uses: actions/cache@v2
       with:
         path: node_modules
         key: ${{ runner.OS }}-build-${{ hashFiles('**/package-lock.json') }}
         restore-keys: |
           ${{ runner.OS }}-build-${{ env.cache-name }}
           ${{ runner.OS }}-build-
-          ${{ runner.OS }}-
+    - uses: actions/download-artifact@v2
+      with:
+        name: .cache
+        path: .cache
     - name: CI test
       run: |
-        npm ci --ignore-scripts
+        npm ci
         npm test
       env:
         CI: true
+    - uses: actions/upload-artifact@v2
+      with:
+        name: .cache
+        path: .cache
     - name: Codecov
       uses: codecov/codecov-action@v1.0.4
       with:

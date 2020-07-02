@@ -14,6 +14,7 @@ test("scanMerge - accumulates many streams into a single stream", (assert) => {
   );
   const v = m.pipe(map((val) => `${val}`));
   assert.equal(isStream(v), true, "returns a valid Stream function");
+  assert.equal(m.waiting, -1, "scanMerge is an ImmediateStream");
   assert.equal(m(), 1, "scanMerge has an initial value");
   add(5);
   assert.equal(

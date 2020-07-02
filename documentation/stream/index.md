@@ -10,11 +10,13 @@ There are two types of streams, `Stream<T>` and `EndStream`.
 
 - [Stream](#streamt)
 - [EndStream](#endstream)
+- [ImmediateStream](#immediatestream)
 - [SinkStream](#sinkstream)
 
 ### Functions
 
 - [createStream](#createStream)
+- [createImmediateStream](#createImmediateStream)
 - [isStream](#isStream)
 
 ### Signals
@@ -83,6 +85,12 @@ stream.end.pipe(map(other.end), map(things.end));
 
 A `Stream<T>` that has been ended/closed can still have its own value updated. However, a closed `Stream<T>` will not emit that value to any other streams. `EndStream` will not update its own value however, as it is representative of its parent `Stream<T>`'s closed state. Once closed, `EndStream` will always yield `true`.
 
+# `ImmediateStream<T>`
+
+`ImmediateStream<T>` represents a type of Stream that has multiple parent streams, _but does not wait for all of them to resolve before updating_. The moment one updates, it will emit the value it received. Immediate streams are not meant to be created directly though. Their purpose is for defining dependent streams that will update immediately upon any parent stream updating, so will be useful for defining new types of operators/helper streams.
+
+The difference between an `ImmediateStream<T>` and a `Stream<T>` is that an `ImmediateStream<T>`'s `waiting` property is set to `-1` and is readonly, since it does not need to track and wait for all parent streams to be updated.
+
 # `SinkStream`
 
 The `sink` stream serves as a drain for certain emit cases, such as subscribing a chain of `EndStream`s. To prevent the need to create extra streams, it is used to receive emits that trigger actions, but should not have further side-effects or dependencies. A `SinkStream` is effectively a type `Stream<void>`, but it will always return `undefined` when called with or without passing a value into it. It is always `CLOSED`, and its state cannot be modified. The `.end` property of a `SinkStream` will always return `undefined` and doesn't do anything.
@@ -111,6 +119,19 @@ const piped = stream.pipe(
 
 stream(6);
 piped(); // also returns the value 22
+```
+
+# createImmediateStream
+
+## `createImmediateStream<T>(initialValue?: T): ImmediateStream<T>`
+
+`createImmediateStream()` is a factory function which produces new `ImmediateStream<T>`s. These can be initialised with or without an initial value. If a `Stream<T>` is initialised with a value, then any time another stream subscribes to that initialised stream through an operator function, it'll immediately be updated with the resulting value from the operator.
+
+```typescript
+const stream = createImmediateStream<number>();
+
+stream.waiting === -1; // returns true
+stream.waiting = 0; // <-- This will error in Typescript!
 ```
 
 # isStream

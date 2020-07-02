@@ -89,6 +89,10 @@ export interface Stream<T> {
   toJSON(): any;
 }
 
+export interface ImmediateStream<T> extends Stream<T> {
+  readonly waiting: -1;
+}
+
 export interface EndStream extends Stream<boolean> {
   /**
    * Returns the Stream's current value.

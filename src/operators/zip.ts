@@ -1,5 +1,5 @@
-import { Stream, StreamTuple } from "../types/stream";
-import { createStream, isStream } from "../stream";
+import { Stream, ImmediateStream, StreamTuple } from "../types/stream";
+import { createImmediateStream, isStream } from "../stream";
 import { PENDING, CLOSED } from "../constants";
 import { SOURCE_ERROR, INVALID_ARGUMENTS } from "../errors";
 import { subscriber, subscribeSink } from "../utils/subscriber";
@@ -11,12 +11,11 @@ const initBuffers = <T>(): T[] => [];
 
 export function zip<T extends Stream<any>[]>(
   ...sources: T
-): Stream<StreamTuple<T>> {
+): ImmediateStream<StreamTuple<T>> {
   if (!sources.length) {
     throw new Error(INVALID_ARGUMENTS);
   }
-  const zipped = createStream<StreamTuple<T>>();
-  zipped.waiting = -1;
+  const zipped = createImmediateStream<StreamTuple<T>>();
 
   const buffers = sources.map(initBuffers) as StreamTuple<T>[];
   const ending: number[] = [];

@@ -6,4 +6,4 @@ import { OperatorFn } from "../types/stream";
  * Skips any repeated values.
  */
 export const dropBy = <T, K extends keyof T = any>(key: K): OperatorFn<T, T> =>
-  dropWith<T>((prev, next) => (prev && prev[key]) === next[key]);
+  dropWith<T>((prev, next) => prev?.[key] === next[key]);

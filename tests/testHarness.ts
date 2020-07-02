@@ -7,7 +7,7 @@ export const test = (
   callback: (assert: tape.Test) => void | Promise<void>
 ): void => {
   tape(name, OPTIONS, (assert) => {
-    const { end } = assert;
+    const end = (err: unknown) => assert.end(err);
     Promise.resolve(assert).then(callback).then(end, end);
   });
 };

@@ -1,6 +1,12 @@
 import { CLOSED, PENDING } from "./constants";
 import { dispatcher as push } from "./dispatcher";
-import { Stream, OperatorFn, EndStream, SinkStream } from "./types/stream";
+import {
+  Stream,
+  ImmediateStream,
+  OperatorFn,
+  EndStream,
+  SinkStream,
+} from "./types/stream";
 import { Closer } from "./types/internal";
 import { pipeFromArray } from "./utils/pipe";
 import { noop } from "./utils/noop";
@@ -78,7 +84,7 @@ export const createStream = <T>(initialValue?: T): Stream<T> => {
   } as Stream<T>;
 
   const complete = function (value: boolean): boolean {
-    if (complete.state && value && typeof value === "boolean") {
+    if (complete.state && value === true) {
       push(complete, value);
       close(next)(complete);
     }
@@ -95,6 +101,14 @@ export const createStream = <T>(initialValue?: T): Stream<T> => {
   }
 
   return stream;
+};
+
+export const createImmediateStream = <T>(
+  initialValue?: T
+): ImmediateStream<T> => {
+  const stream = createStream(initialValue);
+  stream.waiting = -1;
+  return stream as ImmediateStream<T>;
 };
 
 const createSink = (): SinkStream => {

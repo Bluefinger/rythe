@@ -1,12 +1,14 @@
 import { ACTIVE, CHANGING, PENDING, WAITING, StreamState } from "./constants";
-import { Stream, DependentTuple } from "./types/stream";
+import { Stream, DependentTuple, ImmediateStream } from "./types/stream";
 import { Dispatcher } from "./types/internal";
 import { END, SKIP, emitSKIP } from "./signal";
 
 const isReady = <T>(stream: Stream<T>): boolean =>
   !(stream.waiting > 0 && --stream.waiting);
 
-const isImmediateStream = (waiting: number): boolean => waiting < 0;
+const isImmediateStream = <T>(
+  stream: Stream<T>
+): stream is ImmediateStream<T> => stream.waiting < 0;
 
 const isStreamUpdating = <T>(value: T) => value !== SKIP;
 
@@ -31,16 +33,22 @@ const markAsChanging = <T>(stream: Stream<T>): void => {
   const { state: previousState, dependents } = stream;
   stream.state = CHANGING;
   for (let i = dependents.length; i--; ) {
-    const [dep] = dependents[i];
-    if (
-      dep.parents.length > 1 &&
-      !(isImmediateStream(stream.waiting) || previousState === PENDING)
-    ) {
-      dep.waiting += 1;
-    }
-    if (dep.state < CHANGING) {
-      markAsChanging(dep);
-    }
+    markDependent(dependents[i], previousState);
+  }
+};
+
+const markDependent = <T, U>(
+  [dep]: DependentTuple<T, U>,
+  previousParentState: StreamState
+) => {
+  if (
+    dep.parents.length > 1 &&
+    !(isImmediateStream(dep) || previousParentState === PENDING)
+  ) {
+    dep.waiting += 1;
+  }
+  if (dep.state < CHANGING) {
+    markAsChanging(dep);
   }
 };
 

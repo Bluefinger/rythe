@@ -1,8 +1,24 @@
-import { createStream, isStream, sink } from "../src/stream";
+import {
+  createStream,
+  createImmediateStream,
+  isStream,
+  sink,
+} from "../src/stream";
 import { ACTIVE, CLOSED, PENDING } from "../src/constants";
 import { emitEND } from "../src/signal";
 import { Stream } from "../src/types/stream";
 import { test } from "./testHarness";
+
+test("isStream - returns true only for valid stream functions", (assert) => {
+  const a = createStream<number>(5);
+  const b = () => {};
+  const c = {};
+  const d = 5;
+  assert.equal(isStream(a), true, "value `a` is a valid Stream type");
+  assert.equal(isStream(b), false, "value `b` is not a valid Stream type");
+  assert.equal(isStream(c), false, "value `c` is not valid Stream type");
+  assert.equal(isStream(d), false, "value `d` is not valid Stream type");
+});
 
 test("Stream - can act as a getter and setter", (assert) => {
   const a = createStream<number>(5);
@@ -150,6 +166,12 @@ test("Stream - toString - can serialise into a plain string", (assert) => {
     "streamFn{streamFn{2}}",
     "Nested Streams can be serialised into plain strings"
   );
+});
+
+test("ImmediateStream - create a Stream with a negative waiting value for immediate updates from multiple parents", (assert) => {
+  const a = createImmediateStream<number>();
+  assert.equal(isStream(a), true, "ImmediateStream is a valid Stream type");
+  assert.equal(a.waiting, -1, "ImmediateStream waiting value is always -1");
 });
 
 test("Sink - Always returns void, with or without value passed in", (assert) => {

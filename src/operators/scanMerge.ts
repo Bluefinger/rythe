@@ -1,28 +1,27 @@
-import { Stream } from "../types/stream";
-import { createStream, isStream } from "../stream";
+import { Stream, ImmediateStream } from "../types/stream";
+import { createImmediateStream, isStream } from "../stream";
 import { subscriber, subscribeEnd } from "../utils/subscriber";
 import { SOURCE_ERROR } from "../errors";
 
 export function scanMerge<T>(
   initialValue: T,
   ...pairs: [Stream<T>, (acc: T, value: T) => T][]
-): Stream<T>;
+): ImmediateStream<T>;
 export function scanMerge<T>(
   initialValue: T[],
   ...pairs: [Stream<T>, (acc: T[], value: T) => T[]][]
-): Stream<T[]>;
+): ImmediateStream<T[]>;
 export function scanMerge<T, U>(
   initialValue: U,
   ...pairs: [Stream<T>, (acc: U, value: T) => U][]
-): Stream<U>;
+): ImmediateStream<U>;
 
 export function scanMerge<T, U>(
   initialValue: U,
   ...pairs: [Stream<T>, (acc: U, value: T) => U][]
-): Stream<U> {
+): ImmediateStream<U> {
   let acc = initialValue;
-  const merged = createStream<U>();
-  merged.waiting = -1;
+  const merged = createImmediateStream<U>();
   for (let i = pairs.length; i--; ) {
     const [source, sourceFn] = pairs[i];
     if (!isStream(source)) {

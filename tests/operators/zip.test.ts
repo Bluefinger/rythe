@@ -9,6 +9,7 @@ test("zip - zips multiple streams into a single array value", (assert) => {
   const b = createStream<string>();
   const z = zip(a, b);
   assert.equal(isStream(z), true, "returns a valid Stream function");
+  assert.equal(z.waiting, -1, "zip is an ImmediateStream");
   a(5)(4)(3);
   b("c");
   assert.deepEqual(

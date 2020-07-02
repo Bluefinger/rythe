@@ -2,7 +2,7 @@ const { series, parallel } = require("gulp");
 const { rollup, watch: rollupWatch } = require("rollup");
 const del = require("del");
 const { terser } = require("rollup-plugin-terser");
-const sucrase = require("@rollup/plugin-sucrase");
+const ts = require("@wessberg/rollup-plugin-ts");
 const madge = require("madge");
 const log = require("fancy-log");
 const {
@@ -48,8 +48,13 @@ const compressed = [
 const inputOptions = {
   input: ["./src/index.ts"],
   plugins: [
-    sucrase({
-      transforms: ["typescript"],
+    ts({
+      browserslist: false,
+      transpileOnly: true,
+      tsconfig: {
+        fileName: "./tsconfig.json",
+        hook: (config) => ({ ...config, declaration: false }),
+      },
     }),
   ],
 };

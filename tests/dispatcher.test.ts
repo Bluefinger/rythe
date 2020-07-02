@@ -1,6 +1,6 @@
 import { createStream } from "../src/stream";
 import * as dispatch from "../src/dispatcher";
-import { combine, map, scan } from "../src/operators";
+import { combine, map, merge, scan } from "../src/operators";
 import { emitEND, emitSKIP } from "../src/signal";
 import { test } from "./testHarness";
 import { spy, SinonSpy } from "sinon";
@@ -94,4 +94,30 @@ test("Dispatcher - combines complicated stream dependencies atomically", (assert
     "Dispatcher calls should equal combine results length"
   );
   cleanSpy(dispatched as any);
+});
+
+test("Dispatcher - mixed immediate and non-immediate parent streams resolve to dependents correctly", (assert) => {
+  const a = createStream<number>();
+  const b = createStream<string>();
+  const c = createStream<number>();
+  const d = createStream<string>();
+
+  const c1 = combine((s1, s2) => `${s1()}${s2()}`, a, b);
+  const m1 = merge(c, d);
+
+  const m2 = merge(c1, m1);
+  const spyFn = spy((n: number | string) => n);
+  const spied = m2.pipe(map(spyFn));
+
+  a(1);
+  assert.equal(spyFn.callCount, 0, "dependent hasn't emitted yet");
+  c(4);
+  assert.equal(spyFn.callCount, 1, "dependent only emitted once");
+  assert.equal(spied(), 4, "number value had been routed correctly");
+
+  b("B");
+  a(2);
+  assert.equal(spyFn.callCount, 3, "dependent emitted total of three times");
+  assert.equal(spied(), "2B", "string value had been routed correctly");
+  assert.equal(m2.waiting, -1, "waiting was not modified");
 });

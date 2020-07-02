@@ -30,7 +30,7 @@ const WAITING = 4;
  * * PENDING - 1
  * * ACTIVE - 2
  * * CHANGING - 3
- * * UPDATING - 4
+ * * WAITING - 4
  */
 export type StreamState = CLOSED | PENDING | ACTIVE | CHANGING | WAITING;
 export { CLOSED, PENDING, ACTIVE, CHANGING, WAITING };

@@ -13,5 +13,5 @@ export function filter<T>(predicate: (value: T) => boolean): OperatorFn<T, T>;
  */
 export function filter<T>(predicate: (value: T) => boolean): OperatorFn<T, T> {
   return (source: Stream<T>): Stream<T> =>
-    map<T>((value): T => (predicate(value) ? value : emitSKIP()))(source);
+    map<T>((value) => (predicate(value) ? value : emitSKIP()))(source);
 }

@@ -119,5 +119,6 @@ test("Dispatcher - mixed immediate and non-immediate parent streams resolve to d
   a(2);
   assert.equal(spyFn.callCount, 3, "dependent emitted total of three times");
   assert.equal(spied(), "2B", "string value had been routed correctly");
-  assert.equal(m2.waiting, -1, "waiting was not modified");
+  assert.equal(m1.waiting, -1, "first merge waiting value was not modified");
+  assert.equal(m2.waiting, -1, "second merge waiting value was not modified");
 });

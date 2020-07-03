@@ -89,6 +89,10 @@ export interface Stream<T> {
   toJSON(): any;
 }
 
+export interface PipeStream<T> extends Stream<T> {
+  piped: StreamFn<any, any>[];
+}
+
 export interface ImmediateStream<T> extends Stream<T> {
   readonly waiting: -1;
 }

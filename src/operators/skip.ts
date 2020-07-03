@@ -1,18 +1,9 @@
-import { emitSKIP } from "../signal";
 import { Stream, OperatorFn } from "../types/stream";
-import { map } from "./map";
+import { filter } from "./filter";
 import { makeUInt } from "../utils/makeUInt";
 
 export function skip<T>(amount: number): OperatorFn<T, T> {
   let remaining = makeUInt(amount);
   return (source: Stream<T>): Stream<T> =>
-    map<T>(
-      (value): T => {
-        if (remaining) {
-          --remaining;
-          return emitSKIP();
-        }
-        return value;
-      }
-    )(source);
+    filter<T>(() => !(remaining ? remaining-- : remaining))(source);
 }

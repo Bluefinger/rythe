@@ -47,3 +47,15 @@ export const addFrame = (fn: (time: number) => void): void => {
     );
   }
 };
+
+export const addMicroTask = (fn: () => void): void => {
+  if (!store.has(fn)) {
+    store.set(
+      fn,
+      queueMicrotask(() => {
+        fn();
+        store.delete(fn);
+      })
+    );
+  }
+};

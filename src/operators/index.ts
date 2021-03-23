@@ -1,5 +1,6 @@
 export { after } from "./after";
 export { combine } from "./combine";
+export { defer } from "./defer";
 export { during } from "./during";
 export { lift } from "./lift";
 export { dropBy } from "./dropBy";

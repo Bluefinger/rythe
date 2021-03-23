@@ -4,6 +4,7 @@ import {
   clearTimer,
   addFrame,
   clearFrame,
+  addMicroTask,
 } from "../../src/utils/timers";
 import { test } from "../testHarness";
 import { fake } from "sinon";
@@ -132,4 +133,18 @@ test("Timers - clear animation frame", (assert) => {
     );
   }
   clock.uninstall();
+});
+
+test("Timers - add micro task", async (assert) => {
+  const clock = getMockTimer();
+  const mockFn = fake();
+  addMicroTask(mockFn);
+  assert.equal(
+    mockFn.callCount,
+    0,
+    "micro task is queued, but has not been executed"
+  );
+  await clock.flush();
+  assert.equal(mockFn.callCount, 1, "micro task was executed");
+  clock.restore();
 });

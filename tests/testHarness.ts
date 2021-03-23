@@ -6,8 +6,6 @@ export const test = (
   name: string,
   callback: (assert: tape.Test) => void | Promise<void>
 ): void => {
-  tape(name, OPTIONS, (assert) => {
-    const end = (err: unknown) => assert.end(err);
-    Promise.resolve(assert).then(callback).then(end, end);
-  });
+  // eslint-disable-next-line
+  tape(name, OPTIONS, (assert) => Promise.resolve(assert).then(callback));
 };

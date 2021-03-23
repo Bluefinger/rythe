@@ -68,7 +68,7 @@ const initStream = <T>(stream: Partial<Stream<T>>): Stream<T> => {
  * Checks for whether the input is a Stream object.
  */
 export const isStream = (obj: unknown): boolean =>
-  obj && (obj as Stream<unknown>).constructor === initStream;
+  Boolean(obj) && (obj as Stream<unknown>).constructor === initStream;
 
 /**
  * Stream Factory function. Creates a Stream function based on the type of
